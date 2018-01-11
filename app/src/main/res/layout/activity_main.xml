@@ -4,51 +4,138 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.roboprojekt.mobileapplicationdev.roboprojekt.MainActivity">
+    tools:context="com.mobileapplicationdev.roboproject.MainActivity">
 
-    <LinearLayout
+    <TabHost
+        android:id="@+id/tabHost"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <Spinner
-                android:id="@+id/spinner_debug_view"
+            <TabWidget
+                android:id="@android:id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/editText_ipAdress"
+            <FrameLayout
+                android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="@string/text_enter_ip" />
+                android:layout_height="match_parent">
 
-            <ToggleButton
-                android:id="@+id/toggleButton_connection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="onConnectionButtonClick"
-                android:text="ToggleButton"
-                android:textOff="@string/text_toggleButton_connection_off"
-                android:textOn="@string/text_toggleButton_connection_on" />
+                <LinearLayout
+                    android:id="@+id/tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-            <Switch
-                android:id="@+id/switch_driveModus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Switch"
-                android:textOff="@string/text_switch_driveModus_off"
-                android:textOn="@string/text_switch_driveModus_on" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/editText_ipAdress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:digits="1234567890."
+                            android:ems="10"
+                            android:hint="@string/text_enter_ip"
+                            android:inputType="number"
+                            tools:layout_editor_absoluteX="96dp" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButton_connection"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dummy"
+                            android:textOff="@string/text_toggleButton_connection_off"
+                            android:textOn="@string/text_toggleButton_connection_on" />
+
+                        <Switch
+                            android:id="@+id/switch_driveModus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/dummy"
+                            android:textOff="@string/text_switch_driveModus_off"
+                            android:textOn="@string/text_switch_driveModus_on" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <com.jmedeisis.bugstick.Joystick
+                            android:id="@+id/joystick"
+                            android:layout_width="@dimen/base_size"
+                            android:layout_height="@dimen/base_size"
+                            android:layout_margin="15dp"
+                            android:background="@drawable/bg_base">
+
+                            <!-- You may use any View here. -->
+                            <Button
+                                android:layout_width="@dimen/stick_size"
+                                android:layout_height="@dimen/stick_size"
+                                android:background="@drawable/bg_stick" />
+
+                        </com.jmedeisis.bugstick.Joystick>
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="40dp"
+                            android:layout_marginStart="15dp"
+                            android:text="TextView" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/arrow_up"
+                            android:text="Button" />
+
+                        <Button
+                            android:id="@+id/button2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/arrow_down"
+                            android:layout_weight="1"
+                            android:text="Button" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </FrameLayout>
         </LinearLayout>
-    </LinearLayout>
+    </TabHost>
 </android.support.constraint.ConstraintLayout>

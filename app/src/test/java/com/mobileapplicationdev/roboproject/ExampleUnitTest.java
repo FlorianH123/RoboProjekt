@@ -1,4 +1,4 @@
-package com.roboprojekt.mobileapplicationdev.roboprojekt;
+package com.mobileapplicationdev.roboproject;
 
 import org.junit.Test;
 
