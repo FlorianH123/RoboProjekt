@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">RoboProjekt</string>
+
+
+    <string name="text_enter_ip">Enter Robo IP</string>
+
+    <string name="text_toggleButton_connection_on">Disconnect</string>
+    <string name="text_toggleButton_connection_off">Connect</string>
+
+    <string name="text_switch_driveModus_on">Kurven Modus</string>
+    <string name="text_switch_driveModus_off">Geradlinig Modus</string>
+
+    <string-array name="spinner_debug_array">
+        <item>Debug1</item>
+        <item>Debug2</item>
+    </string-array>
 </resources>
