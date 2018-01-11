@@ -119,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
     private void initJoyStick() {
         Joystick joystick = findViewById(R.id.joystick);
         joystick.setJoystickListener(new JoystickListener() {
+            TextView textView = findViewById(R.id.textView);
+
             @Override
             public void onDown() {
                 // ..
@@ -126,14 +128,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDrag(float degrees, float offset) {
-
-                TextView textView = findViewById(R.id.textView);
-                textView.setText(String.valueOf((int) degrees));
+                textView.setText(String.valueOf((int) degrees) + " " + offset);
             }
 
             @Override
             public void onUp() {
-                // ..
+                textView.setText("0, 0");
             }
         });
     }
