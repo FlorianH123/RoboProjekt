@@ -122,18 +122,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@drawable/arrow_up"
+                            android:background="@drawable/arrow_up_drawable"
                             android:text="Button" />
 
                         <Button
                             android:id="@+id/button2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/arrow_down"
+                            android:background="@drawable/arrow_down_drawable"
                             android:layout_weight="1"
                             android:text="Button" />
                     </LinearLayout>
-
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>

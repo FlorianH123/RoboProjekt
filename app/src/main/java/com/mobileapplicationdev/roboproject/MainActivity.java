@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         initConnectionButton();
         initDriveModeSwitch();
         initJoyStick();
-
-        initButton();
     }
 
     private void initTabHost() {
@@ -136,46 +134,5 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText("0, 0");
             }
         });
-    }
-
-    private void initButton() {
-        final Button button = findViewById(R.id.button);
-        final Button buttonDown = findViewById(R.id.button2);
-        button.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP){
-                    button.setBackground(getResources().getDrawable(R.drawable.arrow_up));
-                    // Do what you want
-                    return true;
-                } else {
-                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        button.setBackground(getResources().getDrawable(R.drawable.arrow_up_pushed));
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
-        buttonDown.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if(motionEvent.getAction() == MotionEvent.ACTION_UP){
-                    buttonDown.setBackground(getResources().getDrawable(R.drawable.arrow_down));
-                    // Do what you want
-                    return true;
-                } else {
-                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        buttonDown.setBackground(getResources().getDrawable(R.drawable.arrow_down_pushed));
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
     }
 }
