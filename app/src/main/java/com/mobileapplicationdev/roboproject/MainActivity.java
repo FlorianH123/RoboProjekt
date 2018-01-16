@@ -159,12 +159,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDrag(float degrees, float offset) {
-                setAngle(String.valueOf((int)degrees), textView_angle);
+                setTextViewText(String.valueOf((int)degrees),
+                        getString(R.string.degree), textView_angle);
             }
 
             @Override
             public void onUp() {
-                setAngle("0", textView_angle);
+                setTextViewText("0", getString(R.string.degree), textView_angle);
             }
         });
     }
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double speed = (progress * MAX_SPEED) / 100;
-                setSpeed(String.valueOf(speed), getString(R.string.speed_unit), textView_speed);
+                setTextViewText(String.valueOf(speed), getString(R.string.speed_unit), textView_speed);
             }
 
             @Override
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             angle = MAX_ANGLE;
         }
 
-        setAngle(String.valueOf(angle), textView_angle);
+        setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
     }
 
     public void button_decrease_angle_onClick(View view) {
@@ -210,21 +211,16 @@ public class MainActivity extends AppCompatActivity {
             angle = MIN_ANGLE;
         }
 
-        setAngle(String.valueOf(angle), textView_angle);
-    }
-
-    private void setSpeed(String speed, String unit, TextView textView) {
-        String speedText = "%s %s";
-        textView.setText(String.format(speedText, speed, unit));
+        setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
     }
 
     private int getAngle(TextView textView) {
         String angleString = textView.getText().toString();
-        return Integer.parseInt(angleString.substring(0, angleString.length() - 1));
+        return Integer.parseInt(angleString.substring(0, angleString.length() - 2));
     }
 
-    private void setAngle(String angle, TextView textView) {
-       String angleText = getString(R.string.angle_text);
-       textView.setText(String.format(angleText, angle));
+    private void setTextViewText(String value, String unit, TextView textView) {
+       String template = getString(R.string.textViewTemplate);
+       textView.setText(String.format(template, value, unit));
     }
 }

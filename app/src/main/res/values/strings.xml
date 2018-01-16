@@ -13,14 +13,14 @@
     <string name="text_switch_driveModus_on">Kurven Modus</string>
     <string name="text_switch_driveModus_off">Geradliniger Modus</string>
 
-    <string name="starting_angle">0°</string>
-    <string name="angle_text">%s°</string>
+    <string name="starting_angle">0 °</string>
+    <string name="textViewTemplate">%s %s</string>
     <string name="degree">°</string>
     <string name="angle_plus">+</string>
     <string name="angle_minus">-</string>
 
-    <string name="starting_speed">0.0 km/h</string>
-    <string name="speed_unit">m/s</string>
+    <string name="starting_speed">0.0 m/s</string>
+    <string name="speed_unit"> m/s</string>
 
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein</string>
 
