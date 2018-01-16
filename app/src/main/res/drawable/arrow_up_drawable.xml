@@ -3,5 +3,5 @@
     <item android:state_pressed="false"
         android:drawable="@drawable/arrow_up"/>
     <item android:state_pressed="true"
-        android:drawable="@drawable/arrow_up_pushed"/>
+        android:drawable="@drawable/arrow_up_pressed"/>
 </selector>

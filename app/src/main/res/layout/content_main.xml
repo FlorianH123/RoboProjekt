@@ -139,8 +139,8 @@
                             android:id="@+id/button_forward"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="100dp"
-                            android:text="Forward"
+                            android:layout_marginBottom="50dp"
+                            android:background="@drawable/arrow_up_drawable"
                             app:layout_constraintBottom_toTopOf="@+id/button_backward"
                             app:layout_constraintEnd_toEndOf="@+id/button_backward"
                             app:layout_constraintStart_toStartOf="@+id/button_backward" />
@@ -150,13 +150,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Backward"
+                            android:background="@drawable/arrow_down_drawable"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.95"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.63" />
+                            app:layout_constraintVertical_bias="0.78" />
 
                         <SeekBar
                             android:id="@+id/seekBar_speed"
