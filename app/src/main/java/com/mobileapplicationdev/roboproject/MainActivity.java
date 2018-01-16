@@ -1,12 +1,10 @@
 package com.mobileapplicationdev.roboproject;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -22,9 +20,9 @@ import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG_TAB_1 = "Tag_Tab1";
-    public static final String TAG_TAB_2 = "Tag_Tab2";
-    public static final String TAG_TAB_3 = "Tag_Tab3";
+    private static final String TAG_TAB_1 = "Tag_Tab1";
+    private static final String TAG_TAB_2 = "Tag_Tab2";
+    private static final String TAG_TAB_3 = "Tag_Tab3";
 
     private static final int CHANGE_ANGLE = 5;
     private static final int MAX_ANGLE = 360;
