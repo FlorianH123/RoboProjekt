@@ -14,6 +14,9 @@
     <string name="text_switch_driveModus_on">Kurven Modus</string>
     <string name="text_switch_driveModus_off">Geradlinig Modus</string>
 
+    <string name="starting_angle">0°</string>
+    <string name="angle_text">%s°</string>
+
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein</string>
 
 </resources>

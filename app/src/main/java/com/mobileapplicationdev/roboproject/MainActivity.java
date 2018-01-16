@@ -2,11 +2,10 @@ package com.mobileapplicationdev.roboproject;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -21,6 +20,13 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG_TAB_2 = "Tag_Tab2";
     public static final String TAG_TAB_3 = "Tag_Tab3";
 
+    private static final int CHANGE_ANGLE = 5;
+    private static final int MAX_ANGLE = 360;
+    private static final int MIN_ANGLE = 0;
+
+    private static final int MAX_SPEED = 100;
+    private static final int MIN_SPEED = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         initTabHost();
         initConnectionButton();
         initDriveModeSwitch();
-        initJoyStick();
+        //initJoyStick();
+        initSpeedSeekBar();
     }
 
     private void initTabHost() {
@@ -59,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabChanged(String tagName) {
                 //TODO close Socket
-                Toast.makeText(MainActivity.this, tagName , Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, tagName, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -76,18 +83,18 @@ public class MainActivity extends AppCompatActivity {
                 if (isChecked) {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
-                    if (!ipAddress.equals("")){
+                    if (!ipAddress.equals("")) {
                         //TODO open Socket
-                        Toast.makeText(MainActivity.this,"Activated" , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Activated", Toast.LENGTH_SHORT).show();
                         editText_ipAddress.setEnabled(false);
                     } else {
                         toggle.setChecked(false);
-                        Toast.makeText(MainActivity.this,errMsgInvalidIp , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, errMsgInvalidIp, Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
                     // TODO close Socket
-                    Toast.makeText(MainActivity.this, "Deactivated" , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Deactivated", Toast.LENGTH_SHORT).show();
                     editText_ipAddress.setEnabled(true);
                 }
             }
@@ -114,25 +121,92 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initJoyStick() {
-        Joystick joystick = findViewById(R.id.joystick);
-        joystick.setJoystickListener(new JoystickListener() {
-            TextView textView = findViewById(R.id.textView);
+//    private void initJoyStick() {
+//        Joystick joystick = findViewById(R.id.joystick);
+//        joystick.setJoystickListener(new JoystickListener() {
+//             final TextView textView = findViewById(R.id.textView);
+//
+//            @Override
+//            public void onDown() {
+//                // ..
+//            }
+//
+//            @Override
+//            public void onDrag(float degrees, float offset) {
+//                textView.setText(String.valueOf((int) degrees) + " " + offset);
+//            }
+//
+//            @Override
+//            public void onUp() {
+//                textView.setText("0, 0");
+//            }
+//        });
+//    }
 
+    private void initSpeedSeekBar() {
+        SeekBar seekBar = findViewById(R.id.seekBar_speed);
+        final TextView textView_speed = findViewById(R.id.textView_speed);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onDown() {
-                // ..
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                String speedString = textView_speed.getText().toString();
+                int speed = Integer.parseInt(speedString.substring(0,speedString.length() - 4));
+
+                speed += progress;
+
+                if (speed < MIN_SPEED) {
+                    speed = MIN_SPEED;
+                }
+
+                if (speed > MAX_SPEED) {
+                    speed = MAX_SPEED;
+                }
+
+                textView_speed.setText(String.valueOf(speed));
             }
 
             @Override
-            public void onDrag(float degrees, float offset) {
-                textView.setText(String.valueOf((int) degrees) + " " + offset);
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
             }
 
             @Override
-            public void onUp() {
-                textView.setText("0, 0");
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
+    }
+
+    public void button_increase_angle_onClick(View view) {
+        TextView textView_angle = findViewById(R.id.textView_angle);
+
+        int angle = getAngle(textView_angle) + CHANGE_ANGLE;
+        if (angle > MAX_ANGLE) {
+            angle = MAX_ANGLE;
+        }
+
+        setAngle(String.valueOf(angle), textView_angle);
+    }
+
+    public void button_decrease_angle_onClick(View view) {
+        TextView textView_angle = findViewById(R.id.textView_angle);
+
+        int angle = getAngle(textView_angle) - CHANGE_ANGLE;
+        if (angle < MIN_ANGLE) {
+            angle = MIN_ANGLE;
+        }
+
+        setAngle(String.valueOf(angle), textView_angle);
+    }
+
+    private int getAngle(TextView textView) {
+        String angleString = textView.getText().toString();
+        return Integer.parseInt(angleString.substring(0, angleString.length() - 1));
+    }
+
+    private void setAngle(String angle, TextView textView) {
+       String angleText = getString(R.string.angle_text);
+       textView.setText(String.format(angleText, angle));
     }
 }

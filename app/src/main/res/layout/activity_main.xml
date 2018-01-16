@@ -6,10 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.mobileapplicationdev.roboproject.MainActivity">
 
+
     <TabHost
         android:id="@+id/tabHost"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -32,61 +39,57 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <LinearLayout
+                    <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent">
 
                         <EditText
                             android:id="@+id/editText_ipAdress"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="24dp"
                             android:digits="1234567890."
                             android:ems="10"
                             android:hint="@string/text_enter_ip"
                             android:inputType="number"
-                            tools:layout_editor_absoluteX="96dp" />
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <ToggleButton
                             android:id="@+id/toggleButton_connection"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginTop="24dp"
                             android:text="@string/dummy"
                             android:textOff="@string/text_toggleButton_connection_off"
-                            android:textOn="@string/text_toggleButton_connection_on" />
+                            android:textOn="@string/text_toggleButton_connection_on"
+                            app:layout_constraintStart_toEndOf="@+id/editText_ipAdress"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <Switch
                             android:id="@+id/switch_driveModus"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_marginEnd="24dp"
+                            android:layout_marginTop="24dp"
                             android:text="@string/dummy"
                             android:textOff="@string/text_switch_driveModus_off"
-                            android:textOn="@string/text_switch_driveModus_on" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                            android:textOn="@string/text_switch_driveModus_on"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                         <com.jmedeisis.bugstick.Joystick
                             android:id="@+id/joystick"
                             android:layout_width="@dimen/base_size"
                             android:layout_height="@dimen/base_size"
-                            android:layout_margin="15dp"
-                            android:background="@drawable/bg_base">
+                            android:layout_marginBottom="40dp"
+                            android:layout_marginStart="50dp"
+                            android:background="@drawable/bg_base"
+                            app:layout_constraintBottom_toTopOf="@+id/button_decrease_angle"
+                            app:layout_constraintStart_toStartOf="parent">
 
-                            <!-- You may use any View here. -->
                             <Button
                                 android:layout_width="@dimen/stick_size"
                                 android:layout_height="@dimen/stick_size"
@@ -95,13 +98,85 @@
                         </com.jmedeisis.bugstick.Joystick>
 
                         <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="match_parent"
+                            android:id="@+id/textView_angle"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="40dp"
-                            android:layout_marginStart="15dp"
-                            android:text="TextView" />
-                    </LinearLayout>
+                            android:layout_marginBottom="50dp"
+                            android:layout_marginStart="25dp"
+                            android:text="@string/starting_angle"
+                            android:textSize="@dimen/textView_angle_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/button_decrease_angle" />
+
+                        <Button
+                            android:id="@+id/button_decrease_angle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="50dp"
+                            android:layout_marginStart="70dp"
+                            android:onClick="button_decrease_angle_onClick"
+                            android:text="-"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <Button
+                            android:id="@+id/button_increase_angle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="50dp"
+                            android:layout_marginStart="25dp"
+                            android:onClick="button_increase_angle_onClick"
+                            android:text="+"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textView_angle" />
+
+                        <Button
+                            android:id="@+id/button_forward"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="100dp"
+                            android:layout_marginEnd="100dp"
+                            android:text="Forward"
+                            app:layout_constraintBottom_toTopOf="@+id/button_backward"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <Button
+                            android:id="@+id/button_backward"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="200dp"
+                            android:layout_marginEnd="100dp"
+                            android:text="Backward"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <SeekBar
+                            android:id="@+id/seekBar_speed"
+                            android:layout_width="500dp"
+                            android:layout_height="60dp"
+                            android:layout_marginBottom="100dp"
+                            android:layout_marginStart="60dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/button_increase_angle" />
+
+                        <TextView
+                            android:id="@+id/textView_speed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="25dp"
+                            android:text="10 kmh"
+                            android:textSize="@dimen/textView_speed_text_size"
+                            app:layout_constraintStart_toStartOf="@+id/seekBar_speed"
+                            app:layout_constraintTop_toBottomOf="@+id/seekBar_speed" />
+                    </android.support.constraint.ConstraintLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                 </LinearLayout>
 
@@ -111,28 +186,6 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/arrow_up_drawable"
-                            android:text="Button" />
-
-                        <Button
-                            android:id="@+id/button2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/arrow_down_drawable"
-                            android:layout_weight="1"
-                            android:text="Button" />
-                    </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
