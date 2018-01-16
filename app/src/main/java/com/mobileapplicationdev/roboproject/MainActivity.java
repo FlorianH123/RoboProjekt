@@ -24,8 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int MAX_ANGLE = 360;
     private static final int MIN_ANGLE = 0;
 
-    private static final int MAX_SPEED = 100;
-    private static final int MIN_SPEED = 0;
+    private static final int MAX_SPEED = 50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
         initTabHost();
         initConnectionButton();
         initDriveModeSwitch();
-        //initJoyStick();
+        initJoyStick();
         initSpeedSeekBar();
     }
 
     private void initTabHost() {
-        String tabNameTab1 = (String) getResources().getText(R.string.tab_name_tab1);
-        String tabNameTab2 = (String) getResources().getText(R.string.tab_name_tab2);
-        String tabNameTab3 = (String) getResources().getText(R.string.tab_name_tab3);
+        String tabNameTab1 = getString(R.string.tab_name_tab1);
+        String tabNameTab2 = getString(R.string.tab_name_tab2);
+        String tabNameTab3 = getString(R.string.tab_name_tab3);
 
         TabHost th = findViewById(R.id.tabHost);
         th.setup();
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String ipAddress;
-                String errMsgInvalidIp = getResources().getString(R.string.error_msg_invalid_ip);
+                String errMsgInvalidIp = getString(R.string.error_msg_invalid_ip);
 
                 if (isChecked) {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
@@ -102,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDriveModeSwitch() {
-        final String switchTextOn = (String) getResources().getText(R.string.text_switch_driveModus_on);
-        final String switchTextOff = (String) getResources().getText(R.string.text_switch_driveModus_off);
+        final String switchTextOn = getString(R.string.text_switch_driveModus_on);
+        final String switchTextOff = getString(R.string.text_switch_driveModus_off);
 
         final Switch driveModeSwitch = findViewById(R.id.switch_driveModus);
 
@@ -121,27 +120,28 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    private void initJoyStick() {
-//        Joystick joystick = findViewById(R.id.joystick);
-//        joystick.setJoystickListener(new JoystickListener() {
-//             final TextView textView = findViewById(R.id.textView);
-//
-//            @Override
-//            public void onDown() {
-//                // ..
-//            }
-//
-//            @Override
-//            public void onDrag(float degrees, float offset) {
-//                textView.setText(String.valueOf((int) degrees) + " " + offset);
-//            }
-//
-//            @Override
-//            public void onUp() {
-//                textView.setText("0, 0");
-//            }
-//        });
-//    }
+    private void initJoyStick() {
+        Joystick joystick = findViewById(R.id.joystick);
+
+        joystick.setJoystickListener(new JoystickListener() {
+            final TextView textView_angle = findViewById(R.id.textView_angle);
+
+            @Override
+            public void onDown() {
+                // ..
+            }
+
+            @Override
+            public void onDrag(float degrees, float offset) {
+                setAngle(String.valueOf((int)degrees), textView_angle);
+            }
+
+            @Override
+            public void onUp() {
+                setAngle("0", textView_angle);
+            }
+        });
+    }
 
     private void initSpeedSeekBar() {
         SeekBar seekBar = findViewById(R.id.seekBar_speed);
@@ -150,30 +150,16 @@ public class MainActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                String speedString = textView_speed.getText().toString();
-                int speed = Integer.parseInt(speedString.substring(0,speedString.length() - 4));
-
-                speed += progress;
-
-                if (speed < MIN_SPEED) {
-                    speed = MIN_SPEED;
-                }
-
-                if (speed > MAX_SPEED) {
-                    speed = MAX_SPEED;
-                }
-
-                textView_speed.setText(String.valueOf(speed));
+                double speed = (progress * MAX_SPEED) / 100;
+                setSpeed(String.valueOf(speed), getString(R.string.speed_unit), textView_speed);
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
     }
@@ -182,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView_angle = findViewById(R.id.textView_angle);
 
         int angle = getAngle(textView_angle) + CHANGE_ANGLE;
+
         if (angle > MAX_ANGLE) {
             angle = MAX_ANGLE;
         }
@@ -198,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setAngle(String.valueOf(angle), textView_angle);
+    }
+
+    private void setSpeed(String speed, String unit, TextView textView) {
+        String speedText = "%s %s";
+        textView.setText(String.format(speedText, speed, unit));
     }
 
     private int getAngle(TextView textView) {

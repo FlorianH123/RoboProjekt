@@ -4,6 +4,7 @@
     <dimen name="base_size">300dp</dimen>
 
     <dimen name="text_size">24sp</dimen>
+    <dimen name="button_font_size">30sp</dimen>
     <dimen name="textView_speed_text_size">@dimen/text_size</dimen>
     <dimen name="textView_angle_text_size">@dimen/text_size</dimen>
 </resources>
