@@ -24,4 +24,6 @@
 
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein</string>
 
+    <string name="settings_title">Einstellungen</string>
+
 </resources>
