@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initConnectionButton() {
         final ToggleButton toggle = findViewById(R.id.toggleButton_connection);
-        final EditText editText_ipAddress = findViewById(R.id.editText_ipAdress);
+        final EditText editText_ipAddress = findViewById(R.id.editText_ipAddress);
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         final String switchTextOn = getString(R.string.text_switch_driveModus_on);
         final String switchTextOff = getString(R.string.text_switch_driveModus_off);
 
-        final Switch driveModeSwitch = findViewById(R.id.switch_driveModus);
+        final Switch driveModeSwitch = findViewById(R.id.switch_driveMode);
 
         driveModeSwitch.setText(switchTextOff);
 
