@@ -89,7 +89,8 @@ public class MainActivity extends AppCompatActivity {
         th.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tagName) {
-                //TODO close Socket
+                // TODO close Socket
+                // TODO Toast löschen
                 Toast.makeText(MainActivity.this, tagName, Toast.LENGTH_SHORT).show();
             }
         });
@@ -108,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
                     if (!ipAddress.equals("")) {
-                        //TODO open Socket
+                        // TODO open Socket
+                        // TODO Toast löschen
                         Toast.makeText(MainActivity.this, "Activated", Toast.LENGTH_SHORT).show();
                         editText_ipAddress.setEnabled(false);
                     } else {
@@ -118,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } else {
                     // TODO close Socket
+                    // TODO Toast Löschen
                     Toast.makeText(MainActivity.this, "Deactivated", Toast.LENGTH_SHORT).show();
                     editText_ipAddress.setEnabled(true);
                 }
