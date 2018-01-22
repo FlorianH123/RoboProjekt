@@ -12,16 +12,14 @@ import java.net.Socket;
 
 /**
  * Created by Florian on 17.01.2018.
- * Socket fuer normale Robo Steuerung
+ * Socket Robot Control
  */
 
 public class SocketService extends Service {
-    private boolean isConnected = false;
-    private Callbacks mainActivity;
     private final IBinder mBinder = new LocalBinder();
-    private ControlDataPacket controlDataPacket;
+    private Callbacks mainActivity;
 
-    public class LocalBinder extends Binder {
+    class LocalBinder extends Binder {
         SocketService getService() {
             return SocketService.this;
         }
@@ -39,18 +37,18 @@ public class SocketService extends Service {
                 ControlData controlData = mainActivity.getControlData();
                 try (Socket steeringSocket = new Socket(ip, port);
                      ObjectOutputStream objectOutputStream = new ObjectOutputStream
-                             (steeringSocket.getOutputStream());) {
+                             (steeringSocket.getOutputStream())) {
 
                     ControlDataPacket controlDataPacket;
 
                     while (mainActivity.getToggleButtonStatus()) {
                         if (mainActivity.getForwardButtonStatus()) {
-                             controlDataPacket = new ControlDataPacket
-                                     (1, controlData.getDrivingMode(), controlData.getAngle());
+                            controlDataPacket = new ControlDataPacket
+                                    (1, controlData.getDrivingMode(), controlData.getAngle());
 
-                             objectOutputStream.writeObject(controlDataPacket);
+                            objectOutputStream.writeObject(controlDataPacket);
                         } else if (mainActivity.getBackwardButtonStatus()) {
-                            // TODO invertiere Geschwindigkeit
+                            // TODO invert speed
                             controlDataPacket = new ControlDataPacket
                                     (1, controlData.getDrivingMode(), controlData.getAngle());
 
@@ -66,31 +64,15 @@ public class SocketService extends Service {
 
                 stopSelf();
             }
-        }, "my.thread.name").start();
+        }, "robot_control.socket.thread").start();
     }
 
-    //Here Activity register to the service as Callbacks client
+    // Register Activity to the service as Callbacks client
     public void registerClient(Activity activity) {
         this.mainActivity = (Callbacks) activity;
     }
 
-    public ControlDataPacket getControlDataPacket() {
-        return controlDataPacket;
-    }
-
-    public void setControlDataPacket(ControlDataPacket controlDataPacket) {
-        this.controlDataPacket = controlDataPacket;
-    }
-
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    public void setConnected(boolean connected) {
-        isConnected = connected;
-    }
-
-    //callbacks interface for communication with service clients!
+    // callbacks interface for communication with main activity!
     public interface Callbacks {
         boolean getToggleButtonStatus();
 
