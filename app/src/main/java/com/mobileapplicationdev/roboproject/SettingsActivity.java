@@ -5,7 +5,7 @@ import android.preference.PreferenceActivity;
 
 /**
  * Created by Florian on 16.01.2018.
- * Activity um Einstellungen zu verwalten
+ * Settings activity for port numbers
  */
 
 public class SettingsActivity extends PreferenceActivity {
