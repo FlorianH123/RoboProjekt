@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     private void initConnectionButton() {
         final ToggleButton toggle = findViewById(R.id.toggleButton_connection);
         final EditText editText_ipAddress = findViewById(R.id.editText_ipAddress);
-
+        final Intent intent = new Intent(this, SocketService.class);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String ipAddress;
@@ -108,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
                     if (!ipAddress.equals("")) {
-                        // TODO open Socket
+                        startService(intent);
+                        //bindService(intent);
                         // TODO Toast löschen
                         Toast.makeText(MainActivity.this, "Activated", Toast.LENGTH_SHORT).show();
                         editText_ipAddress.setEnabled(false);
