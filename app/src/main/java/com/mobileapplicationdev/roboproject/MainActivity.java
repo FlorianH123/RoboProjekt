@@ -49,13 +49,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start socket service
         Intent intent = new Intent(this, SocketService.class);
         startService(intent);
         bindService(intent, mConn, Context.BIND_AUTO_CREATE);
 
+        // Set toolbar icon for settings
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Initialise components inside  the main activity
         initTabHost();
         initConnectionButton();
         initDriveModeSwitch();
@@ -64,10 +67,27 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         //initForwardAndBackwardButton();
     }
 
+    /**
+     * Creates the options menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
+    }
+
+    /**
+     * Options Listener
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.settingsMenu) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+
     }
 
     private ServiceConnection mConn = new ServiceConnection() {
@@ -85,17 +105,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     };
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-
-    }
-
+    /**
+     * Initialise tabHost with different tabs
+     */
     private void initTabHost() {
         String tabNameTab1 = getString(R.string.tab_name_tab1);
         String tabNameTab2 = getString(R.string.tab_name_tab2);
@@ -129,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Initialise connection button
+     */
     private void initConnectionButton() {
         final ToggleButton toggle = findViewById(R.id.toggleButton_connection);
         final EditText editText_ipAddress = findViewById(R.id.editText_ipAddress);
@@ -162,15 +177,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
-    private void startSocketService() {
-        TextView textView = findViewById(R.id.editText_ipAddress);
-        String ipAddress = String.valueOf(textView.getText());
-
-        if (mBound) {
-            socketService.openSocket(ipAddress, getPreferenceKeys(0));
-        }
-    }
-
+    /**
+     * Initialise driveModeSwitch
+     */
     private void initDriveModeSwitch() {
         final String switchTextOn = getString(R.string.text_switch_driveModus_on);
         final String switchTextOff = getString(R.string.text_switch_driveModus_off);
@@ -193,6 +202,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Initialise joyStick
+     */
     private void initJoyStick() {
         Joystick joystick = findViewById(R.id.joystick);
 
@@ -216,6 +228,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Initialise seekBar
+     */
     private void initSpeedSeekBar() {
         SeekBar seekBar = findViewById(R.id.seekBar_speed);
         final TextView textView_speed = findViewById(R.id.textView_speed);
@@ -224,7 +239,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double speed = (progress * MAX_SPEED) / 100;
-                setTextViewText(String.valueOf(speed), getString(R.string.speed_unit), textView_speed);
+                setTextViewText(String.valueOf(speed),
+                        getString(R.string.speed_unit), textView_speed);
             }
 
             @Override
@@ -269,6 +285,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 //        });
 //    }
 
+    /**
+     * OnClick listener to increase angle by the plus button
+     */
     public void button_increase_angle_onClick(View view) {
         TextView textView_angle = findViewById(R.id.textView_angle);
 
@@ -281,6 +300,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
     }
 
+    /**
+     * OnClick listener to decrease angle by the minus button
+     */
     public void button_decrease_angle_onClick(View view) {
         TextView textView_angle = findViewById(R.id.textView_angle);
 
@@ -292,16 +314,30 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
     }
 
+    /**
+     * Returns the angle of the wheels without the unit as integer
+     * @param textView the textView which contains the angle of the wheels
+     * @return integer angle
+     */
     private int getAngle(TextView textView) {
         String angleString = textView.getText().toString();
         return Integer.parseInt(angleString.substring(0, angleString.length() - 2));
     }
 
+    /**
+     * Sets a value and an unit as text of a textView
+     * @param value angle or speed
+     * @param unit the unit of the value
+     */
     private void setTextViewText(String value, String unit, TextView textView) {
        String template = getString(R.string.textViewTemplate);
        textView.setText(String.format(template, value, unit));
     }
 
+    /**
+     * Returns the speed without an unit
+     * @return integer speed
+     */
     private int getSpeed() {
         TextView textView = findViewById(R.id.textView_speed);
         String speed = (String) textView.getText();
@@ -311,7 +347,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return (int) Double.parseDouble(speed);
     }
 
+    /**
+     * Returns the value of a shared preference
+     * @param preference number of the shared preference
+     * @return the value of the preference
+     */
     private int getPreferenceKeys(int preference) {
+        // TODO refactor
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         String port1Key = getString(R.string.settings_port_1_key);
@@ -331,6 +373,20 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Integer.parseInt(preferenceStringArray[preference]);
     }
 
+    /**
+     * Starts socket service
+     */
+    private void startSocketService() {
+        TextView textView = findViewById(R.id.editText_ipAddress);
+        String ipAddress = String.valueOf(textView.getText());
+
+        if (mBound) {
+            socketService.openSocket(ipAddress, getPreferenceKeys(0));
+        }
+    }
+
+// Callbacks interface implementation --------------------------------------------------------------
+
     @Override
     public boolean getToggleButtonStatus() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
@@ -339,12 +395,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     @Override
     public boolean getForwardButtonStatus() {
+        // TODO implement isForwardButtonPressed
         Button forwardButton = findViewById(R.id.button_forward);
         return forwardButton.isActivated();
     }
 
     @Override
     public boolean getBackwardButtonStatus() {
+        // TODO implement isBackwardButtonPressed
         return false;
     }
 
@@ -359,4 +417,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         return controlData;
     }
+
+//--------------------------------------------------------------------------------------------------
 }
