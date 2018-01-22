@@ -1,25 +1,27 @@
 package com.mobileapplicationdev.roboproject;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.URL;
 
 /**
  * Created by Florian on 17.01.2018.
+ * Socket fuer normale Robo Steuerung
  */
 
 public class SocketService extends Service {
+    private boolean isConnected = false;
+    private Callbacks mainActivity;
     private final IBinder mBinder = new LocalBinder();
     private ControlDataPacket controlDataPacket;
-    class LocalBinder extends Binder {
+
+    public class LocalBinder extends Binder {
         SocketService getService() {
             return SocketService.this;
         }
@@ -30,16 +32,46 @@ public class SocketService extends Service {
         return mBinder;
     }
 
-    public void openSocket() {
+    public void openSocket(final String ip, final int port) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Socket steeringSocket = new Socket();
+                ControlData controlData = mainActivity.getControlData();
+                try (Socket steeringSocket = new Socket(ip, port);
+                     ObjectOutputStream objectOutputStream = new ObjectOutputStream
+                             (steeringSocket.getOutputStream());) {
 
+                    ControlDataPacket controlDataPacket;
+
+                    while (mainActivity.getToggleButtonStatus()) {
+                        if (mainActivity.getForwardButtonStatus()) {
+                             controlDataPacket = new ControlDataPacket
+                                     (1, controlData.getDrivingMode(), controlData.getAngle());
+
+                             objectOutputStream.writeObject(controlDataPacket);
+                        } else if (mainActivity.getBackwardButtonStatus()) {
+                            // TODO invertiere Geschwindigkeit
+                            controlDataPacket = new ControlDataPacket
+                                    (1, controlData.getDrivingMode(), controlData.getAngle());
+
+                            objectOutputStream.writeObject(controlDataPacket);
+                        } else {
+                            controlDataPacket = new ControlDataPacket();
+                            objectOutputStream.writeObject(controlDataPacket);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 stopSelf();
             }
         }, "my.thread.name").start();
+    }
+
+    //Here Activity register to the service as Callbacks client
+    public void registerClient(Activity activity) {
+        this.mainActivity = (Callbacks) activity;
     }
 
     public ControlDataPacket getControlDataPacket() {
@@ -48,5 +80,24 @@ public class SocketService extends Service {
 
     public void setControlDataPacket(ControlDataPacket controlDataPacket) {
         this.controlDataPacket = controlDataPacket;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setConnected(boolean connected) {
+        isConnected = connected;
+    }
+
+    //callbacks interface for communication with service clients!
+    public interface Callbacks {
+        boolean getToggleButtonStatus();
+
+        boolean getForwardButtonStatus();
+
+        boolean getBackwardButtonStatus();
+
+        ControlData getControlData();
     }
 }

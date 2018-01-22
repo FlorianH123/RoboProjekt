@@ -7,10 +7,10 @@ import java.io.Serializable;
  */
 
 public class ControlDataPacket implements Serializable{
-    private int drive;
-    private int notUsed;
-    private int steeringAngle;
-    private int driveModus;
+    private int drive;          // 0 = stop 1 = drive
+    private int notUsed;        //
+    private int steeringAngle;  // angle; angular velocity
+    private int driveModus;     // 0 = straight mode 1 = curve mode
 
     private int plattform_hoch;
     private int plattform_runter;
@@ -19,8 +19,18 @@ public class ControlDataPacket implements Serializable{
         this.drive = 0;
         this.notUsed = 0;
         this.steeringAngle = 0;
-        this.drive = 0;
         this.driveModus = 0;
+        this.plattform_hoch = 0;
+        this.plattform_runter = 0;
+    }
+
+    public ControlDataPacket(int drive, int steeringAngle, int driveModus) {
+        this.drive = drive;
+        this.steeringAngle = steeringAngle;
+        this.driveModus = driveModus;
+
+        // TODO Später Geschwindigkeit
+        this.notUsed = 0;
         this.plattform_hoch = 0;
         this.plattform_runter = 0;
     }

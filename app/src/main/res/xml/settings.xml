@@ -3,21 +3,21 @@
     android:title="@string/settings_title">
 
     <EditTextPreference
-        android:defaultValue="Default value"
-        android:key="edit_text_preference_1"
+        android:defaultValue="@string/default_value_port_1"
+        android:key="@string/settings_port_1_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Port 1" />
+        android:title="@string/settings_port_1" />
     <EditTextPreference
-        android:defaultValue="Default value"
-        android:key="edit_text_preference_2"
+        android:defaultValue="@string/default_value_port_2"
+        android:key="@string/settings_port_2_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Port 2" />
+        android:title="@string/settings_port_2" />
     <EditTextPreference
-        android:defaultValue="Default value"
-        android:key="edit_text_preference_3"
+        android:defaultValue="@string/default_value_port_3"
+        android:key="@string/settings_port_3_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Port 3" />
+        android:title="@string/settings_port_3" />
 </PreferenceScreen>
