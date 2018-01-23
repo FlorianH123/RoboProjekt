@@ -81,11 +81,8 @@ public class SocketService extends Service {
     // callbacks interface for communication with main activity!
     public interface Callbacks {
         boolean getToggleButtonStatus();
-
         boolean getForwardButtonStatus();
-
         boolean getBackwardButtonStatus();
-
         ControlData getControlData();
     }
 }
