@@ -1,5 +1,6 @@
 package com.mobileapplicationdev.roboproject;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initDriveModeSwitch();
         initJoyStick();
         initSpeedSeekBar();
-        //initForwardAndBackwardButton();
+        initForwardAndBackwardButton();
     }
 
     /**
@@ -254,37 +256,48 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
-//    private void initForwardAndBackwardButton() {
-//        Button forwardButton = findViewById(R.id.button_forward);
-//        Button backwardButton = findViewById(R.id.button_backward);
-//
-//        forwardButton.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    isForwardButtonPressed = true;
-//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//                    isForwardButtonPressed = false;
-//                }
-//
-//                return true;
-//            }
-//
-//        });
-//
-//        backwardButton.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if(event.getAction() == MotionEvent.ACTION_DOWN) {
-//                    isBackwardButtonPressed = true;
-//                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-//                    isBackwardButtonPressed = false;
-//                }
-//
-//                return true;
-//            }
-//        });
-//    }
+    private void initForwardAndBackwardButton() {
+        final Button forwardButton = findViewById(R.id.button_forward);
+        final Button backwardButton = findViewById(R.id.button_backward);
+
+        forwardButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                   isForwardButtonPressed = true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP){
+                    isForwardButtonPressed = false;
+                }
+
+                if (isForwardButtonPressed) {
+                    forwardButton.setBackground(getDrawable(R.drawable.arrow_up_pressed));
+                } else {
+                    forwardButton.setBackground(getDrawable(R.drawable.arrow_up));
+                }
+
+                return true;
+            }
+
+        });
+
+        backwardButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    isBackwardButtonPressed = true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP){
+                    isBackwardButtonPressed = false;
+                }
+
+                if (isBackwardButtonPressed) {
+                    backwardButton.setBackground(getDrawable(R.drawable.arrow_down_pressed));
+                } else {
+                    backwardButton.setBackground(getDrawable(R.drawable.arrow_down));
+                }
+                return true;
+            }
+        });
+    }
 
     /**
      * OnClick listener to increase angle by the plus button
@@ -389,15 +402,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     @Override
     public boolean getForwardButtonStatus() {
-        // TODO implement isForwardButtonPressed
-        Button forwardButton = findViewById(R.id.button_forward);
-        return forwardButton.isActivated();
+        return isForwardButtonPressed;
     }
 
     @Override
     public boolean getBackwardButtonStatus() {
-        // TODO implement isBackwardButtonPressed
-        return false;
+        return isBackwardButtonPressed;
     }
 
     @Override

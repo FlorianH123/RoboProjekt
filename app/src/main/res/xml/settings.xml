@@ -3,19 +3,19 @@
     android:title="@string/settings_title">
 
     <EditTextPreference
-        android:defaultValue="@string/default_value_port_1"
+        android:defaultValue="@string/port_1_default_value"
         android:key="@string/settings_port_1_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/settings_port_1" />
     <EditTextPreference
-        android:defaultValue="@string/default_value_port_2"
+        android:defaultValue="@string/port_2_default_value"
         android:key="@string/settings_port_2_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/settings_port_2" />
     <EditTextPreference
-        android:defaultValue="@string/default_value_port_3"
+        android:defaultValue="@string/port_3_default_value"
         android:key="@string/settings_port_3_key"
         android:selectAllOnFocus="true"
         android:singleLine="true"

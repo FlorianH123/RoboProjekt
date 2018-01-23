@@ -35,6 +35,7 @@ public class SocketService extends Service {
             @Override
             public void run() {
                 ControlData controlData = mainActivity.getControlData();
+
                 try (Socket steeringSocket = new Socket(ip, port);
                      ObjectOutputStream objectOutputStream = new ObjectOutputStream
                              (steeringSocket.getOutputStream())) {
@@ -42,20 +43,25 @@ public class SocketService extends Service {
                     ControlDataPacket controlDataPacket;
 
                     while (mainActivity.getToggleButtonStatus()) {
-                        if (mainActivity.getForwardButtonStatus()) {
-                            controlDataPacket = new ControlDataPacket
-                                    (1, controlData.getDrivingMode(), controlData.getAngle());
+                        if (!mainActivity.getForwardButtonStatus() &&
+                            !mainActivity.getBackwardButtonStatus()) {
 
-                            objectOutputStream.writeObject(controlDataPacket);
-                        } else if (mainActivity.getBackwardButtonStatus()) {
-                            // TODO invert speed
-                            controlDataPacket = new ControlDataPacket
-                                    (1, controlData.getDrivingMode(), controlData.getAngle());
-
-                            objectOutputStream.writeObject(controlDataPacket);
-                        } else {
                             controlDataPacket = new ControlDataPacket();
                             objectOutputStream.writeObject(controlDataPacket);
+
+                        } else if (mainActivity.getForwardButtonStatus()) {
+                            controlDataPacket = new ControlDataPacket
+                                    (1, controlData.getDrivingMode(), controlData.getAngle());
+
+                            objectOutputStream.writeObject(controlDataPacket);
+
+                        } else {
+                            // TODO Implement
+                            // TODO invert speed
+//                            controlDataPacket = new ControlDataPacket
+//                                    (1, controlData.getDrivingMode(), controlData.getAngle());
+//
+//                            objectOutputStream.writeObject(controlDataPacket);
                         }
                     }
                 } catch (IOException e) {
