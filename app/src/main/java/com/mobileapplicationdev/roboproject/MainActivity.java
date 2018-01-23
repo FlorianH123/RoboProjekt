@@ -338,9 +338,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Integer.parseInt(angleString.substring(0, angleString.length() - 2));
     }
 
-    private int getAngleAsBogenmaß(TextView textView) {
+    private double getAngleAsRadian(TextView textView) {
         int angle = getAngle(textView);
-        return 0;
+
+        return ((2 * Math.PI) / 360) * angle;
     }
 
     /**
@@ -422,6 +423,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         controlData.setDrivingMode(drivingMode);
         controlData.setAngle(getAngle(textView));
+        controlData.setRadianAngle(getAngleAsRadian(textView));
         controlData.setSpeed(getSpeed());
 
         return controlData;

@@ -8,6 +8,7 @@ public class ControlData {
     private int speed;
     private int drivingMode;
     private int angle;
+    private double radianAngle;
 
     public ControlData() {
     }
@@ -34,5 +35,23 @@ public class ControlData {
 
     public void setAngle(int angle) {
         this.angle = angle;
+    }
+
+    public double getRadianAngle() {
+        return radianAngle;
+    }
+
+    public void setRadianAngle(double radianAngle) {
+        this.radianAngle = radianAngle;
+    }
+
+    @Override
+    public String toString() {
+        return "ControlData{" +
+                "speed=" + speed +
+                ", drivingMode=" + drivingMode +
+                ", angle=" + angle +
+                ", radianAngle=" + radianAngle +
+                '}';
     }
 }
