@@ -1,6 +1,5 @@
 package com.mobileapplicationdev.roboproject;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -178,8 +176,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Initialise driveModeSwitch
      */
     private void initDriveModeSwitch() {
-        final String switchTextOn = getString(R.string.text_switch_driveModus_on);
-        final String switchTextOff = getString(R.string.text_switch_driveModus_off);
+        final String switchTextOn = getString(R.string.text_switch_driveMode_on);
+        final String switchTextOff = getString(R.string.text_switch_driveMode_off);
 
         final Switch driveModeSwitch = findViewById(R.id.switch_driveMode);
 

@@ -63,10 +63,6 @@ public class SocketService extends Service {
                     } else {
                         // TODO Implement
                         // TODO invert speed
-//                            controlDataPacket = new ControlDataPacket
-//                                    (1, controlData.getDrivingMode(), controlData.getAngle());
-//
-//                            objectOutputStream.writeObject(controlDataPacket);
                     }
                 }
 //                try (Socket steeringSocket = new Socket(ip, port);
@@ -99,10 +95,6 @@ public class SocketService extends Service {
 //                        } else {
 //                            // TODO Implement
 //                            // TODO invert speed
-////                            controlDataPacket = new ControlDataPacket
-////                                    (1, controlData.getDrivingMode(), controlData.getAngle());
-////
-////                            objectOutputStream.writeObject(controlDataPacket);
 //                        }
 //                    }
 //                } catch (IOException e) {

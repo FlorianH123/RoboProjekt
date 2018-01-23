@@ -1,17 +1,17 @@
 <resources>
-    <string name="app_name">RoboProject</string>
+    <string name="app_name">Robot Project</string>
 
     <string name="tab_name_tab1">Steuerung</string>
     <string name="tab_name_tab2">Antriebsmotoren Debug</string>
     <string name="tab_name_tab3">Steuermotoren Debug</string>
 
-    <string name="text_enter_ip">Enter Robo IP</string>
+    <string name="text_enter_ip">Enter Robot IP</string>
 
     <string name="text_toggleButton_connection_on">Disconnect</string>
     <string name="text_toggleButton_connection_off">Connect</string>
 
-    <string name="text_switch_driveModus_on">Kurven Modus</string>
-    <string name="text_switch_driveModus_off">Geradliniger Modus</string>
+    <string name="text_switch_driveMode_on">Kurven Modus</string>
+    <string name="text_switch_driveMode_off">Geradliniger Modus</string>
 
     <string name="starting_angle">0 °</string>
     <string name="textViewTemplate">%s %s</string>
