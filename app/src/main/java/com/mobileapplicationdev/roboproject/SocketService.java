@@ -35,8 +35,6 @@ public class SocketService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-
                 while (mainActivity.getToggleButtonStatus()) {
                     ControlData controlData = mainActivity.getControlData();
 
@@ -118,6 +116,12 @@ public class SocketService extends Service {
 
     private int reverseByteOrder(int i) {
         return (i&0xff)<<24 | (i&0xff00)<<8 | (i&0xff0000)>>8 | (i>>24)&0xff;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i("StopService", "The service has been stopped");
+        super.onDestroy();
     }
 
     // Register Activity to the service as Callbacks client

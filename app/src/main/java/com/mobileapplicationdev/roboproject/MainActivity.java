@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -137,9 +138,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         th.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tagName) {
-                // TODO close Socket
-                // TODO Toast löschen
-                Toast.makeText(MainActivity.this, tagName, Toast.LENGTH_SHORT).show();
+                ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
+                connectionButtonTab1.setChecked(false);
             }
         });
     }
@@ -162,18 +162,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     if (!ipAddress.equals("")) {
                         editText_ipAddress.setEnabled(false);
                         startSocketService();
-                        // TODO Toast löschen
-                        Toast.makeText(MainActivity.this, "Activated", Toast.LENGTH_SHORT).show();
 
                     } else {
                         toggle.setChecked(false);
                         Toast.makeText(MainActivity.this, errMsgInvalidIp, Toast.LENGTH_SHORT).show();
                     }
-
                 } else {
-                    // TODO close Socket
-                    // TODO Toast Löschen
-                    Toast.makeText(MainActivity.this, "Deactivated", Toast.LENGTH_SHORT).show();
                     editText_ipAddress.setEnabled(true);
                 }
             }

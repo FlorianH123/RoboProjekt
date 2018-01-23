@@ -22,7 +22,8 @@
     <string name="starting_speed">0.0 m/s</string>
     <string name="speed_unit"> m/s</string>
 
-    <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein</string>
+    <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein!</string>
+    <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
 
     <string name="settings_title">Einstellungen</string>
 
