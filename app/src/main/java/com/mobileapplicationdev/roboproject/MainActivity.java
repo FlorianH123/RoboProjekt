@@ -338,6 +338,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Integer.parseInt(angleString.substring(0, angleString.length() - 2));
     }
 
+    private int getAngleAsBogenmaß(TextView textView) {
+        int angle = getAngle(textView);
+        return 0;
+    }
+
     /**
      * Sets a value and an unit as text of a textView
      * @param value angle or speed

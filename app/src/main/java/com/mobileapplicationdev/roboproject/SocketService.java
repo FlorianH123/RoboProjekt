@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -37,23 +38,28 @@ public class SocketService extends Service {
                 ControlData controlData = mainActivity.getControlData();
 
                 try (Socket steeringSocket = new Socket(ip, port);
-                     ObjectOutputStream objectOutputStream = new ObjectOutputStream
+                     DataOutputStream dataOutputStream = new DataOutputStream
                              (steeringSocket.getOutputStream())) {
-
-                    ControlDataPacket controlDataPacket;
 
                     while (mainActivity.getToggleButtonStatus()) {
                         if (!mainActivity.getForwardButtonStatus() &&
                             !mainActivity.getBackwardButtonStatus()) {
 
-                            controlDataPacket = new ControlDataPacket();
-                            objectOutputStream.writeObject(controlDataPacket);
+                            dataOutputStream.writeBytes("0");                                           // drive
+                            dataOutputStream.writeBytes("0");                                           // not used
+                            dataOutputStream.writeBytes("0");                                           // angle
+                            dataOutputStream.writeBytes("0");                                           // driving mode
+                            dataOutputStream.writeBytes("0");                                           // plattform hoch not used
+                            dataOutputStream.writeBytes("0");                                           // platform runter not used
+
 
                         } else if (mainActivity.getForwardButtonStatus()) {
-                            controlDataPacket = new ControlDataPacket
-                                    (1, controlData.getDrivingMode(), controlData.getAngle());
-
-                            objectOutputStream.writeObject(controlDataPacket);
+                            dataOutputStream.writeBytes("1");                                           // drive
+                            dataOutputStream.writeBytes("0");                                           // not used
+                            dataOutputStream.writeBytes(String.valueOf(controlData.getAngle()));          // angle
+                            dataOutputStream.writeBytes(String.valueOf(controlData.getDrivingMode()));    // driving mode
+                            dataOutputStream.writeBytes("0");                                          // platform up not used
+                            dataOutputStream.writeBytes("0");                                          // platform down not used
 
                         } else {
                             // TODO Implement
@@ -71,6 +77,10 @@ public class SocketService extends Service {
                 stopSelf();
             }
         }, "robot_control.socket.thread").start();
+    }
+
+    private int reverseByteOrder(int i) {
+        return (i&0xff)<<24 | (i&0xff00)<<8 | (i&0xff0000)>>8 | (i>>24)&0xff;
     }
 
     // Register Activity to the service as Callbacks client
