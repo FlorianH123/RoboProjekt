@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -353,24 +354,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * @return the value of the preference
      */
     private int getPreferenceKeys(int preference) {
-        // TODO refactor
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String port1Key = getString(R.string.settings_port_1_key);
-        String defaultValue1 = getString(R.string.default_value_port_1);
-        String preferenceString1 = sharedPreferences.getString(port1Key, defaultValue1);
+        Resources res = getResources();
+        String[] portKeys = res.getStringArray(R.array.settings_port_key);
+        String[] defaultValues = res.getStringArray(R.array.default_port_value);
 
-        String port2Key = getString(R.string.settings_port_1_key);
-        String defaultValue2 = getString(R.string.default_value_port_1);
-        String preferenceString2 = sharedPreferences.getString(port2Key, defaultValue2);
+        String portKey = portKeys[preference];
+        String defaultValue = defaultValues[preference];
+        String preferenceString = sharedPreferences.getString(portKey, defaultValue);
 
-        String port3Key = getString(R.string.settings_port_1_key);
-        String defaultValue3 = getString(R.string.default_value_port_1);
-        String preferenceString3 = sharedPreferences.getString(port3Key, defaultValue3);
-
-        String preferenceStringArray[] = {preferenceString1, preferenceString2, preferenceString3};
-
-        return Integer.parseInt(preferenceStringArray[preference]);
+        return Integer.parseInt(preferenceString);
     }
 
     /**

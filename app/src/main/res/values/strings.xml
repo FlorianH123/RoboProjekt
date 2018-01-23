@@ -34,6 +34,18 @@
     <string name="default_value_port_2">1000</string>
     <string name="default_value_port_3">1000</string>
 
+    <string-array name="settings_port_key">
+        <item>PORT_1</item>
+        <item>PORT_2</item>
+        <item>PORT_3</item>
+    </string-array>
+
+    <string-array name="default_port_value">
+        <item>1000</item>
+        <item>1000</item>
+        <item>1000</item>
+    </string-array>
+
     <string name="settings_port_1_key">PORT_1</string>
     <string name="settings_port_2_key">PORT_2</string>
     <string name="settings_port_3_key">PORT_3</string>
