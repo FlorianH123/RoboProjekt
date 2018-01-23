@@ -24,6 +24,8 @@
 
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein!</string>
     <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
+    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
+    <string name="error_msg_socket_io_exception">Error while sending\receiving data!</string>
 
     <string name="settings_title">Einstellungen</string>
 

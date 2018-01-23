@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private boolean isForwardButtonPressed = false;
     private boolean isBackwardButtonPressed = false;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,8 +138,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         th.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tagName) {
-                ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
-                connectionButtonTab1.setChecked(false);
+                unCheckAllConnectionButtons();
             }
         });
     }
@@ -390,6 +391,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    private void unCheckAllConnectionButtons() {
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
+
+        connectionButtonTab1.setChecked(false);
+        //connectionButtonTab2.setChecked(false);
+        //connectionButtonTab3.setChecked(false);
+    }
+
 // Callbacks interface implementation --------------------------------------------------------------
 
     @Override
@@ -419,6 +430,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         controlData.setSpeed(getSpeed());
 
         return controlData;
+    }
+
+    @Override
+    public void hostErrorHandler() {
+        String errorMessage = getString(R.string.error_msg_host_error);
+        // TODO fix exception
+        // unCheckAllConnectionButtons();
+        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
 //--------------------------------------------------------------------------------------------------
