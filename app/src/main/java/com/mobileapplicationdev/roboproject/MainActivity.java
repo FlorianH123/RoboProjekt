@@ -7,19 +7,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Random;
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String TAG_TAB_1 = "Tag_Tab1";
     private static final String TAG_TAB_2 = "Tag_Tab2";
     private static final String TAG_TAB_3 = "Tag_Tab3";
@@ -29,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int MIN_ANGLE = 0;
 
     private static final int MAX_SPEED = 50;
+
+
+    private final Random RANDOM = new Random();
+    private LineGraphSeries<DataPoint> series;
+    private int lastX = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +57,56 @@ public class MainActivity extends AppCompatActivity {
         initDriveModeSwitch();
         initJoyStick();
         initSpeedSeekBar();
+        //initGraph();
+        initSpinner();
+        initDynamicGraph();
+    }
+    public void initDynamicGraph(){
+        // we get graph view instance
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        // data
+        series = new LineGraphSeries<DataPoint>();
+        graph.addSeries(series);
+        // customize a little bit viewport
+        Viewport viewport = graph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);
+        viewport.setMaxY(10);
+        viewport.setScrollable(true);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // we're going to simulate real time with thread that append data to the graph
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // we add 100 new entries
+                for (int i = 0; i < 100; i++) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            addEntry();
+                        }
+                    });
+
+                    // sleep to slow down the add of entries
+                    try {
+                        Thread.sleep(600);
+                    } catch (InterruptedException e) {
+                        // manage error ...
+                    }
+                }
+            }
+        }).start();
+    }
+
+    // add random data to graph
+    private void addEntry() {
+        // here, we choose to display max 10 points on the viewport and we scroll to end
+        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
     }
 
     @Override
@@ -223,4 +287,44 @@ public class MainActivity extends AppCompatActivity {
        String template = getString(R.string.textViewTemplate);
        textView.setText(String.format(template, value, unit));
     }
+
+    public void initGraph(){
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
+    }
+
+
+    public void initSpinner(){
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.engines, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String sSelected=parent.getItemAtPosition(position).toString();
+        Toast.makeText(this,sSelected,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
 }
+

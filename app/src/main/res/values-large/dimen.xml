@@ -32,4 +32,11 @@
     <dimen name="button_decrease_angle_text_size">@dimen/button_angle_text_size</dimen>
 
     <dimen name="textView_angle_text_size">@dimen/text_size</dimen>
+
+    <dimen name="graph_size">350dp</dimen>
+
+    <dimen name="toggle_button_debug_size">18sp</dimen>
+
+    <dimen name="spinner_list_engine_height">60dp</dimen>
+    <dimen name="spinner_list_engine_width">600dp</dimen>
 </resources>
