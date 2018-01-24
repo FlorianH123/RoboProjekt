@@ -34,6 +34,135 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                    <LinearLayout
+                        android:id="@+id/tab2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <android.support.constraint.ConstraintLayout
+                            android:layout_width="match_parent"
+                           android:layout_height="match_parent">
+
+                            <EditText
+                                android:id="@+id/editText_ipAddress_tab2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                               android:layout_marginStart="8dp"
+                                android:digits="1234567890."
+                                android:ems="10"
+                                android:hint="@string/text_enter_ip"
+                                android:inputType="number"
+                                android:textSize="@dimen/editText_ip_text_size"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.05"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.05" />/>
+
+                            <ToggleButton
+                                android:id="@+id/toggleButton_connection_tab2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginStart="12dp"
+                                android:textOff="@string/text_toggleButton_connection_off"
+                                android:textOn="@string/text_toggleButton_connection_on"
+                                android:textSize="@dimen/toggleButton_connection_text_size"
+                                app:layout_constraintBottom_toBottomOf="@+id/editText_ipAddress_tab2"
+                                app:layout_constraintStart_toEndOf="@+id/editText_ipAddress_tab2"
+                                app:layout_constraintTop_toTopOf="@+id/editText_ipAddress_tab2"
+                                app:layout_constraintVertical_bias="0.0" />
+
+                            <com.jjoe64.graphview.GraphView
+                                android:id="@+id/graph"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/graph_size"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginTop="8dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.74" />
+
+                            <ToggleButton
+                                android:id="@+id/toggleButton"
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:text=" "
+                                android:textOff="@string/graph_toggle_button_start"
+                                android:textOn="@string/graph_toggle_button_stop"
+                                android:textSize="@dimen/toggle_button_debug_size"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.48"
+                                app:layout_constraintStart_toStartOf="parent" />
+                                <Spinner
+                                android:id="@+id/spinner"
+                                android:textSize="20dp"
+                                android:layout_width="@dimen/spinner_list_engine_width"
+                                android:layout_height="@dimen/spinner_list_engine_height"
+                                app:layout_constraintBottom_toTopOf="@+id/graph"
+                                app:layout_constraintStart_toStartOf="@+id/editText_ipAddress_tab2"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.9" />
+
+                            <EditText
+                                android:id="@+id/editText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:ems="10"
+                                android:hint="@string/enter_speed"
+                                android:inputType="number"
+                                app:layout_constraintBottom_toTopOf="@+id/graph"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/toggleButton_connection_tab2"
+                                app:layout_constraintTop_toTopOf="@+id/toggleButton_connection_tab2"
+                                app:layout_constraintVertical_bias="0.0" />
+
+                            <EditText
+                                android:id="@+id/editText2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_marginStart="8dp"
+                                android:ems="10"
+                                android:hint="@string/enter_I_Faktor"
+                                android:inputType="number"
+                                app:layout_constraintBottom_toTopOf="@+id/graph"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/editText"
+                                app:layout_constraintTop_toTopOf="@+id/editText"
+                                app:layout_constraintVertical_bias="0.0" />
+
+                            <EditText
+                                android:id="@+id/editText3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:ems="10"
+                                android:hint="@string/enter_P_Faktor"
+                                android:inputType="number"
+                                app:layout_constraintBottom_toTopOf="@+id/graph"
+                                app:layout_constraintEnd_toEndOf="@+id/editText2"
+                                app:layout_constraintHorizontal_bias="1.0"
+                                app:layout_constraintStart_toEndOf="@+id/spinner"
+                                app:layout_constraintTop_toTopOf="@+id/spinner"
+                                app:layout_constraintVertical_bias="0.0" />
+
+                        </android.support.constraint.ConstraintLayout>
+                    </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/tab1"
                     android:layout_width="match_parent"
@@ -177,18 +306,6 @@
                             app:layout_constraintEnd_toEndOf="@+id/seekBar_speed"
                             app:layout_constraintStart_toStartOf="@+id/seekBar_speed"
                             app:layout_constraintTop_toBottomOf="@+id/seekBar_speed" />
-                    </android.support.constraint.ConstraintLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
                     </android.support.constraint.ConstraintLayout>
                 </LinearLayout>
 
