@@ -1,34 +1,34 @@
 package com.mobileapplicationdev.roboproject;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.Viewport;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 
-import java.util.Random;
-
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
     private static final String TAG_TAB_1 = "Tag_Tab1";
     private static final String TAG_TAB_2 = "Tag_Tab2";
     private static final String TAG_TAB_3 = "Tag_Tab3";
@@ -39,82 +39,50 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static final int MAX_SPEED = 50;
 
+    private SocketService socketService;
+    private boolean mBound = false;
+    private int drivingMode = 0;
 
-    private final Random RANDOM = new Random();
-    private LineGraphSeries<DataPoint> series;
-    private int lastX = 0;
+    private boolean isForwardButtonPressed = false;
+    private boolean isBackwardButtonPressed = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start socket service
+        Intent intent = new Intent(this, SocketService.class);
+        startService(intent);
+        bindService(intent, mConn, Context.BIND_AUTO_CREATE);
+
+        // Set toolbar icon for settings
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Initialise components inside  the main activity
         initTabHost();
         initConnectionButton();
         initDriveModeSwitch();
         initJoyStick();
         initSpeedSeekBar();
-        //initGraph();
-        initSpinner();
-        initDynamicGraph();
-    }
-    public void initDynamicGraph(){
-        // we get graph view instance
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        // data
-        series = new LineGraphSeries<DataPoint>();
-        graph.addSeries(series);
-        // customize a little bit viewport
-        Viewport viewport = graph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(10);
-        viewport.setScrollable(true);
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // we're going to simulate real time with thread that append data to the graph
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                // we add 100 new entries
-                for (int i = 0; i < 100; i++) {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addEntry();
-                        }
-                    });
-
-                    // sleep to slow down the add of entries
-                    try {
-                        Thread.sleep(600);
-                    } catch (InterruptedException e) {
-                        // manage error ...
-                    }
-                }
-            }
-        }).start();
+        initForwardAndBackwardButton();
     }
 
-    // add random data to graph
-    private void addEntry() {
-        // here, we choose to display max 10 points on the viewport and we scroll to end
-        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
-    }
-
+    /**
+     * Creates the options menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
     }
 
+    /**
+     * Options Listener
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.settingsMenu) {
@@ -126,6 +94,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    private ServiceConnection mConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
+            socketService = binder.getService();
+            socketService.registerClient(MainActivity.this);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
+
+    /**
+     * Initialise tabHost with different tabs
+     */
     private void initTabHost() {
         String tabNameTab1 = getString(R.string.tab_name_tab1);
         String tabNameTab2 = getString(R.string.tab_name_tab2);
@@ -152,13 +138,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         th.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tagName) {
-                // TODO close Socket
-                // TODO Toast löschen
-                Toast.makeText(MainActivity.this, tagName, Toast.LENGTH_SHORT).show();
+                unCheckAllConnectionButtons();
             }
         });
     }
 
+    /**
+     * Initialise connection button
+     */
     private void initConnectionButton() {
         final ToggleButton toggle = findViewById(R.id.toggleButton_connection);
         final EditText editText_ipAddress = findViewById(R.id.editText_ipAddress);
@@ -172,28 +159,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
                     if (!ipAddress.equals("")) {
-                        // TODO open Socket
-                        // TODO Toast löschen
-                        Toast.makeText(MainActivity.this, "Activated", Toast.LENGTH_SHORT).show();
                         editText_ipAddress.setEnabled(false);
+                        startSocketService();
+
                     } else {
                         toggle.setChecked(false);
                         Toast.makeText(MainActivity.this, errMsgInvalidIp, Toast.LENGTH_SHORT).show();
                     }
-
                 } else {
-                    // TODO close Socket
-                    // TODO Toast Löschen
-                    Toast.makeText(MainActivity.this, "Deactivated", Toast.LENGTH_SHORT).show();
                     editText_ipAddress.setEnabled(true);
                 }
             }
         });
     }
 
+    /**
+     * Initialise driveModeSwitch
+     */
     private void initDriveModeSwitch() {
-        final String switchTextOn = getString(R.string.text_switch_driveModus_on);
-        final String switchTextOff = getString(R.string.text_switch_driveModus_off);
+        final String switchTextOn = getString(R.string.text_switch_driveMode_on);
+        final String switchTextOff = getString(R.string.text_switch_driveMode_off);
 
         final Switch driveModeSwitch = findViewById(R.id.switch_driveMode);
 
@@ -203,14 +188,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
+                    drivingMode = 1;
                     driveModeSwitch.setText(switchTextOn);
                 } else {
+                    drivingMode = 0;
                     driveModeSwitch.setText(switchTextOff);
                 }
             }
         });
     }
 
+    /**
+     * Initialise joyStick
+     */
     private void initJoyStick() {
         Joystick joystick = findViewById(R.id.joystick);
 
@@ -234,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    /**
+     * Initialise seekBar
+     */
     private void initSpeedSeekBar() {
         SeekBar seekBar = findViewById(R.id.seekBar_speed);
         final TextView textView_speed = findViewById(R.id.textView_speed);
@@ -242,7 +235,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 double speed = (progress * MAX_SPEED) / 100;
-                setTextViewText(String.valueOf(speed), getString(R.string.speed_unit), textView_speed);
+                setTextViewText(String.valueOf(speed),
+                        getString(R.string.speed_unit), textView_speed);
             }
 
             @Override
@@ -255,6 +249,52 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
     }
 
+    private void initForwardAndBackwardButton() {
+        final Button forwardButton = findViewById(R.id.button_forward);
+        final Button backwardButton = findViewById(R.id.button_backward);
+
+        forwardButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                   isForwardButtonPressed = true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP){
+                    isForwardButtonPressed = false;
+                }
+
+                if (isForwardButtonPressed) {
+                    forwardButton.setBackground(getDrawable(R.drawable.arrow_up_pressed));
+                } else {
+                    forwardButton.setBackground(getDrawable(R.drawable.arrow_up));
+                }
+
+                return true;
+            }
+
+        });
+
+        backwardButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    isBackwardButtonPressed = true;
+                } else if (event.getAction() == MotionEvent.ACTION_UP){
+                    isBackwardButtonPressed = false;
+                }
+
+                if (isBackwardButtonPressed) {
+                    backwardButton.setBackground(getDrawable(R.drawable.arrow_down_pressed));
+                } else {
+                    backwardButton.setBackground(getDrawable(R.drawable.arrow_down));
+                }
+                return true;
+            }
+        });
+    }
+
+    /**
+     * OnClick listener to increase angle by the plus button
+     */
     public void button_increase_angle_onClick(View view) {
         TextView textView_angle = findViewById(R.id.textView_angle);
 
@@ -267,6 +307,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
     }
 
+    /**
+     * OnClick listener to decrease angle by the minus button
+     */
     public void button_decrease_angle_onClick(View view) {
         TextView textView_angle = findViewById(R.id.textView_angle);
 
@@ -278,53 +321,124 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
     }
 
+    /**
+     * Returns the angle of the wheels without the unit as integer
+     * @param textView the textView which contains the angle of the wheels
+     * @return integer angle
+     */
     private int getAngle(TextView textView) {
         String angleString = textView.getText().toString();
         return Integer.parseInt(angleString.substring(0, angleString.length() - 2));
     }
 
+    private double getAngleAsRadian(TextView textView) {
+        int angle = getAngle(textView);
+
+        return ((2 * Math.PI) / 360) * angle;
+    }
+
+    /**
+     * Sets a value and an unit as text of a textView
+     * @param value angle or speed
+     * @param unit the unit of the value
+     */
     private void setTextViewText(String value, String unit, TextView textView) {
        String template = getString(R.string.textViewTemplate);
        textView.setText(String.format(template, value, unit));
     }
 
-    public void initGraph(){
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
+    /**
+     * Returns the speed without an unit
+     * @return integer speed
+     */
+    private int getSpeed() {
+        TextView textView = findViewById(R.id.textView_speed);
+        String speed = (String) textView.getText();
+        int unitLength = getString(R.string.speed_unit).length();
+        speed = speed.substring(0, speed.length() - unitLength - 1);
+
+        return (int) Double.parseDouble(speed);
     }
 
+    /**
+     * Returns the value of a shared preference
+     * @param preference number of the shared preference
+     * @return the value of the preference
+     */
+    private int getPreferenceKeys(int preference) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-    public void initSpinner(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Resources res = getResources();
+        String[] portKeys = res.getStringArray(R.array.settings_port_key);
+        String[] defaultValues = res.getStringArray(R.array.default_port_value);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.engines, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
+        String portKey = portKeys[preference];
+        String defaultValue = defaultValues[preference];
+        String preferenceString = sharedPreferences.getString(portKey, defaultValue);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return Integer.parseInt(preferenceString);
+    }
 
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+    /**
+     * Starts socket service
+     */
+    private void startSocketService() {
+        TextView textView = findViewById(R.id.editText_ipAddress);
+        String ipAddress = String.valueOf(textView.getText());
 
-        spinner.setOnItemSelectedListener(this);
+        if (mBound) {
+            socketService.openSocket(ipAddress, getPreferenceKeys(0));
+        }
+    }
+
+    private void unCheckAllConnectionButtons() {
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
+
+        connectionButtonTab1.setChecked(false);
+        //connectionButtonTab2.setChecked(false);
+        //connectionButtonTab3.setChecked(false);
+    }
+
+// Callbacks interface implementation --------------------------------------------------------------
+
+    @Override
+    public boolean getToggleButtonStatus() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
+        return toggleButton.isChecked();
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String sSelected=parent.getItemAtPosition(position).toString();
-        Toast.makeText(this,sSelected,Toast.LENGTH_SHORT).show();
+    public boolean getForwardButtonStatus() {
+        return isForwardButtonPressed;
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
+    public boolean getBackwardButtonStatus() {
+        return isBackwardButtonPressed;
     }
 
+    @Override
+    public ControlData getControlData() {
+        TextView textView = findViewById(R.id.textView_angle);
+        ControlData controlData = new ControlData();
+
+        controlData.setDrivingMode(drivingMode);
+        controlData.setAngle(getAngle(textView));
+        controlData.setRadianAngle(getAngleAsRadian(textView));
+        controlData.setSpeed(getSpeed());
+
+        return controlData;
+    }
+
+    @Override
+    public void hostErrorHandler() {
+        String errorMessage = getString(R.string.error_msg_host_error);
+        // TODO fix exception
+        // unCheckAllConnectionButtons();
+        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+//--------------------------------------------------------------------------------------------------
 }
-
