@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
  */
 
 public class SocketService extends Service {
-    private static final long SOCKET_SLEEP_MILLIS = 50;
+    private static final long SOCKET_SLEEP_MILLIS = 40;
 
     private final IBinder mBinder = new LocalBinder();
     private final String className = SocketService.class.getName();
@@ -51,42 +51,12 @@ public class SocketService extends Service {
                     while (mainActivity.getToggleButtonStatus()) {
                         ControlData controlData = mainActivity.getControlData();
 
-                        if (!mainActivity.getForwardButtonStatus() &&
-                            !mainActivity.getBackwardButtonStatus()) {
-                            // Neither forward nor backward button are pressed
-
-                            Log.d(SocketService.class.getName(), "Status: Stopped | Data: "
-                                    + controlData.toString());
-
-                            dataOutputStream.write(0);                                           // drive
-                            dataOutputStream.write(0);                                           // not used
-                            dataOutputStream.write(0);                                           // angle
-                            dataOutputStream.write(0);                                           // driving mode
-                            dataOutputStream.write(0);                                           // platform up not used
-                            dataOutputStream.write(0);                                           // platform down not used
-
-                        } else if (mainActivity.getForwardButtonStatus()) {
-                            // Forward button is pressed
-
-                            Log.d(SocketService.class.getName(), "Status: Forwards | Data: "
-                                    + controlData.toString());
-
-                            dataOutputStream.write(reverseByteOrder(1));                          // drive
-                            dataOutputStream.write(0);                                           // not used
-                            dataOutputStream.write(reverseByteOrder(controlData.getAngle()));       // angle
-                            dataOutputStream.write(reverseByteOrder(controlData.getDrivingMode())); // driving mode
-                            dataOutputStream.write(0);                                           // platform up not used
-                            dataOutputStream.write(0);                                           // platform down not used
-
-                        } else {
-                            // Backward button is pressed
-
-                            Log.d(SocketService.class.getName(), "Status: Backwards | Data: "
-                                    + controlData.toString());
-
-                            // TODO Implement
-                            // TODO invert speed
-                        }
+                        dataOutputStream.writeInt(reverseByteOrder(1));                          // drive
+                        dataOutputStream.writeInt(0);                                           // not used
+                        dataOutputStream.writeInt(reverseByteOrder(controlData.getAngle()));       // angle
+                        dataOutputStream.writeInt(reverseByteOrder(controlData.getDrivingMode())); // driving mode
+                        dataOutputStream.writeInt(0);                                           // platform up not used
+                        dataOutputStream.writeInt(0);                                           // platform down not used
 
                         Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
@@ -115,37 +85,7 @@ public class SocketService extends Service {
     // callbacks interface for communication with main activity!
     public interface Callbacks {
         boolean getToggleButtonStatus();
-        boolean getForwardButtonStatus();
-        boolean getBackwardButtonStatus();
         ControlData getControlData();
         void hostErrorHandler();
     }
-
-    //                    if (!mainActivity.getForwardButtonStatus() &&
-//                            !mainActivity.getBackwardButtonStatus()) {
-//
-//                        Log.d(SocketService.class.getName(), "Stop" + controlData.toString());
-////                            dataOutputStream.writeBytes("0");                                           // drive
-////                            dataOutputStream.writeBytes("0");                                           // not used
-////                            dataOutputStream.writeBytes("0");                                           // angle
-////                            dataOutputStream.writeBytes("0");                                           // driving mode
-////                            dataOutputStream.writeBytes("0");                                           // platform up not used
-////                            dataOutputStream.writeBytes("0");                                           // platform down not used
-//
-//
-//                    } else if (mainActivity.getForwardButtonStatus()) {
-//                        Log.d(SocketService.class.getName(), "Forward " + controlData.toString());
-////                            dataOutputStream.writeBytes("1");                                           // drive
-////                            dataOutputStream.writeBytes("0");                                           // not used
-////                            dataOutputStream.writeBytes(String.valueOf(controlData.getAngle()));          // angle
-////                         // dataOutputStream.writeBytes(String.valueOf(controlData.getRadianAngle()));
-////                            dataOutputStream.writeBytes(String.valueOf(controlData.getDrivingMode()));    // driving mode
-////                            dataOutputStream.writeBytes("0");                                          // platform up not used
-////                            dataOutputStream.writeBytes("0");                                          // platform down not used
-//
-//                    } else {
-//                        // TODO Implement
-//                        // TODO invert speed
-//                    }
-//                }
 }

@@ -11,14 +11,11 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -39,24 +36,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private static final String TAG_TAB_2 = "Tag_Tab2";
     private static final String TAG_TAB_3 = "Tag_Tab3";
 
-    private static final int CHANGE_ANGLE = 5;
-    private static final int MAX_ANGLE = 360;
-    private static final int MIN_ANGLE = 0;
-
-    private static final int MAX_SPEED = 50;
-
     private SocketService socketService;
     private boolean mBound = false;
     private int drivingMode = 0;
 
-    private boolean isForwardButtonPressed = false;
-    private boolean isBackwardButtonPressed = false;
+    private float curve = 0.0f;
 
     private final Random RANDOM = new Random();
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,60 +63,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         // Initialise components inside  the main activity
         initTabHost();
         initConnectionButton();
-        initDriveModeSwitch();
-        initJoyStick();
-        initSpeedSeekBar();
-        initForwardAndBackwardButton();
+        initLeftJoyStick();
+        initRightJoyStick();
         initDynamicGraph();
     }
-    public void initDynamicGraph() {
-        // we get graph view instance
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        // data
-        series = new LineGraphSeries<DataPoint>();
-        graph.addSeries(series);
-        // customize a little bit viewport
-        Viewport viewport = graph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(10);
-        viewport.setScrollable(true);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // we're going to simulate real time with thread that append data to the graph
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                // we add 100 new entries
-                for (int i = 0; i < 100; i++) {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addEntry();
-                        }
-                    });
-
-                    // sleep to slow down the add of entries
-                    try {
-                        Thread.sleep(600);
-                    } catch (InterruptedException e) {
-                        // manage error ...
-                    }
-                }
-            }
-        }).start();
-    }
-
-    // add random data to graph
-    private void addEntry() {
-        // here, we choose to display max 10 points on the viewport and we scroll to end
-        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
-    }
+// Options Menu ------------------------------------------------------------------------------------
 
     /**
      * Creates the options menu
@@ -152,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
 
     }
+
+// -------------------------------------------------------------------------------------------------
+
+// TAB 1 -------------------------------------------------------------------------------------------
 
     private ServiceConnection mConn = new ServiceConnection() {
         @Override
@@ -232,39 +176,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
-    /**
-     * Initialise driveModeSwitch
-     */
-    private void initDriveModeSwitch() {
-        final String switchTextOn = getString(R.string.text_switch_driveMode_on);
-        final String switchTextOff = getString(R.string.text_switch_driveMode_off);
-
-        final Switch driveModeSwitch = findViewById(R.id.switch_driveMode);
-
-        driveModeSwitch.setText(switchTextOff);
-
-        driveModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    drivingMode = 1;
-                    driveModeSwitch.setText(switchTextOn);
-                } else {
-                    drivingMode = 0;
-                    driveModeSwitch.setText(switchTextOff);
-                }
-            }
-        });
-    }
 
     /**
      * Initialise joyStick
      */
-    private void initJoyStick() {
-        Joystick joystick = findViewById(R.id.joystick);
+    private void initLeftJoyStick() {
+        Joystick joystick = findViewById(R.id.leftJoystick);
 
         joystick.setJoystickListener(new JoystickListener() {
-            final TextView textView_angle = findViewById(R.id.textView_angle);
 
             @Override
             public void onDown() {
@@ -272,128 +191,40 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                setTextViewText(String.valueOf((int)degrees),
-                        getString(R.string.degree), textView_angle);
             }
 
             @Override
             public void onUp() {
-                setTextViewText("0", getString(R.string.degree), textView_angle);
+
             }
         });
     }
 
-    /**
-     * Initialise seekBar
-     */
-    private void initSpeedSeekBar() {
-        SeekBar seekBar = findViewById(R.id.seekBar_speed);
-        final TextView textView_speed = findViewById(R.id.textView_speed);
+    private void initRightJoyStick() {
+        Joystick joystick = findViewById(R.id.rightJoystick);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        joystick.setJoystickListener(new JoystickListener() {
+
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                double speed = (progress * MAX_SPEED) / 100;
-                setTextViewText(String.valueOf(speed),
-                        getString(R.string.speed_unit), textView_speed);
+            public void onDown() {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+            public void onDrag(float degrees, float offset) {
+                if (degrees == -180) {
+                    curve = -offset;
+                }
+
+                if (degrees == 0) {
+                    curve = offset;
+                }
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+            public void onUp() {
+
             }
         });
-    }
-
-    private void initForwardAndBackwardButton() {
-        final Button forwardButton = findViewById(R.id.button_forward);
-        final Button backwardButton = findViewById(R.id.button_backward);
-
-        forwardButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                   isForwardButtonPressed = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP){
-                    isForwardButtonPressed = false;
-                }
-
-                if (isForwardButtonPressed) {
-                    forwardButton.setBackground(getDrawable(R.drawable.arrow_up_pressed));
-                } else {
-                    forwardButton.setBackground(getDrawable(R.drawable.arrow_up));
-                }
-
-                return true;
-            }
-
-        });
-
-        backwardButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    isBackwardButtonPressed = true;
-                } else if (event.getAction() == MotionEvent.ACTION_UP){
-                    isBackwardButtonPressed = false;
-                }
-
-                if (isBackwardButtonPressed) {
-                    backwardButton.setBackground(getDrawable(R.drawable.arrow_down_pressed));
-                } else {
-                    backwardButton.setBackground(getDrawable(R.drawable.arrow_down));
-                }
-                return true;
-            }
-        });
-    }
-
-    /**
-     * OnClick listener to increase angle by the plus button
-     */
-    public void button_increase_angle_onClick(View view) {
-        TextView textView_angle = findViewById(R.id.textView_angle);
-
-        int angle = getAngle(textView_angle) + CHANGE_ANGLE;
-
-        if (angle > MAX_ANGLE) {
-            angle = MAX_ANGLE;
-        }
-
-        setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
-    }
-
-    /**
-     * OnClick listener to decrease angle by the minus button
-     */
-    public void button_decrease_angle_onClick(View view) {
-        TextView textView_angle = findViewById(R.id.textView_angle);
-
-        int angle = getAngle(textView_angle) - CHANGE_ANGLE;
-        if (angle < MIN_ANGLE) {
-            angle = MIN_ANGLE;
-        }
-
-        setTextViewText(String.valueOf(angle), getString(R.string.degree), textView_angle);
-    }
-
-    /**
-     * Returns the angle of the wheels without the unit as integer
-     * @param textView the textView which contains the angle of the wheels
-     * @return integer angle
-     */
-    private int getAngle(TextView textView) {
-        String angleString = textView.getText().toString();
-        return Integer.parseInt(angleString.substring(0, angleString.length() - 2));
-    }
-
-    private double getAngleAsRadian(TextView textView) {
-        int angle = getAngle(textView);
-
-        return ((2 * Math.PI) / 360) * angle;
     }
 
     /**
@@ -406,18 +237,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
        textView.setText(String.format(template, value, unit));
     }
 
-    /**
-     * Returns the speed without an unit
-     * @return integer speed
-     */
-    private int getSpeed() {
-        TextView textView = findViewById(R.id.textView_speed);
-        String speed = (String) textView.getText();
-        int unitLength = getString(R.string.speed_unit).length();
-        speed = speed.substring(0, speed.length() - unitLength - 1);
-
-        return (int) Double.parseDouble(speed);
-    }
 
     /**
      * Returns the value of a shared preference
@@ -468,25 +287,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return toggleButton.isChecked();
     }
 
-    @Override
-    public boolean getForwardButtonStatus() {
-        return isForwardButtonPressed;
-    }
-
-    @Override
-    public boolean getBackwardButtonStatus() {
-        return isBackwardButtonPressed;
-    }
 
     @Override
     public ControlData getControlData() {
-        TextView textView = findViewById(R.id.textView_angle);
         ControlData controlData = new ControlData();
 
         controlData.setDrivingMode(drivingMode);
-        controlData.setAngle(getAngle(textView));
-        controlData.setRadianAngle(getAngleAsRadian(textView));
-        controlData.setSpeed(getSpeed());
+
 
         return controlData;
     }
@@ -500,4 +307,57 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
 //--------------------------------------------------------------------------------------------------
+
+// Tab 2 -------------------------------------------------------------------------------------------
+
+    public void initDynamicGraph() {
+        // we get graph view instance
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        // data
+        series = new LineGraphSeries<DataPoint>();
+        graph.addSeries(series);
+        // customize a little bit viewport
+        Viewport viewport = graph.getViewport();
+        viewport.setYAxisBoundsManual(true);
+        viewport.setMinY(0);
+        viewport.setMaxY(10);
+        viewport.setScrollable(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // we're going to simulate real time with thread that append data to the graph
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                // we add 100 new entries
+                for (int i = 0; i < 100; i++) {
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            addEntry();
+                        }
+                    });
+
+                    // sleep to slow down the add of entries
+                    try {
+                        Thread.sleep(600);
+                    } catch (InterruptedException e) {
+                        // manage error ...
+                    }
+                }
+            }
+        }).start();
+    }
+
+    // add random data to graph
+    private void addEntry() {
+        // here, we choose to display max 10 points on the viewport and we scroll to end
+        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
+    }
+
+// -------------------------------------------------------------------------------------------------
 }
