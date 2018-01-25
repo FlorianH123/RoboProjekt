@@ -7,6 +7,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -18,6 +19,8 @@ import java.net.UnknownHostException;
  */
 
 public class SocketService extends Service {
+    private static final long SOCKET_SLEEP_MILLIS = 50;
+
     private final IBinder mBinder = new LocalBinder();
     private final String className = SocketService.class.getName();
 
@@ -44,40 +47,55 @@ public class SocketService extends Service {
                      DataOutputStream dataOutputStream = new DataOutputStream
                              (steeringSocket.getOutputStream())) {
 
+                    // while connection toggle button is activated send data
                     while (mainActivity.getToggleButtonStatus()) {
                         ControlData controlData = mainActivity.getControlData();
 
                         if (!mainActivity.getForwardButtonStatus() &&
-                                !mainActivity.getBackwardButtonStatus()) {
+                            !mainActivity.getBackwardButtonStatus()) {
+                            // Neither forward nor backward button are pressed
 
-                            Log.d(SocketService.class.getName(), "Stop" + controlData.toString());
-                            dataOutputStream.writeBytes("0");                                           // drive
-                            dataOutputStream.writeBytes("0");                                           // not used
-                            dataOutputStream.writeBytes("0");                                           // angle
-                            dataOutputStream.writeBytes("0");                                           // driving mode
-                            dataOutputStream.writeBytes("0");                                           // platform up not used
-                            dataOutputStream.writeBytes("0");                                           // platform down not used
+                            Log.d(SocketService.class.getName(), "Status: Stopped | Data: "
+                                    + controlData.toString());
 
+                            dataOutputStream.write(0);                                           // drive
+                            dataOutputStream.write(0);                                           // not used
+                            dataOutputStream.write(0);                                           // angle
+                            dataOutputStream.write(0);                                           // driving mode
+                            dataOutputStream.write(0);                                           // platform up not used
+                            dataOutputStream.write(0);                                           // platform down not used
 
                         } else if (mainActivity.getForwardButtonStatus()) {
-                            Log.d(SocketService.class.getName(), "Forward " + controlData.toString());
-                            dataOutputStream.writeBytes("1");                                           // drive
-                            dataOutputStream.writeBytes("0");                                           // not used
-                            dataOutputStream.writeBytes(String.valueOf(controlData.getAngle()));          // angle
-                            // dataOutputStream.writeBytes(String.valueOf(controlData.getRadianAngle()));
-                            dataOutputStream.writeBytes(String.valueOf(controlData.getDrivingMode()));    // driving mode
-                            dataOutputStream.writeBytes("0");                                          // platform up not used
-                            dataOutputStream.writeBytes("0");                                          // platform down not used
+                            // Forward button is pressed
+
+                            Log.d(SocketService.class.getName(), "Status: Forwards | Data: "
+                                    + controlData.toString());
+
+                            dataOutputStream.write(reverseByteOrder(1));                          // drive
+                            dataOutputStream.write(0);                                           // not used
+                            dataOutputStream.write(reverseByteOrder(controlData.getAngle()));       // angle
+                            dataOutputStream.write(reverseByteOrder(controlData.getDrivingMode())); // driving mode
+                            dataOutputStream.write(0);                                           // platform up not used
+                            dataOutputStream.write(0);                                           // platform down not used
 
                         } else {
+                            // Backward button is pressed
+
+                            Log.d(SocketService.class.getName(), "Status: Backwards | Data: "
+                                    + controlData.toString());
+
                             // TODO Implement
                             // TODO invert speed
                         }
+
+                        Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
-                } catch (UnknownHostException e) {
+                } catch (UnknownHostException ex) {
                     mainActivity.hostErrorHandler();
-                } catch (IOException e) {
-                    Log.e(className, ioExceptionLoggerMsg);
+                } catch (IOException ex) {
+                    Log.e(className, ioExceptionLoggerMsg + ex.getMessage());
+                } catch (InterruptedException ex) {
+                    Log.e(className, ex.getMessage());
                 }
 
                 stopSelf();
