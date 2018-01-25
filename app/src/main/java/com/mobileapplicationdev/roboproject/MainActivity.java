@@ -202,12 +202,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private void initRightJoyStick() {
         Joystick joystick = findViewById(R.id.rightJoystick);
+        final TextView joyStickValue = findViewById(R.id.textView_rightJoyStickValue);
 
         joystick.setJoystickListener(new JoystickListener() {
 
             @Override
-            public void onDown() {
-            }
+            public void onDown() {}
 
             @Override
             public void onDrag(float degrees, float offset) {
@@ -218,25 +218,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 if (degrees == 0) {
                     curve = offset;
                 }
+
+                joyStickValue.setText(String.valueOf(curve));
             }
 
             @Override
             public void onUp() {
-
+                curve = 0.0f;
+                joyStickValue.setText(String.valueOf(curve));
             }
         });
     }
-
-    /**
-     * Sets a value and an unit as text of a textView
-     * @param value angle or speed
-     * @param unit the unit of the value
-     */
-    private void setTextViewText(String value, String unit, TextView textView) {
-       String template = getString(R.string.textViewTemplate);
-       textView.setText(String.format(template, value, unit));
-    }
-
 
     /**
      * Returns the value of a shared preference
@@ -291,9 +283,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     @Override
     public ControlData getControlData() {
         ControlData controlData = new ControlData();
-
-        controlData.setDrivingMode(drivingMode);
-
 
         return controlData;
     }

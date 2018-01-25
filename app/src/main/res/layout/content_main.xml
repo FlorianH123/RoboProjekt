@@ -104,6 +104,17 @@
                                 android:background="@drawable/bg_stick" />
                         </com.jmedeisis.bugstick.Joystick>
 
+                        <TextView
+                            android:id="@+id/textView_rightJoyStickValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="0.0"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
+                            app:layout_constraintStart_toStartOf="@+id/rightJoystick"
+                            app:layout_constraintTop_toBottomOf="@+id/rightJoystick" />
+
                     </android.support.constraint.ConstraintLayout>
                 </LinearLayout>
                     <LinearLayout
