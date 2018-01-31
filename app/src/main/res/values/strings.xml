@@ -1,20 +1,21 @@
 <resources>
     <string name="app_name">Robot Project</string>
-
+<!-- TAB Strings -->
     <string name="tab_name_tab1">Steuerung</string>
     <string name="tab_name_tab2">Antriebsmotoren Debug</string>
     <string name="tab_name_tab3">Steuermotoren Debug</string>
+<!-- -->
 
+<!-- general strings -->
     <string name="text_enter_ip">Enter Robot IP</string>
 
     <string name="text_toggleButton_connection_on">Disconnect</string>
     <string name="text_toggleButton_connection_off">Connect</string>
 
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein!</string>
-    <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
-    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
-    <string name="error_msg_socket_io_exception">Error while sending\receiving data!</string>
+<!---->
 
+<!-- Settings Strings -->
     <string name="settings_title">Einstellungen</string>
 
     <string name="settings_port_1">Port 1</string>
@@ -46,6 +47,10 @@
         <item>@string/angular_velocity_default_value</item>
     </string-array>
 
+    <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
+<!-- -->
+
+<!-- TAB 2 Strings -->
     <string name="graph_toggle_button_start">Start Debugging</string>
     <string name="graph_toggle_button_stop">Stop Debugging</string>
 
@@ -61,5 +66,11 @@
                 <item>Engine2</item>
                 <item>Engine3</item>
             </string-array>
+<!-- -->
+
+<!-- Socket Strings -->
+    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
+    <string name="error_msg_socket_io_exception">Error while sending\receiving data!</string>
+<!-- -->
 
 </resources>
