@@ -73,8 +73,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * @param preferenceId number of the shared preference
      * @return the value of the preference
      */
-    private String getPreferenceValues(int preferenceId) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    private String getPreferenceValue(int preferenceId) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 
         Resources res = getResources();
         String[] portKeys = res.getStringArray(R.array.settings_port_key);
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String portKey = portKeys[preferenceId];
         String defaultValue = defaultValues[preferenceId];
 
-        return sharedPreferences.getString(portKey, defaultValue);
+        return sp.getString(portKey, defaultValue);
     }
 
     private void unCheckAllConnectionButtons() {
@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         } else {
             return super.onOptionsItemSelected(item);
         }
-
     }
 
 // -------------------------------------------------------------------------------------------------
@@ -189,13 +188,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 if (isChecked) {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
-                    if (!ipAddress.equals("")) {
+                    if (!ipAddress.trim().equals("")) {
                         editText_ipAddress.setEnabled(false);
                         startSocketService();
 
                     } else {
                         toggle.setChecked(false);
-                        Toast.makeText(MainActivity.this, errMsgInvalidIp, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                errMsgInvalidIp, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     editText_ipAddress.setEnabled(true);
@@ -203,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
         });
     }
-
 
     /**
      * Initialise joyStick
@@ -231,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void initRightJoyStick() {
         Joystick joystick = findViewById(R.id.rightJoystick);
         final TextView joyStickValue = findViewById(R.id.textView_rightJoyStickValue);
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         joystick.setJoystickListener(new JoystickListener() {
 
@@ -240,8 +238,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                float pAngularVelocity = Float.parseFloat(getPreferenceValues(3));
-                float nAngularVelocity = Float.parseFloat(getPreferenceValues(4));
+                float pAngularVelocity = Float.parseFloat(getPreferenceValue(3));
+                float nAngularVelocity = Float.parseFloat(getPreferenceValue(4));
 
                 if (degrees == -180) {
                     rot_z = offset * pAngularVelocity;
@@ -270,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String ipAddress = String.valueOf(textView.getText());
 
         if (mBound) {
-            socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValues(0)));
+            socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
         }
     }
 
@@ -280,9 +278,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     public void initDynamicGraph() {
         // we get graph view instance
-        GraphView graph = (GraphView) findViewById(R.id.graph);
+        GraphView graph = findViewById(R.id.graph);
         // data
-        series = new LineGraphSeries<DataPoint>();
+        series = new LineGraphSeries<>();
         graph.addSeries(series);
         // customize a little bit viewport
         Viewport viewport = graph.getViewport();
@@ -328,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     public void initSpinner(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.engines, android.R.layout.simple_spinner_item);
@@ -347,7 +345,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
         return toggleButton.isChecked();
     }
-
 
     @Override
     public ControlData getControlData() {
