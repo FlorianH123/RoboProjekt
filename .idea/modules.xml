@@ -3,10 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/RoboProjekt.iml" filepath="$PROJECT_DIR$/RoboProjekt.iml" />
-      <module fileurl="file://C:\Users\Janik\AndroidStudioProjects\RoboProjekt\RoboProjekt.iml" filepath="C:\Users\Janik\AndroidStudioProjects\RoboProjekt\RoboProjekt.iml" />
-      <module fileurl="file://C:\Users\Florian\AndroidStudioProjects\RoboProjekt\.idea\RoboProjekt.iml" filepath="C:\Users\Florian\AndroidStudioProjects\RoboProjekt\.idea\RoboProjekt.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\Janik\AndroidStudioProjects\RoboProjekt\app\app.iml" filepath="C:\Users\Janik\AndroidStudioProjects\RoboProjekt\app\app.iml" />
     </modules>
   </component>
 </project>

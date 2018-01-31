@@ -13,15 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +38,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private SocketService socketService;
     private boolean mBound = false;
-    private int drivingMode = 0;
 
     private float rot_z = 0.0f;
 
@@ -74,15 +68,32 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinner();
     }
 
-    public void initSpinner(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.engines, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+    /**
+     * Returns the value of a shared preference
+     * @param preferenceId number of the shared preference
+     * @return the value of the preference
+     */
+    private String getPreferenceValues(int preferenceId) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Resources res = getResources();
+        String[] portKeys = res.getStringArray(R.array.settings_port_key);
+        String[] defaultValues = res.getStringArray(R.array.default_port_value);
+
+        String portKey = portKeys[preferenceId];
+        String defaultValue = defaultValues[preferenceId];
+
+        return sharedPreferences.getString(portKey, defaultValue);
+    }
+
+    private void unCheckAllConnectionButtons() {
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
+
+        connectionButtonTab1.setChecked(false);
+        //connectionButtonTab2.setChecked(false);
+        //connectionButtonTab3.setChecked(false);
     }
 
 // Options Menu ------------------------------------------------------------------------------------
@@ -229,8 +240,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                String angularVelocityString = sharedPreferences.getString("ANGULAR_VELOCITY", "40");
-                float angularVelocity = Float.parseFloat(angularVelocityString);
+                float angularVelocity = Float.parseFloat(getPreferenceValues(3));
 
                 if (degrees == -180) {
                     rot_z = offset * angularVelocity;
@@ -252,26 +262,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     /**
-     * Returns the value of a shared preference
-     * @param preference number of the shared preference
-     * @return the value of the preference
-     */
-    private int getPreferenceKeys(int preference) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Resources res = getResources();
-        String[] portKeys = res.getStringArray(R.array.settings_port_key);
-        String[] defaultValues = res.getStringArray(R.array.default_port_value);
-
-        String portKey = portKeys[preference];
-        String defaultValue = defaultValues[preference];
-        String preferenceString = sharedPreferences.getString(portKey, defaultValue);
-
-        return Integer.parseInt(preferenceString);
-    }
-
-
-    /**
      * Starts socket service
      */
     private void startSocketService() {
@@ -279,46 +269,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String ipAddress = String.valueOf(textView.getText());
 
         if (mBound) {
-            socketService.openSocket(ipAddress, getPreferenceKeys(0));
+            socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValues(0)));
         }
     }
 
-    private void unCheckAllConnectionButtons() {
-        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
-
-        connectionButtonTab1.setChecked(false);
-        //connectionButtonTab2.setChecked(false);
-        //connectionButtonTab3.setChecked(false);
-    }
-
-// Callbacks interface implementation --------------------------------------------------------------
-
-    @Override
-    public boolean getToggleButtonStatus() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
-        return toggleButton.isChecked();
-    }
-
-
-    @Override
-    public ControlData getControlData() {
-        ControlData controlData = new ControlData();
-
-        controlData.setAngularVelocity(rot_z);
-        return controlData;
-    }
-
-    @Override
-    public void hostErrorHandler() {
-        String errorMessage = getString(R.string.error_msg_host_error);
-        // TODO fix exception
-        // unCheckAllConnectionButtons();
-        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-//--------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 // Tab 2 -------------------------------------------------------------------------------------------
 
@@ -371,5 +326,43 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
     }
 
+    public void initSpinner(){
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.engines, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+    }
+
 // -------------------------------------------------------------------------------------------------
+
+// Callbacks interface implementation --------------------------------------------------------------
+
+    @Override
+    public boolean getToggleButtonStatus() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
+        return toggleButton.isChecked();
+    }
+
+
+    @Override
+    public ControlData getControlData() {
+        ControlData controlData = new ControlData();
+
+        controlData.setAngularVelocity(rot_z);
+        return controlData;
+    }
+
+    @Override
+    public void hostErrorHandler() {
+        String errorMessage = getString(R.string.error_msg_host_error);
+        // TODO fix exception
+        // unCheckAllConnectionButtons();
+        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+//--------------------------------------------------------------------------------------------------
 }
