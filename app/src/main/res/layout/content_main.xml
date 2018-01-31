@@ -150,15 +150,26 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
+                                android:layout_marginStart="8dp"
                                 android:ems="10"
                                 android:hint="@string/enter_P_Faktor"
                                 android:inputType="number"
                                 app:layout_constraintBottom_toTopOf="@+id/graph"
                                 app:layout_constraintEnd_toEndOf="@+id/editText2"
-                                app:layout_constraintHorizontal_bias="1.0"
-                                app:layout_constraintStart_toEndOf="@+id/spinner"
-                                app:layout_constraintTop_toTopOf="@+id/spinner"
-                                app:layout_constraintVertical_bias="0.0" />
+                                app:layout_constraintStart_toStartOf="@+id/editText2"
+                                app:layout_constraintTop_toTopOf="@+id/editText4" />
+
+                            <EditText
+                                android:id="@+id/editText4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:hint="@string/Enter_frequency"
+                                android:inputType="number"
+                                app:layout_constraintBottom_toTopOf="@+id/graph"
+                                app:layout_constraintEnd_toEndOf="@+id/editText"
+                                app:layout_constraintStart_toStartOf="@+id/editText"
+                                app:layout_constraintTop_toTopOf="@+id/spinner" />
 
                         </android.support.constraint.ConstraintLayout>
                     </LinearLayout>
