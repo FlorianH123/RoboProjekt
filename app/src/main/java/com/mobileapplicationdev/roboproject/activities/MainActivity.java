@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -221,6 +222,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
+                degrees = (degrees - 180 * -1) - 270;
+
+                if (degrees <= 90 && degrees >= 0) {
+                    degrees = (degrees * -1) + 360;
+                }
+
+                if (degrees < 0) {
+                    degrees *= -1;
+                }
             }
 
             @Override
