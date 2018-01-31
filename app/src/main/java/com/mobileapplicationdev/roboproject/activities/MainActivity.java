@@ -236,28 +236,28 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     degrees = (degrees - 90.0f) * -1.0f;
 
                     x = (float) (offset * Math.sin(Math.toRadians(degrees)));
-                    y = (float) (offset * Math.cos(Math.toRadians(degrees)));
+                    y = (float) (offset * Math.cos(Math.toRadians(degrees)) * maximumSpeed);
 
                     offset *= maximumSpeed;
                 } else if (degrees < 0.0 && degrees >= -90.0) {
                     degrees *= -1;
 
                     x = (float) (offset * Math.cos(Math.toRadians(degrees)));
-                    y = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
+                    y = (float) (offset * Math.sin(Math.toRadians(degrees)) * minimumSpeed) * -1;
 
                     offset *= minimumSpeed;
                 } else if (degrees < -90.0 && degrees >= -180.0) {
                     degrees = (degrees + 90) * -1;
 
                     x = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
-                    y = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
+                    y = (float) (offset * Math.cos(Math.toRadians(degrees)) * minimumSpeed) * -1;
 
                     offset *= minimumSpeed;
                 } else if (degrees > 90.0){
                     degrees = 180 - degrees;
 
                     x = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
-                    y = (float) (offset * Math.sin(Math.toRadians(degrees)));
+                    y = (float) (offset * Math.sin(Math.toRadians(degrees)) * maximumSpeed);
 
                     offset *= maximumSpeed;
                 }
