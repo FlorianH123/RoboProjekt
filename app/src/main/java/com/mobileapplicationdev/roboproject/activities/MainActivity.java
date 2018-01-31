@@ -392,6 +392,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         ControlData controlData = new ControlData();
 
         controlData.setAngularVelocity(rot_z);
+        controlData.setX(x);
+        controlData.setY(y);
+
         return controlData;
     }
 

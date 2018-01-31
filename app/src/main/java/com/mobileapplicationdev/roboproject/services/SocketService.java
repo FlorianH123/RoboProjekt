@@ -55,6 +55,8 @@ public class SocketService extends Service {
                     while (mainActivity.getToggleButtonStatus()) {
                         ControlData controlData = mainActivity.getControlData();
 
+                        byteWriter.writeFloat(swap(controlData.getX()));
+                        byteWriter.writeFloat(swap(controlData.getY()));
                         byteWriter.writeFloat(swap(controlData.getAngularVelocity()));
 
                         controlDataArray = byteArrayStream.toByteArray();
