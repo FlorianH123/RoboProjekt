@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private SocketService socketService;
     private boolean mBound = false;
 
+    private float x;
+    private float y;
+
     private float rot_z = 0.0f;
 
     private final Random RANDOM = new Random();
@@ -213,6 +216,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      */
     private void initLeftJoyStick() {
         Joystick joystick = findViewById(R.id.leftJoystick);
+        final TextView textView = findViewById(R.id.textView);
+        final TextView textView1 = findViewById(R.id.textView2);
+        final TextView textView2 = findViewById(R.id.textView3);
 
         joystick.setJoystickListener(new JoystickListener() {
 
@@ -222,20 +228,42 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                degrees = (degrees - 180 * -1) - 270;
+                if (degrees <= 90.0 && degrees >= 0.0) {
+                    degrees = (degrees - 90.0f) * -1.0f;
 
-                if (degrees <= 90 && degrees >= 0) {
-                    degrees = (degrees * -1) + 360;
-                }
+                    x = (float) (offset * Math.sin(Math.toRadians(degrees)));
+                    y = (float) (offset * Math.cos(Math.toRadians(degrees)));
 
-                if (degrees < 0) {
+                } else if (degrees < 0.0 && degrees >= -90.0) {
                     degrees *= -1;
+
+                    x = (float) (offset * Math.cos(Math.toRadians(degrees)));
+                    y = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
+                } else if (degrees < -90.0 && degrees >= -180.0) {
+                    degrees = (degrees + 90) * -1;
+
+                    x = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
+                    y = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
+                } else if (degrees > 90.0){
+                    degrees = 180 - degrees;
+
+                    x = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
+                    y = (float) (offset * Math.sin(Math.toRadians(degrees)));
                 }
+
+                textView.setText(String.valueOf(x));
+                textView1.setText(String.valueOf(y));
+                textView2.setText(String.valueOf(degrees));
             }
 
             @Override
             public void onUp() {
+                textView.setText("");
+                textView1.setText("");
+                textView2.setText("");
 
+                x = 0.0f;
+                y = 0.0f;
             }
         });
     }
