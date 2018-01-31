@@ -109,7 +109,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:text="0.0"
+                            android:text="@string/textView_angular_velocity_default_value"
                             android:textSize="@dimen/text_size"
                             app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
                             app:layout_constraintStart_toStartOf="@+id/rightJoystick"
@@ -142,7 +142,7 @@
                                 app:layout_constraintHorizontal_bias="0.05"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.05" />/>
+                                app:layout_constraintVertical_bias="0.05"/>
 
                             <ToggleButton
                                 android:id="@+id/toggleButton_connection_tab2"
@@ -172,13 +172,11 @@
                                 app:layout_constraintVertical_bias="0.74" />
 
                             <ToggleButton
-                                android:id="@+id/toggleButton"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
                                 android:layout_marginEnd="8dp"
                                 android:layout_marginStart="8dp"
-                                android:text=" "
                                 android:textOff="@string/graph_toggle_button_start"
                                 android:textOn="@string/graph_toggle_button_stop"
                                 android:textSize="@dimen/toggle_button_debug_size"
@@ -186,9 +184,10 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0.48"
                                 app:layout_constraintStart_toStartOf="parent" />
-                                <Spinner
+
+                            <Spinner
                                 android:id="@+id/spinner"
-                                android:textSize="20dp"
+                                android:textSize="@dimen/text_size"
                                 android:layout_width="@dimen/spinner_list_engine_width"
                                 android:layout_height="@dimen/spinner_list_engine_height"
                                 app:layout_constraintBottom_toTopOf="@+id/graph"
@@ -229,7 +228,6 @@
                                 app:layout_constraintVertical_bias="0.0" />
 
                             <EditText
-                                android:id="@+id/editText3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"

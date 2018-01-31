@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // TAB 1 -------------------------------------------------------------------------------------------
 
-    private ServiceConnection mConn = new ServiceConnection() {
+    private final ServiceConnection mConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // Tab 2 -------------------------------------------------------------------------------------------
 
-    public void initDynamicGraph() {
+    private void initDynamicGraph() {
         // we get graph view instance
         GraphView graph = findViewById(R.id.graph);
         // data
@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
     }
 
-    public void initSpinner(){
+    private void initSpinner(){
         Spinner spinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
