@@ -1,4 +1,4 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.activities;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,6 +28,9 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
+import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.services.SocketService;
+import com.mobileapplicationdev.roboproject.models.ControlData;
 
 import java.util.Random;
 

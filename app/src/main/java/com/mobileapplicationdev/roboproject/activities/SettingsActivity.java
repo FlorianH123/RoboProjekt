@@ -1,4 +1,4 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
+
+import com.mobileapplicationdev.roboproject.R;
 
 /**
  * Created by Florian on 16.01.2018.

@@ -1,4 +1,4 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.services;
 
 import android.app.Activity;
 import android.app.Service;
@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.models.ControlData;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -26,8 +29,8 @@ public class SocketService extends Service {
 
     private Callbacks mainActivity;
 
-    class LocalBinder extends Binder {
-        SocketService getService() {
+    public class LocalBinder extends Binder {
+        public SocketService getService() {
             return SocketService.this;
         }
     }

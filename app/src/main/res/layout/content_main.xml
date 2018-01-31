@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.mobileapplicationdev.roboproject.MainActivity">
+    tools:context="com.mobileapplicationdev.roboproject.activities.MainActivity">
 
     <TabHost
         android:id="@+id/tabHost"

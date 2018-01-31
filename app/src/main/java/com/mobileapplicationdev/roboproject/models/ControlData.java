@@ -1,7 +1,8 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.models;
 
 /**
  * Created by Florian on 22.01.2018.
+ * Data Packet which contains all necessary control data
  */
 
 public class ControlData {
