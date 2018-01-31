@@ -21,6 +21,9 @@
     <string name="settings_port_1">Port 1</string>
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
+    <string name="settings_robot_speed">Robotoer Geschwindigkeiten</string>
+    <string name="minimum_speed">Mindestgeschwindigkeit</string>
+    <string name="maximum_speed">Maximalgeschwindigkeit</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
     <string name="settings_p_angular_velocity">Positive Winkelgeschwindigkeit</string>
     <string name="settings_n_angular_velocity">Negative Winkelgeschwindigkeit</string>
@@ -30,12 +33,16 @@
     <string name="settings_port_3_key">PORT_3</string>
     <string name="settings_p_angular_velocity_key">P_ANGULAR_VELOCITY</string>
     <string name="settings_n_angular_velocity_key">N_ANGULAR_VELOCITY</string>
+    <string name="settings_minimum_speed_key">MIN_SPEED</string>
+    <string name="settings_maximum_spped_key">MAX_SPEED</string>
 
     <string name="port_1_default_value">1000</string>
     <string name="port_2_default_value">1000</string>
     <string name="port_3_default_value">1000</string>
     <string name="angular_velocity_positive_default_value">40</string>
     <string name="angular_velocity_negative_default_value">40</string>
+    <string name="minimum_speed_default_value">2</string>
+    <string name="maximum_speed_default_value">10</string>
 
     <string-array name="settings_port_key">
         <item>@string/settings_port_1_key</item>
