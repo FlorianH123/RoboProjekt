@@ -20,4 +20,10 @@
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/settings_port_3" />
+    <EditTextPreference
+        android:defaultValue="@string/angular_velocity_default_value"
+        android:key="@string/settings_angular_velocity_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/settings_angular_velocity" />
 </PreferenceScreen>

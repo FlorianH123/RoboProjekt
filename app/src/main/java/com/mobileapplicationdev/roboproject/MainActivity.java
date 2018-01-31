@@ -11,12 +11,10 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private boolean mBound = false;
     private int drivingMode = 0;
 
-    private float curve = 0.0f;
+    private float rot_z = 0.0f;
 
     private final Random RANDOM = new Random();
     private LineGraphSeries<DataPoint> series;
@@ -203,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void initRightJoyStick() {
         Joystick joystick = findViewById(R.id.rightJoystick);
         final TextView joyStickValue = findViewById(R.id.textView_rightJoyStickValue);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         joystick.setJoystickListener(new JoystickListener() {
 
@@ -211,21 +210,24 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
+                String angularVelocityString = sharedPreferences.getString("ANGULAR_VELOCITY", "40");
+                float angularVelocity = Float.parseFloat(angularVelocityString);
+
                 if (degrees == -180) {
-                    curve = -offset;
+                    rot_z = offset * angularVelocity;
                 }
 
                 if (degrees == 0) {
-                    curve = offset;
+                    rot_z = -offset * angularVelocity;
                 }
 
-                joyStickValue.setText(String.valueOf(curve));
+                joyStickValue.setText(String.valueOf(rot_z));
             }
 
             @Override
             public void onUp() {
-                curve = 0.0f;
-                joyStickValue.setText(String.valueOf(curve));
+                rot_z = 0.0f;
+                joyStickValue.setText(String.valueOf(rot_z));
             }
         });
     }
@@ -248,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         return Integer.parseInt(preferenceString);
     }
+
 
     /**
      * Starts socket service
@@ -284,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public ControlData getControlData() {
         ControlData controlData = new ControlData();
 
+        controlData.setAngularVelocity(rot_z);
         return controlData;
     }
 
