@@ -59,6 +59,7 @@ public class SocketService extends Service {
                         controlDataArray = baos.toByteArray();
 
                         dataOutputStream.write(controlDataArray);
+                        baos.reset();
 
                         //byteWriter.writeFloat(swap(controlData.getAngularVelocity()));
 
