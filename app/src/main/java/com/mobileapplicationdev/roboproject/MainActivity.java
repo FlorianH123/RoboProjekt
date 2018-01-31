@@ -240,14 +240,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                float angularVelocity = Float.parseFloat(getPreferenceValues(3));
+                float pAngularVelocity = Float.parseFloat(getPreferenceValues(3));
+                float nAngularVelocity = Float.parseFloat(getPreferenceValues(4));
 
                 if (degrees == -180) {
-                    rot_z = offset * angularVelocity;
+                    rot_z = offset * pAngularVelocity;
                 }
 
                 if (degrees == 0) {
-                    rot_z = -offset * angularVelocity;
+                    rot_z = -offset * nAngularVelocity;
                 }
 
                 joyStickValue.setText(String.valueOf(rot_z));
