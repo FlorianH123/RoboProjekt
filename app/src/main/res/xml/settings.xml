@@ -49,7 +49,7 @@
             android:title="@string/minimum_speed" />
         <EditTextPreference
             android:defaultValue="@string/maximum_speed_default_value"
-            android:key="@string/settings_maximum_spped_key"
+            android:key="@string/settings_maximum_speed_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/maximum_speed" />

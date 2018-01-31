@@ -219,6 +219,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         final TextView textView = findViewById(R.id.textView);
         final TextView textView1 = findViewById(R.id.textView2);
         final TextView textView2 = findViewById(R.id.textView3);
+        final TextView textView3 = findViewById(R.id.textView4);
+
+        final float maximumSpeed = Float.valueOf(getPreferenceValue(6));
+        final float minimumSpeed = Float.valueOf(getPreferenceValue(5));
 
         joystick.setJoystickListener(new JoystickListener() {
 
@@ -234,26 +238,34 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     x = (float) (offset * Math.sin(Math.toRadians(degrees)));
                     y = (float) (offset * Math.cos(Math.toRadians(degrees)));
 
+                    offset *= maximumSpeed;
                 } else if (degrees < 0.0 && degrees >= -90.0) {
                     degrees *= -1;
 
                     x = (float) (offset * Math.cos(Math.toRadians(degrees)));
                     y = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
+
+                    offset *= minimumSpeed;
                 } else if (degrees < -90.0 && degrees >= -180.0) {
                     degrees = (degrees + 90) * -1;
 
                     x = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
                     y = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
+
+                    offset *= minimumSpeed;
                 } else if (degrees > 90.0){
                     degrees = 180 - degrees;
 
                     x = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
                     y = (float) (offset * Math.sin(Math.toRadians(degrees)));
+
+                    offset *= maximumSpeed;
                 }
 
                 textView.setText(String.valueOf(x));
                 textView1.setText(String.valueOf(y));
                 textView2.setText(String.valueOf(degrees));
+                textView3.setText(String.valueOf(offset));
             }
 
             @Override
@@ -261,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 textView.setText("");
                 textView1.setText("");
                 textView2.setText("");
+                textView3.setText("");
 
                 x = 0.0f;
                 y = 0.0f;
