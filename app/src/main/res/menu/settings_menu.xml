@@ -7,5 +7,5 @@
     <item
         android:id="@+id/settingsMenu"
         android:title="@string/settings_title"
-        app:showAsAction="never"/>
+        app:showAsAction="always" />
 </menu>
