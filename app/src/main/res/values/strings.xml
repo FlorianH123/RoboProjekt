@@ -24,8 +24,8 @@
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
     <string name="settings_robot_speed">Roboter Geschwindigkeiten</string>
-    <string name="maximum_x">Max. Maximum X</string>
-    <string name="maximum_y">Max. Maximum Y</string>
+    <string name="maximum_x">Maximum X</string>
+    <string name="maximum_y">Maximum Y</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
 
     <string name="settings_port_1_key">PORT_1</string>
