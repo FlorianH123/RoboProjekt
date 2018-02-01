@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private float x;
     private float y;
-
     private float rot_z = 0.0f;
 
     private final Random RANDOM = new Random();
@@ -227,36 +226,36 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
 
             @Override
-            public void onDrag(float degrees, float offset) {
+            public void onDrag(float angle, float offset) {
                 float maxForwardSpeed  = Float.valueOf(getPreferenceValue(4));
                 float maxBackwardSpeed = Float.valueOf(getPreferenceValue(5));
 
-                if (Util.isInFirstQuarter(degrees)) {                                  // 1. quarter
-                    degrees = -(degrees - 90);
-                    degrees = (float) Math.toRadians(degrees);
+                if (Util.isInFirstQuarter(angle)) {                                  // 1. quarter
+                    angle = -(angle - 90);
+                    angle = (float) Math.toRadians(angle);
 
-                    y = (float) -(offset * Math.sin(degrees) * maxForwardSpeed);
-                    x = (float)  (offset * Math.cos(degrees) * maxForwardSpeed);
+                    y = (float) -(offset * Math.sin(angle) * maxForwardSpeed);
+                    x = (float)  (offset * Math.cos(angle) * maxForwardSpeed);
 
-                } else if (Util.isInSecondQuarter(degrees)) {                          // 2. quarter
-                    degrees = (float) Math.toRadians(-degrees);
+                } else if (Util.isInSecondQuarter(angle)) {                          // 2. quarter
+                    angle = (float) Math.toRadians(-angle);
 
-                    y = (float) -(offset * Math.cos(degrees) * maxBackwardSpeed);
-                    x = (float) -(offset * Math.sin(degrees) * maxBackwardSpeed);
+                    y = (float) -(offset * Math.cos(angle) * maxBackwardSpeed);
+                    x = (float) -(offset * Math.sin(angle) * maxBackwardSpeed);
 
-                } else if (Util.isInThirdQuarter(degrees)) {                           // 3. quarter
-                    degrees = -(degrees + 90);
-                    degrees = (float) Math.toRadians(degrees);
+                } else if (Util.isInThirdQuarter(angle)) {                           // 3. quarter
+                    angle = -(angle + 90);
+                    angle = (float) Math.toRadians(angle);
 
-                    y = (float)  (offset * Math.sin(degrees) * maxBackwardSpeed);
-                    x = (float) -(offset * Math.cos(degrees) * maxBackwardSpeed);
+                    y = (float)  (offset * Math.sin(angle) * maxBackwardSpeed);
+                    x = (float) -(offset * Math.cos(angle) * maxBackwardSpeed);
 
-                } else if (Util.isInFourthQuarter(degrees)){                           // 4. quarter
-                    degrees = 180 - degrees;
-                    degrees = (float) Math.toRadians(degrees);
+                } else if (Util.isInFourthQuarter(angle)){                           // 4. quarter
+                    angle = 180 - angle;
+                    angle = (float) Math.toRadians(angle);
 
-                    y = (float) (offset * Math.cos(degrees) * maxForwardSpeed);
-                    x = (float) (offset * Math.sin(degrees) * maxForwardSpeed);
+                    y = (float) (offset * Math.cos(angle) * maxForwardSpeed);
+                    x = (float) (offset * Math.sin(angle) * maxForwardSpeed);
                 }
 
                 textViewX.setText(String.format(Locale.getDefault(),"%.3f", x));
@@ -274,6 +273,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Initialise joyStick
+     */
     private void initRightJoyStick() {
         Joystick joystick = findViewById(R.id.rightJoystick);
         final TextView joyStickValue = findViewById(R.id.textView_rightJoyStickValue);
