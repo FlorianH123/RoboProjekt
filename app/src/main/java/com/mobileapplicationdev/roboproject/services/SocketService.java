@@ -59,9 +59,10 @@ public class SocketService extends Service {
                         byteWriter.writeFloat(swap(controlData.getY()));
                         byteWriter.writeFloat(swap(controlData.getAngularVelocity()));
 
-                        Log.d(className, controlData.toString());
+                        //Log.d(className, controlData.toString());
 
                         controlDataArray = byteArrayStream.toByteArray();
+
                         dataOutputStream.write(controlDataArray);
                         byteArrayStream.reset();
 

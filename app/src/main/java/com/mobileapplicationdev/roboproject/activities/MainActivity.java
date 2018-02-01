@@ -221,9 +221,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         final TextView textView2 = findViewById(R.id.textView3);
         final TextView textView3 = findViewById(R.id.textView4);
 
-        final float maximumSpeed = Float.valueOf(getPreferenceValue(6));
-        final float minimumSpeed = Float.valueOf(getPreferenceValue(5));
-
         joystick.setJoystickListener(new JoystickListener() {
 
             @Override
@@ -232,34 +229,32 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
+                float maximumSpeed = Float.valueOf(getPreferenceValue(6));
+                float minimumSpeed = Float.valueOf(getPreferenceValue(5));
+
                 if (degrees <= 90.0 && degrees >= 0.0) {
                     degrees = (degrees - 90.0f) * -1.0f;
 
-                    x = (float) (offset * Math.sin(Math.toRadians(degrees)));
-                    y = (float) (offset * Math.cos(Math.toRadians(degrees)) * maximumSpeed);
+                    y = (float) -(offset * Math.sin(Math.toRadians(degrees)) * maximumSpeed);
+                    x = (float) (offset * Math.cos(Math.toRadians(degrees)) * minimumSpeed);
 
-                    offset *= maximumSpeed;
                 } else if (degrees < 0.0 && degrees >= -90.0) {
                     degrees *= -1;
 
-                    x = (float) (offset * Math.cos(Math.toRadians(degrees)));
-                    y = (float) (offset * Math.sin(Math.toRadians(degrees)) * minimumSpeed) * -1;
+                    y = (float) -(offset * Math.cos(Math.toRadians(degrees)) * maximumSpeed);
+                    x = (float) (offset * Math.sin(Math.toRadians(degrees)) * minimumSpeed) * -1;
 
-                    offset *= minimumSpeed;
                 } else if (degrees < -90.0 && degrees >= -180.0) {
                     degrees = (degrees + 90) * -1;
 
-                    x = (float) (offset * Math.sin(Math.toRadians(degrees))) * -1;
-                    y = (float) (offset * Math.cos(Math.toRadians(degrees)) * minimumSpeed) * -1;
+                    y = (float) (offset * Math.sin(Math.toRadians(degrees)) * maximumSpeed);
+                    x = (float) (offset * Math.cos(Math.toRadians(degrees)) * minimumSpeed) * -1;
 
-                    offset *= minimumSpeed;
                 } else if (degrees > 90.0){
                     degrees = 180 - degrees;
 
-                    x = (float) (offset * Math.cos(Math.toRadians(degrees))) * -1;
-                    y = (float) (offset * Math.sin(Math.toRadians(degrees)) * maximumSpeed);
-
-                    offset *= maximumSpeed;
+                    y = (float) (offset * Math.cos(Math.toRadians(degrees)) * maximumSpeed);
+                    x = (float) (offset * Math.sin(Math.toRadians(degrees)) * minimumSpeed);
                 }
 
                 textView.setText(String.valueOf(x));
