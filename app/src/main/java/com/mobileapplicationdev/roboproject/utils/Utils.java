@@ -1,6 +1,6 @@
 package com.mobileapplicationdev.roboproject.utils;
 
-public class Util {
+public class Utils {
     /**
      * Returns if the joystick is in the first quarter of the square
      * @param angle angle

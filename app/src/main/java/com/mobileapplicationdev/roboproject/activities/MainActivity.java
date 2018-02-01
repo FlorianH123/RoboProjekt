@@ -31,7 +31,7 @@ import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.services.SocketService;
-import com.mobileapplicationdev.roboproject.utils.Util;
+import com.mobileapplicationdev.roboproject.utils.Utils;
 
 import java.util.Locale;
 import java.util.Random;
@@ -231,27 +231,27 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 float maximumY = Float.valueOf(getPreferenceValue(4));
                 float maximumX  = Float.valueOf(getPreferenceValue(5));
 
-                if (Util.isInFirstQuarter(angle)) {                                  // 1. quarter
+                if (Utils.isInFirstQuarter(angle)) {                                  // 1. quarter
                     angle = -(angle - 90);
                     angle = (float) Math.toRadians(angle);
 
                     y = (float) -(offset * Math.sin(angle) * maximumY);
                     x = (float)  (offset * Math.cos(angle) * maximumX);
 
-                } else if (Util.isInSecondQuarter(angle)) {                          // 2. quarter
+                } else if (Utils.isInSecondQuarter(angle)) {                          // 2. quarter
                     angle = (float) Math.toRadians(-angle);
 
                     y = (float) -(offset * Math.cos(angle) * maximumY);
                     x = (float) -(offset * Math.sin(angle) * maximumX);
 
-                } else if (Util.isInThirdQuarter(angle)) {                           // 3. quarter
+                } else if (Utils.isInThirdQuarter(angle)) {                           // 3. quarter
                     angle = -(angle + 90);
                     angle = (float) Math.toRadians(angle);
 
                     y = (float)  (offset * Math.sin(angle) * maximumY);
                     x = (float) -(offset * Math.cos(angle) * maximumX);
 
-                } else if (Util.isInFourthQuarter(angle)){                           // 4. quarter
+                } else if (Utils.isInFourthQuarter(angle)){                           // 4. quarter
                     angle = 180 - angle;
                     angle = (float) Math.toRadians(angle);
 
