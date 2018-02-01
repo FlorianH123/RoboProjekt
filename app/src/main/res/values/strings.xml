@@ -24,31 +24,31 @@
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
     <string name="settings_robot_speed">Roboter Geschwindigkeiten</string>
-    <string name="maximum_backward_speed">Max. Vorwärtsgeschwindigkeit</string>
-    <string name="maximum_forward_speed">Max. Rückwärtsgeschwindigkeit</string>
+    <string name="maximum_x">Max. Maximum X</string>
+    <string name="maximum_y">Max. Maximum Y</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
 
     <string name="settings_port_1_key">PORT_1</string>
     <string name="settings_port_2_key">PORT_2</string>
     <string name="settings_port_3_key">PORT_3</string>
     <string name="settings_angular_velocity_key">ANGULAR_VELOCITY</string>
-    <string name="settings_maximum_forward_speed_key">MAX_FORWARD_SPEED</string>
-    <string name="settings_maximum_backward_speed_key">MAX_BACKWARD_SPEED</string>
+    <string name="settings_maximum_x_key">MAXIMUM_X</string>
+    <string name="settings_maximum_y_key">MAXIMUM_Y</string>
 
     <string name="port_1_default_value">1000</string>
     <string name="port_2_default_value">1000</string>
     <string name="port_3_default_value">1000</string>
     <string name="angular_velocity_default_value">0.5</string>
-    <string name="maximum_forward_speed_default_value">0.6</string>
-    <string name="maximum_backward_speed_default_value">0.5</string>
+    <string name="maximum_x_default_value">0.6</string>
+    <string name="maximum_y_default_value">0.5</string>
 
     <string-array name="settings_port_key">
         <item>@string/settings_port_1_key</item>
         <item>@string/settings_port_2_key</item>
         <item>@string/settings_port_3_key</item>
         <item>@string/settings_angular_velocity_key</item>
-        <item>@string/settings_maximum_forward_speed_key</item>
-        <item>@string/settings_maximum_backward_speed_key</item>
+        <item>@string/settings_maximum_x_key</item>
+        <item>@string/settings_maximum_y_key</item>
     </string-array>
 
     <string-array name="default_port_value">
@@ -56,8 +56,8 @@
         <item>@string/port_2_default_value</item>
         <item>@string/port_3_default_value</item>
         <item>@string/angular_velocity_default_value</item>
-        <item>@string/maximum_forward_speed_default_value</item>
-        <item>@string/maximum_backward_speed_default_value</item>
+        <item>@string/maximum_x_default_value</item>
+        <item>@string/maximum_y_default_value</item>
     </string-array>
 
     <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>

@@ -227,35 +227,36 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float angle, float offset) {
-                float maxForwardSpeed  = Float.valueOf(getPreferenceValue(4));
-                float maxBackwardSpeed = Float.valueOf(getPreferenceValue(5));
+
+                float maximumY = Float.valueOf(getPreferenceValue(4));
+                float maximumX  = Float.valueOf(getPreferenceValue(5));
 
                 if (Util.isInFirstQuarter(angle)) {                                  // 1. quarter
                     angle = -(angle - 90);
                     angle = (float) Math.toRadians(angle);
 
-                    y = (float) -(offset * Math.sin(angle) * maxForwardSpeed);
-                    x = (float)  (offset * Math.cos(angle) * maxForwardSpeed);
+                    y = (float) -(offset * Math.sin(angle) * maximumY);
+                    x = (float)  (offset * Math.cos(angle) * maximumX);
 
                 } else if (Util.isInSecondQuarter(angle)) {                          // 2. quarter
                     angle = (float) Math.toRadians(-angle);
 
-                    y = (float) -(offset * Math.cos(angle) * maxBackwardSpeed);
-                    x = (float) -(offset * Math.sin(angle) * maxBackwardSpeed);
+                    y = (float) -(offset * Math.cos(angle) * maximumY);
+                    x = (float) -(offset * Math.sin(angle) * maximumX);
 
                 } else if (Util.isInThirdQuarter(angle)) {                           // 3. quarter
                     angle = -(angle + 90);
                     angle = (float) Math.toRadians(angle);
 
-                    y = (float)  (offset * Math.sin(angle) * maxBackwardSpeed);
-                    x = (float) -(offset * Math.cos(angle) * maxBackwardSpeed);
+                    y = (float)  (offset * Math.sin(angle) * maximumY);
+                    x = (float) -(offset * Math.cos(angle) * maximumX);
 
                 } else if (Util.isInFourthQuarter(angle)){                           // 4. quarter
                     angle = 180 - angle;
                     angle = (float) Math.toRadians(angle);
 
-                    y = (float) (offset * Math.cos(angle) * maxForwardSpeed);
-                    x = (float) (offset * Math.sin(angle) * maxForwardSpeed);
+                    y = (float) (offset * Math.cos(angle) * maximumY);
+                    x = (float) (offset * Math.sin(angle) * maximumX);
                 }
 
                 textViewX.setText(String.format(Locale.getDefault(),"%.3f", x));

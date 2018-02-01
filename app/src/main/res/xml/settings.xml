@@ -36,18 +36,18 @@
         <PreferenceScreen android:title="@string/settings_robot_speed">
             <PreferenceCategory android:title="@string/settings_robot_speed">
                 <EditTextPreference
-                    android:defaultValue="@string/maximum_forward_speed_default_value"
-                    android:key="@string/settings_maximum_forward_speed_key"
+                    android:defaultValue="@string/maximum_x_default_value"
+                    android:key="@string/settings_maximum_x_key"
                     android:selectAllOnFocus="true"
                     android:singleLine="true"
-                    android:title="@string/maximum_forward_speed" />
+                    android:title="@string/maximum_y" />
 
                 <EditTextPreference
-                    android:defaultValue="@string/maximum_backward_speed_default_value"
-                    android:key="@string/settings_maximum_backward_speed_key"
+                    android:defaultValue="@string/maximum_y_default_value"
+                    android:key="@string/settings_maximum_y_key"
                     android:selectAllOnFocus="true"
                     android:singleLine="true"
-                    android:title="@string/maximum_backward_speed" />
+                    android:title="@string/maximum_x" />
             </PreferenceCategory>
         </PreferenceScreen>
     </PreferenceCategory>
