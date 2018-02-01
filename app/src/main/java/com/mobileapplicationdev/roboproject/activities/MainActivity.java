@@ -31,7 +31,9 @@ import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.services.SocketService;
+import com.mobileapplicationdev.roboproject.utils.Util;
 
+import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
@@ -229,27 +231,27 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 float maxForwardSpeed  = Float.valueOf(getPreferenceValue(4));
                 float maxBackwardSpeed = Float.valueOf(getPreferenceValue(5));
 
-                if (degrees <= 90.0 && degrees >= 0.0) {                               // 1. quarter
+                if (Util.isInFirstQuarter(degrees)) {                                  // 1. quarter
                     degrees = -(degrees - 90);
                     degrees = (float) Math.toRadians(degrees);
 
                     y = (float) -(offset * Math.sin(degrees) * maxForwardSpeed);
                     x = (float)  (offset * Math.cos(degrees) * maxForwardSpeed);
 
-                } else if (degrees < 0.0 && degrees >= -90.0) {                        // 2. quarter
+                } else if (Util.isInSecondQuarter(degrees)) {                          // 2. quarter
                     degrees = (float) Math.toRadians(-degrees);
 
                     y = (float) -(offset * Math.cos(degrees) * maxBackwardSpeed);
                     x = (float) -(offset * Math.sin(degrees) * maxBackwardSpeed);
 
-                } else if (degrees < -90.0 && degrees >= -180.0) {                     // 3. quarter
+                } else if (Util.isInThirdQuarter(degrees)) {                           // 3. quarter
                     degrees = -(degrees + 90);
                     degrees = (float) Math.toRadians(degrees);
 
                     y = (float)  (offset * Math.sin(degrees) * maxBackwardSpeed);
                     x = (float) -(offset * Math.cos(degrees) * maxBackwardSpeed);
 
-                } else if (degrees > 90.0){                                            // 4. quarter
+                } else if (Util.isInFourthQuarter(degrees)){                           // 4. quarter
                     degrees = 180 - degrees;
                     degrees = (float) Math.toRadians(degrees);
 
@@ -257,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     x = (float) (offset * Math.sin(degrees) * maxForwardSpeed);
                 }
 
-                textViewX.setText(String.format("%.3f", x));
-                textViewY.setText(String.format("%.3f", y));
+                textViewX.setText(String.format(Locale.getDefault(),"%.3f", x));
+                textViewY.setText(String.format(Locale.getDefault(),"%.3f", y));
             }
 
             @Override
