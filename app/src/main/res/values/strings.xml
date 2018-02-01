@@ -17,6 +17,8 @@
 
 <!-- Settings Strings -->
     <string name="settings_title">Einstellungen</string>
+    <string name="settings_port_title">Port Einstellungen</string>
+    <string name="settings_speed_title">Geschwindigkeiten</string>
 
     <string name="settings_port_1">Port 1</string>
     <string name="settings_port_2">Port 2</string>

@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/settings_title">
 
-    <PreferenceCategory android:title="Port Einstellungen">
+    <PreferenceCategory android:title="@string/settings_port_title">
 
         <EditTextPreference
             android:defaultValue="@string/port_1_default_value"
@@ -24,7 +24,7 @@
             android:title="@string/settings_port_3" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Geschwindigkeiten">
+    <PreferenceCategory android:title="@string/settings_speed_title">
 
         <EditTextPreference
             android:defaultValue="@string/angular_velocity_default_value"
