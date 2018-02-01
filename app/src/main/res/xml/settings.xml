@@ -23,35 +23,26 @@
         android:singleLine="true"
         android:title="@string/settings_port_3" />
 
-    <PreferenceScreen android:title="@string/settings_angular_velocity">
+    <EditTextPreference
+        android:defaultValue="@string/angular_velocity_default_value"
+        android:key="@string/settings_angular_velocity_key"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/settings_angular_velocity" />
 
-        <EditTextPreference
-            android:defaultValue="@string/angular_velocity_positive_default_value"
-            android:key="@string/settings_p_angular_velocity_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/settings_p_angular_velocity" />
-
-        <EditTextPreference
-            android:defaultValue="@string/angular_velocity_negative_default_value"
-            android:key="@string/settings_n_angular_velocity_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/settings_n_angular_velocity" />
-    </PreferenceScreen>
     <PreferenceScreen android:title="@string/settings_robot_speed">
+        <EditTextPreference
+            android:defaultValue="@string/maximum_forward_speed_default_value"
+            android:key="@string/settings_maximum_forward_speed_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/maximum_forward_speed"/>
 
         <EditTextPreference
-            android:defaultValue="@string/minimum_speed_default_value"
-            android:key="@string/settings_minimum_speed_key"
+            android:defaultValue="@string/maximum_backward_speed_default_value"
+            android:key="@string/settings_maximum_backward_speed_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/minimum_speed" />
-        <EditTextPreference
-            android:defaultValue="@string/maximum_speed_default_value"
-            android:key="@string/settings_maximum_speed_key"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/maximum_speed" />
+            android:title="@string/maximum_backward_speed"/>
     </PreferenceScreen>
 </PreferenceScreen>

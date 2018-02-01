@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -30,8 +29,8 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
-import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.models.ControlData;
+import com.mobileapplicationdev.roboproject.services.SocketService;
 
 import java.util.Random;
 
@@ -216,10 +215,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      */
     private void initLeftJoyStick() {
         Joystick joystick = findViewById(R.id.leftJoystick);
-        final TextView textView = findViewById(R.id.textView);
-        final TextView textView1 = findViewById(R.id.textView2);
-        final TextView textView2 = findViewById(R.id.textView3);
-        final TextView textView3 = findViewById(R.id.textView4);
+        final TextView textViewX = findViewById(R.id.textView_leftJoyStick_X_Value);
+        final TextView textViewY = findViewById(R.id.textView_leftJoyStick_Y_Value);
 
         joystick.setJoystickListener(new JoystickListener() {
 
@@ -229,46 +226,45 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                float maximumSpeed = Float.valueOf(getPreferenceValue(6));
-                float minimumSpeed = Float.valueOf(getPreferenceValue(5));
+                float maxForwardSpeed  = Float.valueOf(getPreferenceValue(4));
+                float maxBackwardSpeed = Float.valueOf(getPreferenceValue(5));
 
-                if (degrees <= 90.0 && degrees >= 0.0) {
-                    degrees = (degrees - 90.0f) * -1.0f;
+                if (degrees <= 90.0 && degrees >= 0.0) {                               // 1. quarter
+                    degrees = -(degrees - 90);
+                    degrees = (float) Math.toRadians(degrees);
 
-                    y = (float) -(offset * Math.sin(Math.toRadians(degrees)) * maximumSpeed);
-                    x = (float) (offset * Math.cos(Math.toRadians(degrees)) * minimumSpeed);
+                    y = (float) -(offset * Math.sin(degrees) * maxForwardSpeed);
+                    x = (float)  (offset * Math.cos(degrees) * maxForwardSpeed);
 
-                } else if (degrees < 0.0 && degrees >= -90.0) {
-                    degrees *= -1;
+                } else if (degrees < 0.0 && degrees >= -90.0) {                        // 2. quarter
+                    degrees = (float) Math.toRadians(-degrees);
 
-                    y = (float) -(offset * Math.cos(Math.toRadians(degrees)) * maximumSpeed);
-                    x = (float) (offset * Math.sin(Math.toRadians(degrees)) * minimumSpeed) * -1;
+                    y = (float) -(offset * Math.cos(degrees) * maxBackwardSpeed);
+                    x = (float) -(offset * Math.sin(degrees) * maxBackwardSpeed);
 
-                } else if (degrees < -90.0 && degrees >= -180.0) {
-                    degrees = (degrees + 90) * -1;
+                } else if (degrees < -90.0 && degrees >= -180.0) {                     // 3. quarter
+                    degrees = -(degrees + 90);
+                    degrees = (float) Math.toRadians(degrees);
 
-                    y = (float) (offset * Math.sin(Math.toRadians(degrees)) * maximumSpeed);
-                    x = (float) (offset * Math.cos(Math.toRadians(degrees)) * minimumSpeed) * -1;
+                    y = (float)  (offset * Math.sin(degrees) * maxBackwardSpeed);
+                    x = (float) -(offset * Math.cos(degrees) * maxBackwardSpeed);
 
-                } else if (degrees > 90.0){
+                } else if (degrees > 90.0){                                            // 4. quarter
                     degrees = 180 - degrees;
+                    degrees = (float) Math.toRadians(degrees);
 
-                    y = (float) (offset * Math.cos(Math.toRadians(degrees)) * maximumSpeed);
-                    x = (float) (offset * Math.sin(Math.toRadians(degrees)) * minimumSpeed);
+                    y = (float) (offset * Math.cos(degrees) * maxForwardSpeed);
+                    x = (float) (offset * Math.sin(degrees) * maxForwardSpeed);
                 }
 
-                textView.setText(String.valueOf(x));
-                textView1.setText(String.valueOf(y));
-                textView2.setText(String.valueOf(degrees));
-                textView3.setText(String.valueOf(offset));
+                textViewX.setText(String.format("%.3f", x));
+                textViewY.setText(String.format("%.3f", y));
             }
 
             @Override
             public void onUp() {
-                textView.setText("");
-                textView1.setText("");
-                textView2.setText("");
-                textView3.setText("");
+                textViewX.setText("0.0");
+                textViewY.setText("0.0");
 
                 x = 0.0f;
                 y = 0.0f;
@@ -287,15 +283,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                float pAngularVelocity = Float.parseFloat(getPreferenceValue(3));
-                float nAngularVelocity = Float.parseFloat(getPreferenceValue(4));
+                float angularVelocity = Float.parseFloat(getPreferenceValue(3));
 
                 if (degrees == -180) {
-                    rot_z = offset * pAngularVelocity;
+                    rot_z = offset * angularVelocity;
                 }
 
                 if (degrees == 0) {
-                    rot_z = -offset * nAngularVelocity;
+                    rot_z = -offset * angularVelocity;
                 }
 
                 joyStickValue.setText(String.valueOf(rot_z));
