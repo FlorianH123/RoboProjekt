@@ -37,9 +37,9 @@ import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
-    private static final String TAG_TAB_1 = "Tag_Tab1";
-    private static final String TAG_TAB_2 = "Tag_Tab2";
-    private static final String TAG_TAB_3 = "Tag_Tab3";
+    public static final String TAG_TAB_1 = "Tag_Tab1";
+    public static final String TAG_TAB_2 = "Tag_Tab2";
+    public static final String TAG_TAB_3 = "Tag_Tab3";
 
     private SocketService socketService;
     private boolean mBound = false;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float x;
     private float y;
     private float rot_z = 0.0f;
+
+    private ToggleButton toggleButton;
 
     private final Random RANDOM = new Random();
     private LineGraphSeries<DataPoint> series;
@@ -65,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         // Set toolbar icon for settings
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toggleButton = findViewById(R.id.toggleButton_connection_tab1);
 
         // Initialise components inside  the main activity
         initTabHost();
@@ -462,14 +466,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public void hostErrorHandler() {
-        String errorMessage = getString(R.string.error_msg_host_error);
-        // TODO fix exception
-        // unCheckAllConnectionButtons();
-        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public ControlData setControlDataDebug(){
         TextView enterDebugSpeed = findViewById(R.id.editText_enterDebug_speed);
         TextView enterVarI = findViewById(R.id.editTextEnterI);
@@ -482,8 +478,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return controlData;
     }
 
-    public ToggleButton getToggleButton() {
-        return findViewById(R.id.toggleButton_connection_tab1);
+    public ToggleButton getToggleButton(String tagTab) {
+        switch (tagTab) {
+            case TAG_TAB_1:
+                return findViewById(R.id.toggleButton_connection_tab1);
+            case TAG_TAB_2:
+                return findViewById(R.id.toggleButton_connection_tab2);
+            case TAG_TAB_3:
+                return findViewById(R.id.toggleButton_connection_tab3);
+            default:
+                return null;
+        }
     }
 //--------------------------------------------------------------------------------------------------
 }

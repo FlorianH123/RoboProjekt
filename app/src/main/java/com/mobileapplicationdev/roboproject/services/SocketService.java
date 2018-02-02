@@ -6,16 +6,19 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.activities.MainActivity;
 import com.mobileapplicationdev.roboproject.models.ControlData;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
+
+import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
 
 /**
  * Created by Florian on 17.01.2018.
@@ -42,10 +45,10 @@ public class SocketService extends Service {
     }
 
     public void openSocket(final String ip, final int port) {
-        new Thread ( new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                String ioExceptionLoggerMsg = getString(R.string.error_msg_socket_io_exception);
+
                 byte[] controlDataArray;
 
                 try (Socket steeringSocket = new Socket(ip, port);
@@ -69,16 +72,20 @@ public class SocketService extends Service {
 
                         Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
-                } catch (UnknownHostException ex) {
-                    //mainActivity.hostErrorHandler();
-                    mainActivity.getToggleButton().post(new Runnable() {
+                } catch (IOException ex) {
+                    final ToggleButton toggleButton = mainActivity.getToggleButton(MainActivity.TAG_TAB_1);
+                    final String exceptionString = getErrorMessage() + ex.getMessage();
+
+                    Log.e(className, exceptionString);
+
+                    toggleButton.post(new Runnable() {
                         @Override
                         public void run() {
-                            mainActivity.getToggleButton().setChecked(false);
+                            Toast.makeText(SocketService.this, exceptionString,
+                                    Toast.LENGTH_LONG).show();
+                            toggleButton.setChecked(false);
                         }
                     });
-                } catch (IOException ex) {
-                    Log.e(className, ioExceptionLoggerMsg + ex.getMessage());
                 } catch (InterruptedException ex) {
                     Log.e(className, ex.getMessage());
                 }
@@ -88,31 +95,52 @@ public class SocketService extends Service {
         }, "robot_control.socket.thread").start();
     }
 
-    /**
-     * Byte swap a single int value.
-     *
-     * @param value  Value to byte swap.
-     * @return Byte swapped representation.
-     */
-    private int swap (int value) {
-        int b1 = (value) & 0xff;
-        int b2 = (value >>  8) & 0xff;
-        int b3 = (value >> 16) & 0xff;
-        int b4 = (value >> 24) & 0xff;
+    public void openPlottingSocket(final String ip, final int port) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] debugData;
 
-        return b1 << 24 | b2 << 16 | b3 << 8 | b4;
-    }
+                try (Socket debugSocket = new Socket(ip, port);
+                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
+                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                     DataOutputStream byteWriter = new DataOutputStream(baos)) {
 
-    /**
-     * Byte swap a single float value.
-     *
-     * @param value  Value to byte swap.
-     * @return Byte swapped representation.
-     */
-    private float swap (float value) {
-        int intValue = Float.floatToIntBits (value);
-        intValue = swap (intValue);
-        return Float.intBitsToFloat (intValue);
+                    while (mainActivity.getDebugButtonStatus()) {
+                        ControlData controlData = mainActivity.setControlDataDebug();
+                        byteWriter.writeInt(swap(controlData.getSpeed()));
+                        byteWriter.writeFloat(swap(controlData.getVarI()));
+                        byteWriter.writeFloat(swap(controlData.getVarP()));
+                        byteWriter.writeFloat(swap(controlData.getRegulatorFrequenz()));
+
+                        debugData = baos.toByteArray();
+                        baos.reset();
+                        dataOS.write(debugData);
+
+                        Thread.sleep(50);
+                    }
+                } catch (IOException ex) {
+                    final ToggleButton toggleButton = mainActivity.getToggleButton(MainActivity.TAG_TAB_2);
+                    final String exceptionString = getErrorMessage() + ex.getMessage();
+
+                    Log.e(className, exceptionString);
+
+                    toggleButton.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SocketService.this, exceptionString,
+                                    Toast.LENGTH_LONG).show();
+                            toggleButton.setChecked(false);
+                        }
+                    });
+                } catch (InterruptedException ex) {
+                    Log.e(className, ex.getMessage());
+                }
+
+                stopSelf();
+
+            }
+        }, "robot_debugPlot.socket.thread").start();
     }
 
     // Register Activity to the service as Callbacks client
@@ -124,49 +152,15 @@ public class SocketService extends Service {
     public interface Callbacks {
         boolean getToggleButtonStatus();
         ControlData getControlData();
-        void hostErrorHandler();
         boolean getDebugButtonStatus();
         ControlData setControlDataDebug();
-        ToggleButton getToggleButton();
+        ToggleButton getToggleButton(String tagTab);
     }
 
-    public void openPlottingSocket(final String ip , final int port){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String ioExceptionLoggerMsg = getString(R.string.error_msg_socket_io_exception);
-                byte[] debugData;
+    private String getErrorMessage() {
+        String ioExceptionLoggerMsg =
+                getString(R.string.error_msg_socket_io_exception);
 
-                try (Socket debugSocket = new Socket(ip,port);
-                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
-                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                     DataOutputStream byteWriter = new DataOutputStream(baos)
-
-                ){ while(mainActivity.getDebugButtonStatus()){
-                    ControlData controlData = mainActivity.setControlDataDebug();
-                    byteWriter.writeInt(swap(controlData.getSpeed()));
-                    byteWriter.writeFloat(swap(controlData.getVarI()));
-                    byteWriter.writeFloat(swap(controlData.getVarP()));
-                    byteWriter.writeFloat(swap(controlData.getRegulatorFrequenz()));
-
-                    debugData = baos.toByteArray();
-                    baos.reset();
-                    dataOS.write(debugData);
-
-                    Thread.sleep(50);
-                }
-                } catch (UnknownHostException e) {
-                   mainActivity.hostErrorHandler();
-                } catch (IOException e) {
-                    Log.e(className,ioExceptionLoggerMsg + e.getMessage());
-                } catch (InterruptedException e) {
-                    Log.e(className,e.getMessage());
-                }
-
-                stopSelf();
-
-            }
-        },"robot_debugPlot.socket.thread").start();
-
+        return ioExceptionLoggerMsg + " ";
     }
 }

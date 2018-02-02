@@ -36,4 +36,31 @@ public class Utils {
     public static boolean isInFourthQuarter(float angle) {
         return angle > 90.0;
     }
+
+    /**
+     * Byte swap a single int value.
+     *
+     * @param value Value to byte swap.
+     * @return Byte swapped representation.
+     */
+    public static int swap(int value) {
+        int b1 = (value) & 0xff;
+        int b2 = (value >> 8) & 0xff;
+        int b3 = (value >> 16) & 0xff;
+        int b4 = (value >> 24) & 0xff;
+
+        return b1 << 24 | b2 << 16 | b3 << 8 | b4;
+    }
+
+    /**
+     * Byte swap a single float value.
+     *
+     * @param value Value to byte swap.
+     * @return Byte swapped representation.
+     */
+    public static float swap(float value) {
+        int intValue = Float.floatToIntBits(value);
+        intValue = swap(intValue);
+        return Float.intBitsToFloat(intValue);
+    }
 }
