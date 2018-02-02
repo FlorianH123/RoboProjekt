@@ -215,23 +215,7 @@
                             app:layout_constraintHorizontal_bias="0.05"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.05" />/>
-                            <EditText
-                                android:id="@+id/editText_ipAddress_tab2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="51dp"
-                               android:layout_marginStart="8dp"
-                                android:digits="1234567890."
-                                android:ems="10"
-                                android:hint="@string/text_enter_ip"
-                                android:inputType="number"
-                                android:textSize="@dimen/editText_ip_text_size"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintHorizontal_bias="0.05"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.05"/>
+                            app:layout_constraintVertical_bias="0.05" />
 
                         <ToggleButton
                             android:id="@+id/toggleButton_connection_tab2"
@@ -310,7 +294,7 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginStart="8dp"
                             android:ems="10"
-                            android:hint="@string/enter_I_Faktor"
+                            android:hint="@string/enter_I_Factor"
                             android:inputType="number"
                             app:layout_constraintBottom_toTopOf="@+id/graph"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -325,7 +309,7 @@
                             android:layout_marginBottom="8dp"
                             android:layout_marginStart="8dp"
                             android:ems="10"
-                            android:hint="@string/enter_P_Faktor"
+                            android:hint="@string/enter_P_Factor"
                             android:inputType="number"
                             app:layout_constraintBottom_toTopOf="@+id/graph"
                             app:layout_constraintEnd_toEndOf="@+id/editTextEnterI"
@@ -346,91 +330,6 @@
 
                     </android.support.constraint.ConstraintLayout>
                 </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/tab1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <android.support.constraint.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:id="@+id/editText_ipAddress"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:hint="@string/text_enter_ip"
-                            android:textSize="@dimen/editText_ip_text_size"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.05"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.050000012" />
-
-                        <ToggleButton
-                            android:id="@+id/toggleButton_connection"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="60dp"
-                            android:textOff="@string/text_toggleButton_connection_off"
-                            android:textOn="@string/text_toggleButton_connection_on"
-                            android:textSize="@dimen/toggleButton_connection_text_size"
-                            app:layout_constraintBaseline_toBaselineOf="@+id/editText_ipAddress"
-                            app:layout_constraintStart_toEndOf="@+id/editText_ipAddress" />
-
-                        <com.jmedeisis.bugstick.Joystick
-                            android:id="@+id/leftJoystick"
-                            android:layout_width="@dimen/base_size"
-                            android:layout_height="@dimen/base_size"
-                            android:background="@drawable/bg_base"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.05"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <Button
-                                android:layout_width="@dimen/stick_size"
-                                android:layout_height="@dimen/stick_size"
-                                android:background="@drawable/bg_stick" />
-                        </com.jmedeisis.bugstick.Joystick>
-
-                        <com.jmedeisis.bugstick.Joystick
-                            android:id="@+id/rightJoystick"
-                            android:layout_width="@dimen/base_size"
-                            android:layout_height="0dp"
-                            android:background="@drawable/bg_base"
-                            app:layout_constraintBottom_toBottomOf="@+id/leftJoystick"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.95"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/leftJoystick"
-                            app:motion_constraint="Horizontal">
-
-                            <Button
-                                android:layout_width="@dimen/stick_size"
-                                android:layout_height="@dimen/stick_size"
-                                android:background="@drawable/bg_stick" />
-                        </com.jmedeisis.bugstick.Joystick>
-
-                        <TextView
-                            android:id="@+id/textView_rightJoyStickValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:text="0.0"
-                            android:textSize="@dimen/text_size"
-                            app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
-                            app:layout_constraintStart_toStartOf="@+id/rightJoystick"
-                            app:layout_constraintTop_toBottomOf="@+id/rightJoystick" />
-
-                    </android.support.constraint.ConstraintLayout>
-                </LinearLayout>
-
 
                 <LinearLayout
                     android:id="@+id/tab3"

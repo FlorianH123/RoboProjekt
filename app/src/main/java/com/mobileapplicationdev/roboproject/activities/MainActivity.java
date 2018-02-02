@@ -323,66 +323,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
-    private void startDebugSocket(){
-        //TextView textView = findViewById(R.id)
-          //      String ipAdress
-    }
 
-    private void unCheckAllConnectionButtons() {
-        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
-
-        connectionButtonTab1.setChecked(false);
-        //connectionButtonTab2.setChecked(false);
-        //connectionButtonTab3.setChecked(false);
-    }
-
-// Callbacks interface implementation --------------------------------------------------------------
-
-    @Override
-    public boolean getToggleButtonStatus() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
-        return toggleButton.isChecked();
-    }
-
-    @Override
-    public boolean getDebugButtonStatus(){
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
-        return toggleButton.isChecked();
-    }
-
-    @Override
-    public ControlData setControlDataDebug(){
-        TextView enterDebugSpeed = findViewById(R.id.editText_enterDebug_speed);
-        TextView enterVarI = findViewById(R.id.editTextEnterI);
-        TextView enterVarP = findViewById(R.id.editTextEnterP);
-        TextView enterRegulatorFrequenz = findViewById(R.id.editTextFrequency);
-        ControlData controlData = new ControlData(Integer.parseInt(enterDebugSpeed.getText().toString()),
-                                                    Float.parseFloat(enterVarI.getText().toString()),
-                                                    Float.parseFloat(enterVarP.getText().toString()),
-                                                    Float.parseFloat(enterRegulatorFrequenz.getText().toString()));
-        return controlData;
-    }
-
-    @Override
-    public ControlData getControlData() {
-        ControlData controlData = new ControlData();
-
-        controlData.setAngularVelocity(rot_z);
-        return controlData;
-    }
-
-    @Override
-    public void hostErrorHandler() {
-        String errorMessage = getString(R.string.error_msg_host_error);
-        // TODO fix exception
-        // unCheckAllConnectionButtons();
-        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-//--------------------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------------------
 
 // Tab 2 -------------------------------------------------------------------------------------------
 
@@ -446,6 +387,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         spinner.setAdapter(adapter);
     }
 
+    private void startDebugSocket(){
+        TextView textView = findViewById(R.id.editText_ipAddress_tab2);
+        String ipAdress = String.valueOf(textView.getText());
+
+        if(mBound){
+            socketService.openPlottingSocket(ipAdress,Integer.parseInt(getPreferenceValue(1)));
+        }
+    }
 // -------------------------------------------------------------------------------------------------
 
 // Callbacks interface implementation --------------------------------------------------------------
@@ -473,6 +422,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         // TODO fix exception
         // unCheckAllConnectionButtons();
         //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean getDebugButtonStatus(){
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
+        return toggleButton.isChecked();
+    }
+
+    @Override
+    public ControlData setControlDataDebug(){
+        TextView enterDebugSpeed = findViewById(R.id.editText_enterDebug_speed);
+        TextView enterVarI = findViewById(R.id.editTextEnterI);
+        TextView enterVarP = findViewById(R.id.editTextEnterP);
+        TextView enterRegulatorFrequenz = findViewById(R.id.editTextFrequency);
+        ControlData controlData = new ControlData(Integer.parseInt(enterDebugSpeed.getText().toString()),
+                Float.parseFloat(enterVarI.getText().toString()),
+                Float.parseFloat(enterVarP.getText().toString()),
+                Float.parseFloat(enterRegulatorFrequenz.getText().toString()));
+        return controlData;
     }
 
 //--------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.models;
 
 /**
  * Created by Florian on 22.01.2018.
@@ -38,6 +38,7 @@ public class ControlData {
 
     public float getVarI() {
         return varI;
+    }
     public float getX() {
         return x;
     }
