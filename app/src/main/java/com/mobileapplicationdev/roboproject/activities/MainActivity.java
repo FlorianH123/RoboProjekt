@@ -74,7 +74,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initLeftJoyStick();
         initRightJoyStick();
         initDynamicGraph();
-        initSpinner();
+        initSpinnerTab2();
+        initSpinnerTab3();
     }
 
     /**
@@ -415,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
     }
 
-    private void initSpinner(){
+    private void initSpinnerTab2(){
         Spinner spinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -435,6 +436,20 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         EditText editText =  findViewById(R.id.editText_ipAddress_tab3);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_3);
+    }
+
+    private void initSpinnerTab3(){
+        Spinner spinner = findViewById(R.id.spinner_engines_tab3);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.engines, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
     }
 
 // -------------------------------------------------------------------------------------------------

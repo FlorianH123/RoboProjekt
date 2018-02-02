@@ -82,10 +82,14 @@
     <string name="Enter_frequency">Enter regulator frequency</string>
 
     <string-array name="engines">
-        <item>Engine1</item>
-        <item>Engine2</item>
-        <item>Engine3</item>
+        <item>Motor vorne links</item>
+        <item>Motor vorne rechts</item>
+        <item>Motor hinten</item>
     </string-array>
+<!-- -->
+
+<!-- TAB 3 Strings -->
+    <string name="enter_angle">Enter angle</string>
 <!-- -->
 
 <!-- Socket Strings -->
