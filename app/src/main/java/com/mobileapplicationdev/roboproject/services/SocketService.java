@@ -48,7 +48,6 @@ public class SocketService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 byte[] controlDataArray;
 
                 try (Socket steeringSocket = new Socket(ip, port);
@@ -73,20 +72,7 @@ public class SocketService extends Service {
                         Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
                 } catch (IOException ex) {
-                    final ToggleButton toggleButton = mainActivity.
-                            getToggleButton(MainActivity.TAG_TAB_1);
-                    final String errorString = getErrorMessage(ex.getMessage());
-
-                    Log.e(className, errorString);
-
-                    toggleButton.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(SocketService.this, errorString,
-                                    Toast.LENGTH_LONG).show();
-                            toggleButton.setChecked(false);
-                        }
-                    });
+                   exceptionHandler(MainActivity.TAG_TAB_1, ex.getMessage());
                 } catch (InterruptedException ex) {
                     Log.e(className, ex.getMessage());
                 }
@@ -121,20 +107,7 @@ public class SocketService extends Service {
                         Thread.sleep(50);
                     }
                 } catch (IOException ex) {
-                    final ToggleButton toggleButton = mainActivity.
-                            getToggleButton(MainActivity.TAG_TAB_2);
-                    final String errorString = getErrorMessage(ex.getMessage());
-
-                    Log.e(className, errorString);
-
-                    toggleButton.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(SocketService.this, errorString,
-                                    Toast.LENGTH_LONG).show();
-                            toggleButton.setChecked(false);
-                        }
-                    });
+                    exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
                 } catch (InterruptedException ex) {
                     Log.e(className, ex.getMessage());
                 }
@@ -164,5 +137,22 @@ public class SocketService extends Service {
                 getString(R.string.error_msg_socket_io_exception);
 
         return ioExceptionLoggerMsg + " " + exceptionMessage;
+    }
+
+    private void exceptionHandler(String tagTab, String ex) {
+        final ToggleButton toggleButton = mainActivity.
+                getToggleButton(tagTab);
+        final String errorString = getErrorMessage(ex);
+
+        Log.e(className, errorString);
+
+        toggleButton.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(SocketService.this, errorString,
+                        Toast.LENGTH_LONG).show();
+                toggleButton.setChecked(false);
+            }
+        });
     }
 }
