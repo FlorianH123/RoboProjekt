@@ -258,14 +258,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     x = (float) (offset * Math.sin(angle) * maximumX);
                 }
 
-                textViewX.setText(String.format(Locale.getDefault(),"%.3f", x));
-                textViewY.setText(String.format(Locale.getDefault(),"%.3f", y));
+                textViewX.setText(String.format(Locale.getDefault(),"%.2f", x));
+                textViewY.setText(String.format(Locale.getDefault(),"%.2f", y));
             }
 
             @Override
             public void onUp() {
-                textViewX.setText("0.0");
-                textViewY.setText("0.0");
+                String defaultValue = getString(R.string.textView_default_value);
+                textViewX.setText(defaultValue);
+                textViewY.setText(defaultValue);
 
                 x = 0.0f;
                 y = 0.0f;
@@ -302,8 +303,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onUp() {
+                String defaultValue = getString(R.string.textView_default_value);
+                joyStickValue.setText(defaultValue);
+
                 rot_z = 0.0f;
-                joyStickValue.setText("0.0");
             }
         });
     }
