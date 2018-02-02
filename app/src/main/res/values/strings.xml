@@ -89,7 +89,6 @@
 <!-- -->
 
 <!-- Socket Strings -->
-    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
     <string name="error_msg_socket_io_exception">Error while sending/receiving data!</string>
 <!-- -->
 
