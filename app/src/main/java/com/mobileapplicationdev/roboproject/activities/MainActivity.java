@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
-    private ToggleButton toggleButton;
-
     private final Random RANDOM = new Random();
     private LineGraphSeries<DataPoint> series;
     private int lastX = 0;
@@ -67,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         // Set toolbar icon for settings
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        toggleButton = findViewById(R.id.toggleButton_connection_tab1);
 
         // Initialise components inside  the main activity
         initTabHost();
