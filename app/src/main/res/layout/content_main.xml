@@ -79,6 +79,7 @@
                             app:layout_constraintHorizontal_bias="0.05"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.6"
                             app:start_on_first_touch="true">
 
                             <Button
@@ -105,17 +106,6 @@
                                 android:layout_height="@dimen/stick_size"
                                 android:background="@drawable/bg_stick"/>
                         </com.jmedeisis.bugstick.Joystick>
-
-                        <TextView
-                            android:id="@+id/textView_rightJoyStickValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:text="@string/textView_default_value"
-                            android:textSize="@dimen/text_size"
-                            app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
-                            app:layout_constraintStart_toStartOf="@+id/rightJoystick"
-                            app:layout_constraintTop_toBottomOf="@+id/rightJoystick" />
 
                         <TextView
                             android:id="@+id/textView_leftJoyStick_X_Value"
@@ -160,6 +150,39 @@
                             android:textSize="@dimen/text_size"
                             app:layout_constraintEnd_toEndOf="@+id/leftJoystick"
                             app:layout_constraintTop_toBottomOf="@+id/textView_leftJoyStick_Y_Value" />
+
+                        <TextView
+                            android:id="@+id/textView_linear_velocity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:text="@string/textView_linear_velocity"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintBottom_toTopOf="@+id/leftJoystick"
+                            app:layout_constraintEnd_toEndOf="@+id/leftJoystick"
+                            app:layout_constraintStart_toStartOf="@+id/leftJoystick" />
+
+                        <TextView
+                            android:id="@+id/textView_angular_velocity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:text="@string/textView_angular_velocity"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintBottom_toTopOf="@+id/rightJoystick"
+                            app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
+                            app:layout_constraintStart_toStartOf="@+id/rightJoystick" />
+
+                        <TextView
+                            android:id="@+id/textView_rightJoyStickValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/textView_default_value"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
+                            app:layout_constraintStart_toStartOf="@+id/rightJoystick"
+                            app:layout_constraintTop_toBottomOf="@+id/rightJoystick" />
                     </android.support.constraint.ConstraintLayout>
 
                 </LinearLayout>

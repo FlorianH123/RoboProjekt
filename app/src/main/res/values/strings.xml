@@ -64,9 +64,11 @@
 <!-- -->
 
 <!-- TAB 1 Strings -->
-    <string name="textView_default_value">0.0</string>
+    <string name="textView_default_value">0.00</string>
     <string name="textView_x">X</string>
     <string name="textView_y">Y</string>
+    <string name="textView_linear_velocity">Lineargeschwindigkeit</string>
+    <string name="textView_angular_velocity">Winkelgeschwindigkeit</string>
 <!-- -->
 
 <!-- TAB 2 Strings -->
