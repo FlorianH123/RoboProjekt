@@ -134,13 +134,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // Socket connection -------------------------------------------------------------------------------
 
     private void unCheckAllConnectionButtons() {
-        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection_tab1);
+        ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection_tab2);
+        ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection_tab3);
 
         connectionButtonTab1.setChecked(false);
-        //connectionButtonTab2.setChecked(false);
-        //connectionButtonTab3.setChecked(false);
+        connectionButtonTab2.setChecked(false);
+        connectionButtonTab3.setChecked(false);
     }
 
     /**
@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void startSocketService(String tagTab) {
         if (mBound) {
             if (tagTab.equals(TAG_TAB_1)) {
-                TextView textView = findViewById(R.id.editText_ipAddress);
+                TextView textView = findViewById(R.id.editText_ipAddress_tab1);
                 String ipAddress = String.valueOf(textView.getText());
 
                 socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
@@ -243,8 +243,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // TAB 1 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab1() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
-        EditText editText = findViewById(R.id.editText_ipAddress);
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab1);
+        EditText editText = findViewById(R.id.editText_ipAddress_tab1);
 
         initConnectionButton(toggleButton , editText, TAG_TAB_1);
     }
@@ -425,8 +425,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // Tab 3 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab3() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_debug_2);
-        EditText editText =  findViewById(R.id.editText_ipAddress_debug_2);
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab3);
+        EditText editText =  findViewById(R.id.editText_ipAddress_tab3);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_3);
     }
@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     @Override
     public boolean getToggleButtonStatus() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab1);
         return toggleButton.isChecked();
     }
 
