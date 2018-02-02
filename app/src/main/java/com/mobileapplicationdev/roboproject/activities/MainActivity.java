@@ -191,17 +191,20 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Starts socket service
      */
     private void startSocketService(String tagTab) {
+        TextView textView;
+        String ipAddress;
+
         if (mBound) {
             if (tagTab.equals(TAG_TAB_1)) {
-                TextView textView = findViewById(R.id.editText_ipAddress_tab1);
-                String ipAddress = String.valueOf(textView.getText());
+                textView = findViewById(R.id.editText_ipAddress_tab1);
+                ipAddress = String.valueOf(textView.getText());
 
                 socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
             }
 
             if (tagTab.equals(TAG_TAB_2)) {
-                TextView textView = findViewById(R.id.editText_ipAddress_tab2);
-                String ipAddress = String.valueOf(textView.getText());
+                textView = findViewById(R.id.editText_ipAddress_tab2);
+                ipAddress = String.valueOf(textView.getText());
 
                 socketService.openPlottingSocket(ipAddress,Integer.parseInt(getPreferenceValue(1)));
             }
