@@ -73,7 +73,8 @@ public class SocketService extends Service {
                         Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
                 } catch (IOException ex) {
-                    final ToggleButton toggleButton = mainActivity.getToggleButton(MainActivity.TAG_TAB_1);
+                    final ToggleButton toggleButton = mainActivity.
+                            getToggleButton(MainActivity.TAG_TAB_1);
                     final String exceptionString = getErrorMessage() + ex.getMessage();
 
                     Log.e(className, exceptionString);
@@ -120,7 +121,8 @@ public class SocketService extends Service {
                         Thread.sleep(50);
                     }
                 } catch (IOException ex) {
-                    final ToggleButton toggleButton = mainActivity.getToggleButton(MainActivity.TAG_TAB_2);
+                    final ToggleButton toggleButton = mainActivity.
+                            getToggleButton(MainActivity.TAG_TAB_2);
                     final String exceptionString = getErrorMessage() + ex.getMessage();
 
                     Log.e(className, exceptionString);
