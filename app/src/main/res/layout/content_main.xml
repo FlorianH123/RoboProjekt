@@ -196,33 +196,27 @@
                         <EditText
                             android:id="@+id/editText_ipAddress_tab2"
                             android:layout_width="wrap_content"
-                            android:layout_height="51dp"
-                            android:layout_marginStart="8dp"
-                            android:digits="1234567890."
+                            android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/text_enter_ip"
-                            android:inputType="number"
                             android:textSize="@dimen/editText_ip_text_size"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.05"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.05" />
+                            app:layout_constraintVertical_bias="0.050000012" />
 
                         <ToggleButton
                             android:id="@+id/toggleButton_connection_tab2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="60dp"
                             android:textOff="@string/text_toggleButton_connection_off"
                             android:textOn="@string/text_toggleButton_connection_on"
                             android:textSize="@dimen/toggleButton_connection_text_size"
-                            app:layout_constraintBottom_toBottomOf="@+id/editText_ipAddress_tab2"
-                            app:layout_constraintStart_toEndOf="@+id/editText_ipAddress_tab2"
-                            app:layout_constraintTop_toTopOf="@+id/editText_ipAddress_tab2"
-                            app:layout_constraintVertical_bias="0.0" />
+                            app:layout_constraintBaseline_toBaselineOf="@+id/editText_ipAddress_tab2"
+                            app:layout_constraintStart_toEndOf="@+id/editText_ipAddress_tab2" />
 
                         <com.jjoe64.graphview.GraphView
                             android:id="@+id/graph"
