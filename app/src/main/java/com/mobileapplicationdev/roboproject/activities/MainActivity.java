@@ -484,11 +484,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         TextView enterDebugSpeed = findViewById(R.id.editText_enterDebug_speed);
         TextView enterVarI = findViewById(R.id.editTextEnterI);
         TextView enterVarP = findViewById(R.id.editTextEnterP);
-        TextView enterRegulatorFrequenz = findViewById(R.id.editTextFrequency);
-        ControlData controlData = new ControlData(Integer.parseInt(enterDebugSpeed.getText().toString()),
-                Float.parseFloat(enterVarI.getText().toString()),
-                Float.parseFloat(enterVarP.getText().toString()),
-                Float.parseFloat(enterRegulatorFrequenz.getText().toString()));
+        TextView enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
+
+        ControlData controlData = new ControlData();
+
+        controlData.setSpeed(Integer.parseInt(enterDebugSpeed.getText().toString()));
+        controlData.setVarI(Float.parseFloat(enterVarI.getText().toString()));
+        controlData.setVarP(Float.parseFloat(enterVarP.getText().toString()));
+        controlData.setRegulatorFrequency(Float.parseFloat(
+                enterRegulatorFrequency.getText().toString()));
+
         return controlData;
     }
 

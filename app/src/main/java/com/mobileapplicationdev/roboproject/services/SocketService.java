@@ -98,7 +98,7 @@ public class SocketService extends Service {
                         byteWriter.writeInt(swap(controlData.getSpeed()));
                         byteWriter.writeFloat(swap(controlData.getVarI()));
                         byteWriter.writeFloat(swap(controlData.getVarP()));
-                        byteWriter.writeFloat(swap(controlData.getRegulatorFrequenz()));
+                        byteWriter.writeFloat(swap(controlData.getRegulatorFrequency()));
 
                         debugData = byteArrayStream.toByteArray();
                         byteArrayStream.reset();
