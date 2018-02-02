@@ -74,12 +74,12 @@
                             android:layout_width="@dimen/base_size"
                             android:layout_height="@dimen/base_size"
                             android:background="@drawable/bg_base"
-                            app:start_on_first_touch="true"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.05"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:start_on_first_touch="true">
 
                             <Button
                                 android:layout_width="@dimen/stick_size"

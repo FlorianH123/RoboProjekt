@@ -222,8 +222,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         joystick.setJoystickListener(new JoystickListener() {
 
             @Override
-            public void onDown() {
-            }
+            public void onDown() {}
 
             @Override
             public void onDrag(float angle, float offset) {
@@ -298,13 +297,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     rot_z = -offset * angularVelocity;
                 }
 
-                joyStickValue.setText(String.valueOf(rot_z));
+                joyStickValue.setText(String.format(Locale.getDefault(), "%.2f", rot_z));
             }
 
             @Override
             public void onUp() {
                 rot_z = 0.0f;
-                joyStickValue.setText(String.valueOf(rot_z));
+                joyStickValue.setText("0.0");
             }
         });
     }
