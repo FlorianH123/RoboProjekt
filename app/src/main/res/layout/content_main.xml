@@ -340,6 +340,31 @@
                     <android.support.constraint.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/editText_ipAddress_debug_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/text_enter_ip"
+                            android:textSize="@dimen/editText_ip_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.05"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.05" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButton_connection_debug_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="60dp"
+                            android:textOff="@string/text_toggleButton_connection_off"
+                            android:textOn="@string/text_toggleButton_connection_on"
+                            android:textSize="@dimen/toggleButton_connection_text_size"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/editText_ipAddress_debug_2"
+                            app:layout_constraintStart_toEndOf="@+id/editText_ipAddress_debug_2" />
                     </android.support.constraint.ConstraintLayout>
                 </LinearLayout>
             </FrameLayout>

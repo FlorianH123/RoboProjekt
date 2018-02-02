@@ -68,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // Initialise components inside  the main activity
         initTabHost();
-        initConnectionButton();
+        initConnectionButtonTab1();
+        initConnectionButtonTab2();
+        initConnectionButtonTab3();
         initLeftJoyStick();
         initRightJoyStick();
         initDynamicGraph();
@@ -92,59 +94,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         return sp.getString(portKey, defaultValue);
     }
-
-    private void unCheckAllConnectionButtons() {
-        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
-
-        connectionButtonTab1.setChecked(false);
-        //connectionButtonTab2.setChecked(false);
-        //connectionButtonTab3.setChecked(false);
-    }
-
-// Options Menu ------------------------------------------------------------------------------------
-
-    /**
-     * Creates the options menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        return true;
-    }
-
-    /**
-     * Options Listener
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-
-// TAB 1 -------------------------------------------------------------------------------------------
-
-    private final ServiceConnection mConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
-            socketService = binder.getService();
-            socketService.registerClient(MainActivity.this);
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBound = false;
-        }
-    };
 
     /**
      * Initialise tabHost with different tabs
@@ -180,13 +129,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+// -------------------------------------------------------------------------------------------------
+
+// Socket connection -------------------------------------------------------------------------------
+
+    private void unCheckAllConnectionButtons() {
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
+
+        connectionButtonTab1.setChecked(false);
+        //connectionButtonTab2.setChecked(false);
+        //connectionButtonTab3.setChecked(false);
+    }
+
     /**
      * Initialise connection button
      */
-    private void initConnectionButton() {
-        final ToggleButton toggle = findViewById(R.id.toggleButton_connection);
-        final EditText editText_ipAddress = findViewById(R.id.editText_ipAddress);
-
+    private void initConnectionButton(final ToggleButton toggle, final EditText editText_ipAddress,
+                                      final String tagTab) {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String ipAddress;
@@ -197,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
                     if (!ipAddress.trim().equals("")) {
                         editText_ipAddress.setEnabled(false);
-                        startSocketService();
+                        startSocketService(tagTab);
 
                     } else {
                         toggle.setChecked(false);
@@ -209,6 +170,83 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 }
             }
         });
+    }
+
+    private final ServiceConnection mConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
+            socketService = binder.getService();
+            socketService.registerClient(MainActivity.this);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
+
+    /**
+     * Starts socket service
+     */
+    private void startSocketService(String tagTab) {
+        if (mBound) {
+            if (tagTab.equals(TAG_TAB_1)) {
+                TextView textView = findViewById(R.id.editText_ipAddress);
+                String ipAddress = String.valueOf(textView.getText());
+
+                socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
+            }
+
+            if (tagTab.equals(TAG_TAB_2)) {
+                TextView textView = findViewById(R.id.editText_ipAddress_tab2);
+                String ipAdress = String.valueOf(textView.getText());
+
+                socketService.openPlottingSocket(ipAdress,Integer.parseInt(getPreferenceValue(1)));
+            }
+
+            if (tagTab.equals(TAG_TAB_3)) {
+
+            }
+        }
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// Options Menu ------------------------------------------------------------------------------------
+
+    /**
+     * Creates the options menu
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    /**
+     * Options Listener
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.settingsMenu) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// TAB 1 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab1() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
+        EditText editText = findViewById(R.id.editText_ipAddress);
+
+        initConnectionButton(toggleButton , editText, TAG_TAB_1);
     }
 
     /**
@@ -311,21 +349,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
-    /**
-     * Starts socket service
-     */
-    private void startSocketService() {
-        TextView textView = findViewById(R.id.editText_ipAddress);
-        String ipAddress = String.valueOf(textView.getText());
-
-        if (mBound) {
-            socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
-        }
-    }
-
 // -------------------------------------------------------------------------------------------------
 
 // Tab 2 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab2() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
+        EditText editText = findViewById(R.id.editText_ipAddress_tab2);
+
+        initConnectionButton(toggleButton , editText, TAG_TAB_2);
+    }
 
     private void initDynamicGraph() {
         // we get graph view instance
@@ -387,14 +420,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         spinner.setAdapter(adapter);
     }
 
-    private void startDebugSocket(){
-        TextView textView = findViewById(R.id.editText_ipAddress_tab2);
-        String ipAdress = String.valueOf(textView.getText());
+// -------------------------------------------------------------------------------------------------
 
-        if(mBound){
-            socketService.openPlottingSocket(ipAdress,Integer.parseInt(getPreferenceValue(1)));
-        }
+// Tab 3 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab3() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_debug_2);
+        EditText editText =  findViewById(R.id.editText_ipAddress_debug_2);
+
+        initConnectionButton(toggleButton, editText, TAG_TAB_3);
     }
+
 // -------------------------------------------------------------------------------------------------
 
 // Callbacks interface implementation --------------------------------------------------------------
