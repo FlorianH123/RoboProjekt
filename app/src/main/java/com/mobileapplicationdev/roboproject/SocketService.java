@@ -38,7 +38,7 @@ public class SocketService extends Service {
     }
 
     public void openSocket(final String ip, final int port) {
-        new Thread(new Runnable() {
+        new Thread ( new Runnable() {
             @Override
             public void run() {
                 String ioExceptionLoggerMsg = getString(R.string.error_msg_socket_io_exception);
@@ -118,5 +118,47 @@ public class SocketService extends Service {
         boolean getToggleButtonStatus();
         ControlData getControlData();
         void hostErrorHandler();
+        boolean getDebugButtonStatus();
+        ControlData setControlDataDebug();
+    }
+
+    public void openPlottingSocket(final String ip , final int port){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String ioExceptionLoggerMsg = getString(R.string.error_msg_socket_io_exception);
+                byte[] debugData;
+
+                try (Socket debugSocket = new Socket(ip,port);
+                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
+                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                     DataOutputStream byteWriter = new DataOutputStream(baos)
+
+                ){ while(mainActivity.getDebugButtonStatus()){
+                    ControlData controlData = mainActivity.setControlDataDebug();
+                    byteWriter.writeInt(swap(controlData.getSpeed()));
+                    byteWriter.writeFloat(swap(controlData.getVarI()));
+                    byteWriter.writeFloat(swap(controlData.getVarP()));
+                    byteWriter.writeFloat(swap(controlData.getRegulatorFrequenz()));
+
+                    debugData = baos.toByteArray();
+                    baos.reset();
+                    dataOS.write(debugData);
+
+                    Thread.sleep(50);
+                }
+                } catch (UnknownHostException e) {
+                   mainActivity.hostErrorHandler();
+                } catch (IOException e) {
+                    Log.e(className,ioExceptionLoggerMsg + e.getMessage());
+                } catch (InterruptedException e) {
+                    Log.e(className,e.getMessage());
+                }
+
+                stopSelf();
+
+            }
+        },"robot_debugPlot.socket.thread").start();
+
     }
 }

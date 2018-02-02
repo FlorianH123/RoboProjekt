@@ -283,6 +283,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    private void startDebugSocket(){
+        //TextView textView = findViewById(R.id)
+          //      String ipAdress
+    }
+
     private void unCheckAllConnectionButtons() {
         ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
         //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
@@ -301,6 +306,24 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return toggleButton.isChecked();
     }
 
+    @Override
+    public boolean getDebugButtonStatus(){
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
+        return toggleButton.isChecked();
+    }
+
+    @Override
+    public ControlData setControlDataDebug(){
+        TextView enterDebugSpeed = findViewById(R.id.editText_enterDebug_speed);
+        TextView enterVarI = findViewById(R.id.editTextEnterI);
+        TextView enterVarP = findViewById(R.id.editTextEnterP);
+        TextView enterRegulatorFrequenz = findViewById(R.id.editTextFrequency);
+        ControlData controlData = new ControlData(Integer.parseInt(enterDebugSpeed.getText().toString()),
+                                                    Float.parseFloat(enterVarI.getText().toString()),
+                                                    Float.parseFloat(enterVarP.getText().toString()),
+                                                    Float.parseFloat(enterRegulatorFrequenz.getText().toString()));
+        return controlData;
+    }
 
     @Override
     public ControlData getControlData() {
