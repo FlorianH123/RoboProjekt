@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 textView = findViewById(R.id.editText_ipAddress_tab3);
                 ipAddress = String.valueOf(textView.getText());
 
-                socketService.openPlottingSocket(ipAddress,
+                socketService.openRotatingEngineSocket(ipAddress,
                         Integer.parseInt(getPreferenceValue(2)));
             }
         }
