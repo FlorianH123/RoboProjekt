@@ -445,6 +445,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
+    public boolean getDebugButtonStatus(){
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
+        return toggleButton.isChecked();
+    }
+
+    @Override
     public ControlData getControlData() {
         ControlData controlData = new ControlData();
 
@@ -461,12 +467,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         // TODO fix exception
         // unCheckAllConnectionButtons();
         //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean getDebugButtonStatus(){
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
-        return toggleButton.isChecked();
     }
 
     @Override
