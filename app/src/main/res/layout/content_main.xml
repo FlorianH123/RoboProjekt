@@ -266,7 +266,7 @@
                             android:layout_marginEnd="16dp"
                             android:ems="10"
                             android:hint="@string/enter_speed"
-                            android:inputType="number"
+                            android:inputType="numberDecimal"
                             app:layout_constraintBottom_toBottomOf="@+id/editTextEnterP"
                             app:layout_constraintEnd_toStartOf="@+id/editTextEnterP"
                             app:layout_constraintTop_toTopOf="@+id/editTextEnterP" />
@@ -278,7 +278,7 @@
                             android:layout_marginTop="16dp"
                             android:ems="10"
                             android:hint="@string/enter_I_Factor"
-                            android:inputType="number"
+                            android:inputType="numberDecimal"
                             app:layout_constraintEnd_toEndOf="@+id/editTextEnterP"
                             app:layout_constraintStart_toStartOf="@+id/editTextEnterP"
                             app:layout_constraintTop_toBottomOf="@+id/editTextEnterP" />
@@ -289,7 +289,7 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/enter_P_Factor"
-                            android:inputType="number"
+                            android:inputType="numberDecimal"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.95"
@@ -362,7 +362,7 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="@string/enter_P_Factor"
-                            android:inputType="textPersonName"
+                            android:inputType="numberDecimal"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.95"
@@ -377,7 +377,7 @@
                             android:layout_marginEnd="16dp"
                             android:ems="10"
                             android:hint="@string/enter_angle"
-                            android:inputType="textPersonName"
+                            android:inputType="number"
                             app:layout_constraintBottom_toBottomOf="@+id/editText_p_tab2"
                             app:layout_constraintEnd_toStartOf="@+id/editText_p_tab2"
                             app:layout_constraintTop_toTopOf="@+id/editText_p_tab2" />
@@ -389,7 +389,7 @@
                             android:layout_marginTop="16dp"
                             android:ems="10"
                             android:hint="@string/Enter_frequency"
-                            android:inputType="textPersonName"
+                            android:inputType="number"
                             app:layout_constraintEnd_toEndOf="@+id/editText_angle_tab2"
                             app:layout_constraintStart_toStartOf="@+id/editText_angle_tab2"
                             app:layout_constraintTop_toBottomOf="@+id/editText_angle_tab2" />
@@ -401,7 +401,7 @@
                             android:layout_marginTop="16dp"
                             android:ems="10"
                             android:hint="@string/enter_I_Factor"
-                            android:inputType="textPersonName"
+                            android:inputType="numberDecimal"
                             app:layout_constraintEnd_toEndOf="@+id/editText_p_tab2"
                             app:layout_constraintStart_toStartOf="@+id/editText_p_tab2"
                             app:layout_constraintTop_toBottomOf="@+id/editText_p_tab2" />
