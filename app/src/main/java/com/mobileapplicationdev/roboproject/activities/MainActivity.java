@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 if (isChecked) {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
-                    if (!ipAddress.trim().equals("")) {
+                    if (!ipAddress.trim().isEmpty()) {
                         editText_ipAddress.setEnabled(false);
                         startSocketService(tagTab);
 
@@ -201,9 +201,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             if (tagTab.equals(TAG_TAB_2)) {
                 TextView textView = findViewById(R.id.editText_ipAddress_tab2);
-                String ipAdress = String.valueOf(textView.getText());
+                String ipAddress = String.valueOf(textView.getText());
 
-                socketService.openPlottingSocket(ipAdress,Integer.parseInt(getPreferenceValue(1)));
+                socketService.openPlottingSocket(ipAddress,Integer.parseInt(getPreferenceValue(1)));
             }
 
             if (tagTab.equals(TAG_TAB_3)) {
