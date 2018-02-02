@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 ipAddress = String.valueOf(textView.getText());
 
                 socketService.openPlottingSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(3)));
+                        Integer.parseInt(getPreferenceValue(2)));
             }
         }
     }
