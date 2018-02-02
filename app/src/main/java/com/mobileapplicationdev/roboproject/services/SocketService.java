@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.ToggleButton;
 
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.models.ControlData;
@@ -69,7 +70,13 @@ public class SocketService extends Service {
                         Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
                 } catch (UnknownHostException ex) {
-                    mainActivity.hostErrorHandler();
+                    //mainActivity.hostErrorHandler();
+                    mainActivity.getToggleButton().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.getToggleButton().setChecked(false);
+                        }
+                    });
                 } catch (IOException ex) {
                     Log.e(className, ioExceptionLoggerMsg + ex.getMessage());
                 } catch (InterruptedException ex) {
@@ -120,6 +127,7 @@ public class SocketService extends Service {
         void hostErrorHandler();
         boolean getDebugButtonStatus();
         ControlData setControlDataDebug();
+        ToggleButton getToggleButton();
     }
 
     public void openPlottingSocket(final String ip , final int port){

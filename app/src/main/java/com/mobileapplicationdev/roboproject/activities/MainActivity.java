@@ -482,5 +482,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return controlData;
     }
 
+    public ToggleButton getToggleButton() {
+        return findViewById(R.id.toggleButton_connection_tab1);
+    }
 //--------------------------------------------------------------------------------------------------
 }
