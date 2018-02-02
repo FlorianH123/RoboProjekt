@@ -44,7 +44,7 @@ public class SocketService extends Service {
         return mBinder;
     }
 
-    public void openSocket(final String ip, final int port) {
+    public void openSteeringSocket(final String ip, final int port) {
         new Thread(new Runnable() {
             @Override
             public void run() {

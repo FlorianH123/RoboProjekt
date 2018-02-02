@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      */
     private void initConnectionButton(final ToggleButton toggle, final EditText editText_ipAddress,
                                       final String tagTab) {
+
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 String ipAddress;
@@ -199,14 +200,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 textView = findViewById(R.id.editText_ipAddress_tab1);
                 ipAddress = String.valueOf(textView.getText());
 
-                socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
+                socketService.openSteeringSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(0)));
             }
 
             if (tagTab.equals(TAG_TAB_2)) {
                 textView = findViewById(R.id.editText_ipAddress_tab2);
                 ipAddress = String.valueOf(textView.getText());
 
-                socketService.openPlottingSocket(ipAddress,Integer.parseInt(getPreferenceValue(1)));
+                socketService.openPlottingSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(1)));
             }
 
             if (tagTab.equals(TAG_TAB_3)) {
