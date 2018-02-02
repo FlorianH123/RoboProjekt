@@ -75,14 +75,14 @@ public class SocketService extends Service {
                 } catch (IOException ex) {
                     final ToggleButton toggleButton = mainActivity.
                             getToggleButton(MainActivity.TAG_TAB_1);
-                    final String exceptionString = getErrorMessage() + ex.getMessage();
+                    final String errorString = getErrorMessage(ex.getMessage());
 
-                    Log.e(className, exceptionString);
+                    Log.e(className, errorString);
 
                     toggleButton.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SocketService.this, exceptionString,
+                            Toast.makeText(SocketService.this, errorString,
                                     Toast.LENGTH_LONG).show();
                             toggleButton.setChecked(false);
                         }
@@ -123,14 +123,14 @@ public class SocketService extends Service {
                 } catch (IOException ex) {
                     final ToggleButton toggleButton = mainActivity.
                             getToggleButton(MainActivity.TAG_TAB_2);
-                    final String exceptionString = getErrorMessage() + ex.getMessage();
+                    final String errorString = getErrorMessage(ex.getMessage());
 
-                    Log.e(className, exceptionString);
+                    Log.e(className, errorString);
 
                     toggleButton.post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SocketService.this, exceptionString,
+                            Toast.makeText(SocketService.this, errorString,
                                     Toast.LENGTH_LONG).show();
                             toggleButton.setChecked(false);
                         }
@@ -159,10 +159,10 @@ public class SocketService extends Service {
         ToggleButton getToggleButton(String tagTab);
     }
 
-    private String getErrorMessage() {
+    private String getErrorMessage(String exceptionMessage) {
         String ioExceptionLoggerMsg =
                 getString(R.string.error_msg_socket_io_exception);
 
-        return ioExceptionLoggerMsg + " ";
+        return ioExceptionLoggerMsg + " " + exceptionMessage;
     }
 }
