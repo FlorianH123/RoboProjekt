@@ -1,12 +1,13 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
+
+import com.mobileapplicationdev.roboproject.R;
 
 /**
  * Created by Florian on 16.01.2018.
@@ -34,22 +35,23 @@ public class SettingsActivity extends PreferenceActivity {
                 String portNumberString;
                 int portNumber;
 
-                if (key.equals(getString(R.string.settings_port_1_key))) {
-                    defaultValue = getString(R.string.port_1_default_value);
+                if (key.equals(getString(R.string.settings_port_1_key)) ||
+                    key.equals(getString(R.string.settings_port_2_key)) ||
+                    key.equals(getString(R.string.settings_port_3_key))) {
+
+                    if (key.equals(getString(R.string.settings_port_1_key))) {
+                        defaultValue = getString(R.string.port_1_default_value);
+                    } else if (key.equals(getString(R.string.settings_port_2_key))) {
+                        defaultValue = getString(R.string.port_2_default_value);
+                    } else if (key.equals(getString(R.string.settings_port_3_key))) {
+                        defaultValue = getString(R.string.port_3_default_value);
+                    }
+
+                    portNumberString = sharedPreferences.getString(key, defaultValue);
+                    portNumber = Integer.parseInt(portNumberString);
+
+                    validatePortNumber(portNumber, key, defaultValue, sharedPreferences);
                 }
-
-                if (key.equals(getString(R.string.settings_port_2_key))) {
-                    defaultValue = getString(R.string.port_2_default_value);
-                }
-
-                if (key.equals(getString(R.string.settings_port_3_key))) {
-                    defaultValue = getString(R.string.port_3_default_value);
-                }
-
-                portNumberString = sharedPreferences.getString(key, defaultValue);
-                portNumber = Integer.parseInt(portNumberString);
-
-                validatePortNumber(portNumber, key, defaultValue, sharedPreferences);
             }
         });
     }

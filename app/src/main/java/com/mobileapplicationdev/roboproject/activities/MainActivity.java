@@ -1,4 +1,4 @@
-package com.mobileapplicationdev.roboproject;
+package com.mobileapplicationdev.roboproject.activities;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,15 +13,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +28,12 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
+import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.models.ControlData;
+import com.mobileapplicationdev.roboproject.services.SocketService;
+import com.mobileapplicationdev.roboproject.utils.Utils;
 
+import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
@@ -43,8 +43,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private SocketService socketService;
     private boolean mBound = false;
-    private int drivingMode = 0;
 
+    private float x;
+    private float y;
     private float rot_z = 0.0f;
 
     private final Random RANDOM = new Random();
@@ -74,15 +75,32 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinner();
     }
 
-    public void initSpinner(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.engines, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+    /**
+     * Returns the value of a shared preference
+     * @param preferenceId number of the shared preference
+     * @return the value of the preference
+     */
+    private String getPreferenceValue(int preferenceId) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Resources res = getResources();
+        String[] portKeys = res.getStringArray(R.array.settings_port_key);
+        String[] defaultValues = res.getStringArray(R.array.default_port_value);
+
+        String portKey = portKeys[preferenceId];
+        String defaultValue = defaultValues[preferenceId];
+
+        return sp.getString(portKey, defaultValue);
+    }
+
+    private void unCheckAllConnectionButtons() {
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
+        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
+
+        connectionButtonTab1.setChecked(false);
+        //connectionButtonTab2.setChecked(false);
+        //connectionButtonTab3.setChecked(false);
     }
 
 // Options Menu ------------------------------------------------------------------------------------
@@ -107,14 +125,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         } else {
             return super.onOptionsItemSelected(item);
         }
-
     }
 
 // -------------------------------------------------------------------------------------------------
 
 // TAB 1 -------------------------------------------------------------------------------------------
 
-    private ServiceConnection mConn = new ServiceConnection() {
+    private final ServiceConnection mConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
@@ -178,13 +195,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 if (isChecked) {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
-                    if (!ipAddress.equals("")) {
+                    if (!ipAddress.trim().equals("")) {
                         editText_ipAddress.setEnabled(false);
                         startSocketService();
 
                     } else {
                         toggle.setChecked(false);
-                        Toast.makeText(MainActivity.this, errMsgInvalidIp, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,
+                                errMsgInvalidIp, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     editText_ipAddress.setEnabled(true);
@@ -193,34 +211,74 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
-
     /**
      * Initialise joyStick
      */
     private void initLeftJoyStick() {
         Joystick joystick = findViewById(R.id.leftJoystick);
+        final TextView textViewX = findViewById(R.id.textView_leftJoyStick_X_Value);
+        final TextView textViewY = findViewById(R.id.textView_leftJoyStick_Y_Value);
 
         joystick.setJoystickListener(new JoystickListener() {
 
             @Override
-            public void onDown() {
-            }
+            public void onDown() {}
 
             @Override
-            public void onDrag(float degrees, float offset) {
+            public void onDrag(float angle, float offset) {
+
+                float maximumY = Float.valueOf(getPreferenceValue(4));
+                float maximumX  = Float.valueOf(getPreferenceValue(5));
+
+                if (Utils.isInFirstQuarter(angle)) {                                  // 1. quarter
+                    angle = -(angle - 90);
+                    angle = (float) Math.toRadians(angle);
+
+                    y = (float) -(offset * Math.sin(angle) * maximumY);
+                    x = (float)  (offset * Math.cos(angle) * maximumX);
+
+                } else if (Utils.isInSecondQuarter(angle)) {                          // 2. quarter
+                    angle = (float) Math.toRadians(-angle);
+
+                    y = (float) -(offset * Math.cos(angle) * maximumY);
+                    x = (float) -(offset * Math.sin(angle) * maximumX);
+
+                } else if (Utils.isInThirdQuarter(angle)) {                           // 3. quarter
+                    angle = -(angle + 90);
+                    angle = (float) Math.toRadians(angle);
+
+                    y = (float)  (offset * Math.sin(angle) * maximumY);
+                    x = (float) -(offset * Math.cos(angle) * maximumX);
+
+                } else if (Utils.isInFourthQuarter(angle)){                           // 4. quarter
+                    angle = 180 - angle;
+                    angle = (float) Math.toRadians(angle);
+
+                    y = (float) (offset * Math.cos(angle) * maximumY);
+                    x = (float) (offset * Math.sin(angle) * maximumX);
+                }
+
+                textViewX.setText(String.format(Locale.getDefault(),"%.3f", x));
+                textViewY.setText(String.format(Locale.getDefault(),"%.3f", y));
             }
 
             @Override
             public void onUp() {
+                textViewX.setText("0.0");
+                textViewY.setText("0.0");
 
+                x = 0.0f;
+                y = 0.0f;
             }
         });
     }
 
+    /**
+     * Initialise joyStick
+     */
     private void initRightJoyStick() {
         Joystick joystick = findViewById(R.id.rightJoystick);
         final TextView joyStickValue = findViewById(R.id.textView_rightJoyStickValue);
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         joystick.setJoystickListener(new JoystickListener() {
 
@@ -229,8 +287,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                String angularVelocityString = sharedPreferences.getString("ANGULAR_VELOCITY", "40");
-                float angularVelocity = Float.parseFloat(angularVelocityString);
+                float angularVelocity = Float.parseFloat(getPreferenceValue(3));
 
                 if (degrees == -180) {
                     rot_z = offset * angularVelocity;
@@ -240,36 +297,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     rot_z = -offset * angularVelocity;
                 }
 
-                joyStickValue.setText(String.valueOf(rot_z));
+                joyStickValue.setText(String.format(Locale.getDefault(), "%.2f", rot_z));
             }
 
             @Override
             public void onUp() {
                 rot_z = 0.0f;
-                joyStickValue.setText(String.valueOf(rot_z));
+                joyStickValue.setText("0.0");
             }
         });
     }
-
-    /**
-     * Returns the value of a shared preference
-     * @param preference number of the shared preference
-     * @return the value of the preference
-     */
-    private int getPreferenceKeys(int preference) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Resources res = getResources();
-        String[] portKeys = res.getStringArray(R.array.settings_port_key);
-        String[] defaultValues = res.getStringArray(R.array.default_port_value);
-
-        String portKey = portKeys[preference];
-        String defaultValue = defaultValues[preference];
-        String preferenceString = sharedPreferences.getString(portKey, defaultValue);
-
-        return Integer.parseInt(preferenceString);
-    }
-
 
     /**
      * Starts socket service
@@ -279,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String ipAddress = String.valueOf(textView.getText());
 
         if (mBound) {
-            socketService.openSocket(ipAddress, getPreferenceKeys(0));
+            socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
         }
     }
 
@@ -342,14 +379,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
 //--------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------
 
 // Tab 2 -------------------------------------------------------------------------------------------
 
-    public void initDynamicGraph() {
+    private void initDynamicGraph() {
         // we get graph view instance
-        GraphView graph = (GraphView) findViewById(R.id.graph);
+        GraphView graph = findViewById(R.id.graph);
         // data
-        series = new LineGraphSeries<DataPoint>();
+        series = new LineGraphSeries<>();
         graph.addSeries(series);
         // customize a little bit viewport
         Viewport viewport = graph.getViewport();
@@ -394,5 +432,45 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
     }
 
+    private void initSpinner(){
+        Spinner spinner = findViewById(R.id.spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.engines, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+    }
+
 // -------------------------------------------------------------------------------------------------
+
+// Callbacks interface implementation --------------------------------------------------------------
+
+    @Override
+    public boolean getToggleButtonStatus() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
+        return toggleButton.isChecked();
+    }
+
+    @Override
+    public ControlData getControlData() {
+        ControlData controlData = new ControlData();
+
+        controlData.setAngularVelocity(rot_z);
+        controlData.setX(x);
+        controlData.setY(y);
+
+        return controlData;
+    }
+
+    @Override
+    public void hostErrorHandler() {
+        String errorMessage = getString(R.string.error_msg_host_error);
+        // TODO fix exception
+        // unCheckAllConnectionButtons();
+        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+//--------------------------------------------------------------------------------------------------
 }

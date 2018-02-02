@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.mobileapplicationdev.roboproject.MainActivity">
+    tools:context="com.mobileapplicationdev.roboproject.activities.MainActivity">
 
     <TabHost
         android:id="@+id/tabHost"
@@ -35,6 +35,139 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:id="@+id/tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/editText_ipAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/text_enter_ip"
+                            android:textSize="@dimen/editText_ip_text_size"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.05"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.050000012" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButton_connection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="60dp"
+                            android:textOff="@string/text_toggleButton_connection_off"
+                            android:textOn="@string/text_toggleButton_connection_on"
+                            android:textSize="@dimen/toggleButton_connection_text_size"
+                            app:layout_constraintBaseline_toBaselineOf="@+id/editText_ipAddress"
+                            app:layout_constraintStart_toEndOf="@+id/editText_ipAddress" />
+
+                        <com.jmedeisis.bugstick.Joystick
+                            android:id="@+id/leftJoystick"
+                            android:layout_width="@dimen/base_size"
+                            android:layout_height="@dimen/base_size"
+                            android:background="@drawable/bg_base"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.05"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:start_on_first_touch="true">
+
+                            <Button
+                                android:layout_width="@dimen/stick_size"
+                                android:layout_height="@dimen/stick_size"
+                                android:background="@drawable/bg_stick" />
+                        </com.jmedeisis.bugstick.Joystick>
+
+                        <com.jmedeisis.bugstick.Joystick
+                            android:id="@+id/rightJoystick"
+                            android:layout_width="@dimen/base_size"
+                            android:layout_height="0dp"
+                            android:background="@drawable/bg_base"
+                            app:motion_constraint="Horizontal"
+                            app:start_on_first_touch="true"
+                            app:layout_constraintBottom_toBottomOf="@+id/leftJoystick"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.95"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/leftJoystick">
+
+                            <Button
+                                android:layout_width="@dimen/stick_size"
+                                android:layout_height="@dimen/stick_size"
+                                android:background="@drawable/bg_stick"/>
+                        </com.jmedeisis.bugstick.Joystick>
+
+                        <TextView
+                            android:id="@+id/textView_rightJoyStickValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/textView_default_value"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintEnd_toEndOf="@+id/rightJoystick"
+                            app:layout_constraintStart_toStartOf="@+id/rightJoystick"
+                            app:layout_constraintTop_toBottomOf="@+id/rightJoystick" />
+
+                        <TextView
+                            android:id="@+id/textView_leftJoyStick_X_Value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="24dp"
+                            android:text="@string/textView_default_value"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintStart_toStartOf="@+id/leftJoystick"
+                            app:layout_constraintTop_toBottomOf="@+id/leftJoystick" />
+
+                        <TextView
+                            android:id="@+id/textView_leftJoyStick_Y_Value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:text="@string/textView_default_value"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintBottom_toBottomOf="@+id/textView_leftJoyStick_X_Value"
+                            app:layout_constraintEnd_toEndOf="@+id/leftJoystick"
+                            app:layout_constraintTop_toTopOf="@+id/textView_leftJoyStick_X_Value" />
+
+                        <TextView
+                            android:id="@+id/textView_x_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/textView_x"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintStart_toStartOf="@+id/leftJoystick"
+                            app:layout_constraintTop_toBottomOf="@+id/textView_leftJoyStick_X_Value" />
+
+                        <TextView
+                            android:id="@+id/textView_y_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/textView_y"
+                            android:textSize="@dimen/text_size"
+                            app:layout_constraintEnd_toEndOf="@+id/leftJoystick"
+                            app:layout_constraintTop_toBottomOf="@+id/textView_leftJoyStick_Y_Value" />
+                    </android.support.constraint.ConstraintLayout>
+
+                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/tab2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
                     android:id="@+id/tab2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -60,6 +193,22 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintVertical_bias="0.05" />/>
+                            <EditText
+                                android:id="@+id/editText_ipAddress_tab2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="51dp"
+                               android:layout_marginStart="8dp"
+                                android:digits="1234567890."
+                                android:ems="10"
+                                android:hint="@string/text_enter_ip"
+                                android:inputType="number"
+                                android:textSize="@dimen/editText_ip_text_size"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0.05"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.05"/>
 
                         <ToggleButton
                             android:id="@+id/toggleButton_connection_tab2"

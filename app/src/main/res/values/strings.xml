@@ -1,54 +1,54 @@
 <resources>
     <string name="app_name">Robot Project</string>
-
+<!-- TAB Strings -->
     <string name="tab_name_tab1">Steuerung</string>
     <string name="tab_name_tab2">Antriebsmotoren Debug</string>
     <string name="tab_name_tab3">Steuermotoren Debug</string>
+<!-- -->
 
+<!-- general strings -->
     <string name="text_enter_ip">Enter Robot IP</string>
 
     <string name="text_toggleButton_connection_on">Disconnect</string>
     <string name="text_toggleButton_connection_off">Connect</string>
 
-    <string name="text_switch_driveMode_on">Kurven Modus</string>
-    <string name="text_switch_driveMode_off">Geradliniger Modus</string>
-
-    <string name="starting_angle">0 °</string>
-    <string name="textViewTemplate">%s %s</string>
-    <string name="degree">°</string>
-    <string name="angle_plus">+</string>
-    <string name="angle_minus">-</string>
-
-    <string name="starting_speed">0.0 m/s</string>
-    <string name="speed_unit"> m/s</string>
-
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein!</string>
-    <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
-    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
-    <string name="error_msg_socket_io_exception">Error while sending\receiving data!</string>
+<!---->
 
+<!-- Settings Strings -->
     <string name="settings_title">Einstellungen</string>
+    <string name="settings_port_title">Port Einstellungen</string>
+    <string name="settings_speed_title">Geschwindigkeiten</string>
 
     <string name="settings_port_1">Port 1</string>
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
+    <string name="settings_robot_speed">Roboter Geschwindigkeiten</string>
+    <string name="maximum_x">Maximum X</string>
+    <string name="maximum_y">Maximum Y</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
 
     <string name="settings_port_1_key">PORT_1</string>
     <string name="settings_port_2_key">PORT_2</string>
     <string name="settings_port_3_key">PORT_3</string>
     <string name="settings_angular_velocity_key">ANGULAR_VELOCITY</string>
+    <string name="settings_maximum_x_key">MAXIMUM_X</string>
+    <string name="settings_maximum_y_key">MAXIMUM_Y</string>
 
     <string name="port_1_default_value">1000</string>
     <string name="port_2_default_value">1000</string>
     <string name="port_3_default_value">1000</string>
-    <string name="angular_velocity_default_value">40</string>
+    <string name="angular_velocity_default_value">0.5</string>
+    <string name="maximum_x_default_value">0.6</string>
+    <string name="maximum_y_default_value">0.5</string>
 
     <string-array name="settings_port_key">
         <item>@string/settings_port_1_key</item>
         <item>@string/settings_port_2_key</item>
         <item>@string/settings_port_3_key</item>
         <item>@string/settings_angular_velocity_key</item>
+        <item>@string/settings_maximum_x_key</item>
+        <item>@string/settings_maximum_y_key</item>
     </string-array>
 
     <string-array name="default_port_value">
@@ -56,22 +56,39 @@
         <item>@string/port_2_default_value</item>
         <item>@string/port_3_default_value</item>
         <item>@string/angular_velocity_default_value</item>
+        <item>@string/maximum_x_default_value</item>
+        <item>@string/maximum_y_default_value</item>
     </string-array>
 
+    <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
+<!-- -->
+
+<!-- TAB 1 Strings -->
+    <string name="textView_default_value">0.0</string>
+    <string name="textView_x">X</string>
+    <string name="textView_y">Y</string>
+<!-- -->
+
+<!-- TAB 2 Strings -->
     <string name="graph_toggle_button_start">Start Debugging</string>
     <string name="graph_toggle_button_stop">Stop Debugging</string>
 
     <string name="enter_speed">Enter Speed cm/s</string>
 
-    <string name="enter_P_Faktor">Enter P</string>
-    <string name="enter_I_Faktor">Enter I</string>
+    <string name="enter_P_Factor">Enter P</string>
+    <string name="enter_I_Factor">Enter I</string>
     <string name="Enter_frequency">Enter regulator frequency</string>
 
-    <string name="spinner_engine">Engine 1-3</string>
-            <string-array name="engines">
-                <item>Engine1</item>
-                <item>Engine2</item>
-                <item>Engine3</item>
-            </string-array>
+    <string-array name="engines">
+        <item>Engine1</item>
+        <item>Engine2</item>
+        <item>Engine3</item>
+    </string-array>
+<!-- -->
+
+<!-- Socket Strings -->
+    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
+    <string name="error_msg_socket_io_exception">Error while sending/receiving data!</string>
+<!-- -->
 
 </resources>

@@ -2,28 +2,54 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/settings_title">
 
-    <EditTextPreference
-        android:defaultValue="@string/port_1_default_value"
-        android:key="@string/settings_port_1_key"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/settings_port_1" />
-    <EditTextPreference
-        android:defaultValue="@string/port_2_default_value"
-        android:key="@string/settings_port_2_key"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/settings_port_2" />
-    <EditTextPreference
-        android:defaultValue="@string/port_3_default_value"
-        android:key="@string/settings_port_3_key"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/settings_port_3" />
-    <EditTextPreference
-        android:defaultValue="@string/angular_velocity_default_value"
-        android:key="@string/settings_angular_velocity_key"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/settings_angular_velocity" />
+    <PreferenceCategory android:title="@string/settings_port_title">
+
+        <EditTextPreference
+            android:defaultValue="@string/port_1_default_value"
+            android:key="@string/settings_port_1_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_port_1" />
+        <EditTextPreference
+            android:defaultValue="@string/port_2_default_value"
+            android:key="@string/settings_port_2_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_port_2" />
+        <EditTextPreference
+            android:defaultValue="@string/port_3_default_value"
+            android:key="@string/settings_port_3_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_port_3" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_speed_title">
+
+        <EditTextPreference
+            android:defaultValue="@string/angular_velocity_default_value"
+            android:key="@string/settings_angular_velocity_key"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/settings_angular_velocity" />
+
+        <PreferenceScreen android:title="@string/settings_robot_speed">
+            <PreferenceCategory android:title="@string/settings_robot_speed">
+                <EditTextPreference
+                    android:defaultValue="@string/maximum_x_default_value"
+                    android:key="@string/settings_maximum_x_key"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:title="@string/maximum_y" />
+
+                <EditTextPreference
+                    android:defaultValue="@string/maximum_y_default_value"
+                    android:key="@string/settings_maximum_y_key"
+                    android:selectAllOnFocus="true"
+                    android:singleLine="true"
+                    android:title="@string/maximum_x" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+    </PreferenceCategory>
+
 </PreferenceScreen>

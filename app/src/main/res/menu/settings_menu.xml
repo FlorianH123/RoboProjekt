@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.mobileapplicationdev.roboproject.MainActivity">
+    tools:context="com.mobileapplicationdev.roboproject.activities.MainActivity">
 
     <item
         android:id="@+id/settingsMenu"
         android:title="@string/settings_title"
-        app:showAsAction="never"/>
+        app:showAsAction="always" />
 </menu>
