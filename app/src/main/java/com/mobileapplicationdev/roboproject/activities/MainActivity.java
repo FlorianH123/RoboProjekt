@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // -------------------------------------------------------------------------------------------------
 
-// Tab 2 -------------------------------------------------------------------------------------------
+// TAB 2 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab2() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
@@ -425,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // -------------------------------------------------------------------------------------------------
 
-// Tab 3 -------------------------------------------------------------------------------------------
+// TAB 3 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab3() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab3);
