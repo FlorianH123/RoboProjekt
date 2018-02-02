@@ -90,8 +90,8 @@ public class SocketService extends Service {
 
                 try (Socket debugSocket = new Socket(ip, port);
                      DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
-                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                     DataOutputStream byteWriter = new DataOutputStream(baos)) {
+                     ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+                     DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
 
                     while (mainActivity.getDebugButtonStatus()) {
                         ControlData controlData = mainActivity.setControlDataDebug();
@@ -100,8 +100,8 @@ public class SocketService extends Service {
                         byteWriter.writeFloat(swap(controlData.getVarP()));
                         byteWriter.writeFloat(swap(controlData.getRegulatorFrequenz()));
 
-                        debugData = baos.toByteArray();
-                        baos.reset();
+                        debugData = byteArrayStream.toByteArray();
+                        byteArrayStream.reset();
                         dataOS.write(debugData);
 
                         Thread.sleep(50);
