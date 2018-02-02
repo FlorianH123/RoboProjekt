@@ -118,6 +118,33 @@ public class SocketService extends Service {
         }, "robot_debugPlot.socket.thread").start();
     }
 
+    public void openRotatingEngineSocket(final String ip, final int port) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                byte[] debugData;
+
+                try (Socket debugSocket = new Socket(ip, port);
+                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
+                     ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+                     DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
+
+                    while (mainActivity.getDebugButtonStatus()) {
+
+                        Thread.sleep(50);
+                    }
+                } catch (IOException ex) {
+                    exceptionHandler(MainActivity.TAG_TAB_3, ex.getMessage());
+                } catch (InterruptedException ex) {
+                    Log.e(className, ex.getMessage());
+                }
+
+                stopSelf();
+
+            }
+        }, "robot_rotatingEngine.socket.thread").start();
+    }
+
     // Register Activity to the service as Callbacks client
     public void registerClient(Activity activity) {
         this.mainActivity = (Callbacks) activity;

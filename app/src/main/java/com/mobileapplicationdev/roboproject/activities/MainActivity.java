@@ -214,7 +214,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
 
             if (tagTab.equals(TAG_TAB_3)) {
+                textView = findViewById(R.id.editText_ipAddress_tab3);
+                ipAddress = String.valueOf(textView.getText());
 
+                socketService.openPlottingSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(3)));
             }
         }
     }
