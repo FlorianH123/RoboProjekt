@@ -23,7 +23,7 @@
     <string name="settings_port_1">Port 1</string>
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
-    <string name="settings_robot_speed">Roboter Geschwindigkeiten</string>
+    <string name="settings_robot_speed">Lineargeschwindigkeit</string>
     <string name="maximum_x">Maximum X</string>
     <string name="maximum_y">Maximum Y</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
@@ -82,14 +82,17 @@
     <string name="Enter_frequency">Enter regulator frequency</string>
 
     <string-array name="engines">
-        <item>Engine1</item>
-        <item>Engine2</item>
-        <item>Engine3</item>
+        <item>Motor vorne links</item>
+        <item>Motor vorne rechts</item>
+        <item>Motor hinten</item>
     </string-array>
 <!-- -->
 
+<!-- TAB 3 Strings -->
+    <string name="enter_angle">Enter angle</string>
+<!-- -->
+
 <!-- Socket Strings -->
-    <string name="error_msg_host_error">Der Host wurde nicht gefunden!</string>
     <string name="error_msg_socket_io_exception">Error while sending/receiving data!</string>
 <!-- -->
 

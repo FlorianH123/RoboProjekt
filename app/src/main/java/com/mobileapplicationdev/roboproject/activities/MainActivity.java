@@ -43,9 +43,9 @@ import java.util.Locale;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
-    private static final String TAG_TAB_1 = "Tag_Tab1";
-    private static final String TAG_TAB_2 = "Tag_Tab2";
-    private static final String TAG_TAB_3 = "Tag_Tab3";
+    public static final String TAG_TAB_1 = "Tag_Tab1";
+    public static final String TAG_TAB_2 = "Tag_Tab2";
+    public static final String TAG_TAB_3 = "Tag_Tab3";
 
     private SocketService socketService;
     private boolean mBound = false;
@@ -78,12 +78,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // Initialise components inside  the main activity
         initTabHost();
-        initConnectionButton();
+        initConnectionButtonTab1();
+        initConnectionButtonTab2();
+        initConnectionButtonTab3();
         initLeftJoyStick();
         initRightJoyStick();
         initDebugToggleButton();
         initDynamicGraph();
-        initSpinner();
+        initSpinnerTab2();
+        initSpinnerTab3();
     }
 
     /**
@@ -103,59 +106,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         return sp.getString(portKey, defaultValue);
     }
-
-    private void unCheckAllConnectionButtons() {
-        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection);
-        //ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection);
-
-        connectionButtonTab1.setChecked(false);
-        //connectionButtonTab2.setChecked(false);
-        //connectionButtonTab3.setChecked(false);
-    }
-
-// Options Menu ------------------------------------------------------------------------------------
-
-    /**
-     * Creates the options menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        return true;
-    }
-
-    /**
-     * Options Listener
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-
-// TAB 1 -------------------------------------------------------------------------------------------
-
-    private final ServiceConnection mConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
-            socketService = binder.getService();
-            socketService.registerClient(MainActivity.this);
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBound = false;
-        }
-    };
 
     /**
      * Initialise tabHost with different tabs
@@ -191,12 +141,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+// -------------------------------------------------------------------------------------------------
+
+// Socket connection -------------------------------------------------------------------------------
+
+    private void unCheckAllConnectionButtons() {
+        ToggleButton connectionButtonTab1 = findViewById(R.id.toggleButton_connection_tab1);
+        ToggleButton connectionButtonTab2 = findViewById(R.id.toggleButton_connection_tab2);
+        ToggleButton connectionButtonTab3 = findViewById(R.id.toggleButton_connection_tab3);
+
+        connectionButtonTab1.setChecked(false);
+        connectionButtonTab2.setChecked(false);
+        connectionButtonTab3.setChecked(false);
+    }
+
     /**
      * Initialise connection button
      */
-    private void initConnectionButton() {
-        final ToggleButton toggle = findViewById(R.id.toggleButton_connection);
-        final EditText editText_ipAddress = findViewById(R.id.editText_ipAddress);
+    private void initConnectionButton(final ToggleButton toggle, final EditText editText_ipAddress,
+                                      final String tagTab) {
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -206,9 +169,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 if (isChecked) {
                     ipAddress = String.valueOf(editText_ipAddress.getText());
 
-                    if (!ipAddress.trim().equals("")) {
+                    if (!ipAddress.trim().isEmpty()) {
                         editText_ipAddress.setEnabled(false);
-                        startSocketService();
+                        startSocketService(tagTab);
 
                     } else {
                         toggle.setChecked(false);
@@ -220,6 +183,92 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 }
             }
         });
+    }
+
+    private final ServiceConnection mConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            SocketService.LocalBinder binder = (SocketService.LocalBinder) service;
+            socketService = binder.getService();
+            socketService.registerClient(MainActivity.this);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
+
+    /**
+     * Starts socket service
+     */
+    private void startSocketService(String tagTab) {
+        TextView textView;
+        String ipAddress;
+
+        if (mBound) {
+            if (tagTab.equals(TAG_TAB_1)) {
+                textView = findViewById(R.id.editText_ipAddress_tab1);
+                ipAddress = String.valueOf(textView.getText());
+
+                socketService.openSteeringSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(0)));
+            }
+
+            if (tagTab.equals(TAG_TAB_2)) {
+                textView = findViewById(R.id.editText_ipAddress_tab2);
+                ipAddress = String.valueOf(textView.getText());
+
+                socketService.openPlottingSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(1)));
+            }
+
+            if (tagTab.equals(TAG_TAB_3)) {
+                textView = findViewById(R.id.editText_ipAddress_tab3);
+                ipAddress = String.valueOf(textView.getText());
+
+                socketService.openRotatingEngineSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(2)));
+            }
+        }
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// Options Menu ------------------------------------------------------------------------------------
+
+    /**
+     * Creates the options menu
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    /**
+     * Options Listener
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.settingsMenu) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// TAB 1 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab1() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab1);
+        EditText editText = findViewById(R.id.editText_ipAddress_tab1);
+
+        initConnectionButton(toggleButton , editText, TAG_TAB_1);
     }
 
     /**
@@ -322,21 +371,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
-    /**
-     * Starts socket service
-     */
-    private void startSocketService() {
-        TextView textView = findViewById(R.id.editText_ipAddress);
-        String ipAddress = String.valueOf(textView.getText());
+// -------------------------------------------------------------------------------------------------
 
-        if (mBound) {
-            socketService.openSocket(ipAddress, Integer.parseInt(getPreferenceValue(0)));
-        }
+// TAB 2 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab2() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
+        EditText editText = findViewById(R.id.editText_ipAddress_tab2);
+
+        initConnectionButton(toggleButton , editText, TAG_TAB_2);
     }
-
-
-
-// Tab 2 -------------------------------------------------------------------------------------------
 
     private void initDynamicGraph(){
         realTimeChart = (LineChart)findViewById(R.id.graph);
@@ -497,13 +541,38 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return array;
     }
 
-    private void initSpinner(){
+    private void initSpinnerTab2(){
         Spinner spinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.engines, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// TAB 3 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab3() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab3);
+        EditText editText =  findViewById(R.id.editText_ipAddress_tab3);
+
+        initConnectionButton(toggleButton, editText, TAG_TAB_3);
+    }
+
+    private void initSpinnerTab3(){
+        Spinner spinner = findViewById(R.id.spinner_engines_tab3);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.engines, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
     }
@@ -523,7 +592,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     @Override
     public boolean getToggleButtonStatus() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection);
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab1);
+        return toggleButton.isChecked();
+    }
+
+    @Override
+    public boolean getDebugButtonStatus(){
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
         return toggleButton.isChecked();
     }
 
@@ -539,31 +614,34 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public void hostErrorHandler() {
-        String errorMessage = getString(R.string.error_msg_host_error);
-        // TODO fix exception
-        // unCheckAllConnectionButtons();
-        //Toast.makeText(MainActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean getDebugButtonStatus(){
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_debug);
-        return toggleButton.isChecked();
-    }
-
-    @Override
     public ControlData setControlDataDebug(){
         TextView enterDebugSpeed = findViewById(R.id.editText_enterDebug_speed);
         TextView enterVarI = findViewById(R.id.editTextEnterI);
         TextView enterVarP = findViewById(R.id.editTextEnterP);
-        TextView enterRegulatorFrequenz = findViewById(R.id.editTextFrequency);
-        ControlData controlData = new ControlData(Integer.parseInt(enterDebugSpeed.getText().toString()),
-                Float.parseFloat(enterVarI.getText().toString()),
-                Float.parseFloat(enterVarP.getText().toString()),
-                Float.parseFloat(enterRegulatorFrequenz.getText().toString()));
+        TextView enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
+
+        ControlData controlData = new ControlData();
+
+        controlData.setSpeed(Integer.parseInt(enterDebugSpeed.getText().toString()));
+        controlData.setVarI(Float.parseFloat(enterVarI.getText().toString()));
+        controlData.setVarP(Float.parseFloat(enterVarP.getText().toString()));
+        controlData.setRegulatorFrequency(Float.parseFloat(
+                enterRegulatorFrequency.getText().toString()));
+
         return controlData;
     }
 
+    public ToggleButton getToggleButton(String tagTab) {
+        switch (tagTab) {
+            case TAG_TAB_1:
+                return findViewById(R.id.toggleButton_connection_tab1);
+            case TAG_TAB_2:
+                return findViewById(R.id.toggleButton_connection_tab2);
+            case TAG_TAB_3:
+                return findViewById(R.id.toggleButton_connection_tab3);
+            default:
+                return null;
+        }
+    }
 //--------------------------------------------------------------------------------------------------
 }

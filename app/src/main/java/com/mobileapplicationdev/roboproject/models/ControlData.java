@@ -7,26 +7,15 @@ package com.mobileapplicationdev.roboproject.models;
 
 public class ControlData {
     private int speed;
-    private int drivingMode;
-    private int angle;
-    private double radianAngle;
     private float varI;
     private float varP;
-    private float regulatorFrequenz;
+    private float regulatorFrequency;
+
     private float angularVelocity;
     private float x;
     private float y;
 
-    public ControlData(int speed, float varI, float varP, float regulatorFrequenz){
-        this.speed = speed;
-        this.varI = varI;
-        this.varP = varP;
-        this.regulatorFrequenz = regulatorFrequenz;
-    }
-
-    public ControlData(){
-
-    }
+    public ControlData(){}
 
     public float getAngularVelocity() {
         return angularVelocity;
@@ -76,12 +65,12 @@ public class ControlData {
         this.varP = varP;
     }
 
-    public float getRegulatorFrequenz() {
-        return regulatorFrequenz;
+    public float getRegulatorFrequency() {
+        return regulatorFrequency;
     }
 
-    public void setRegulatorFrequenz(float regulatorFrequenz) {
-        this.regulatorFrequenz = regulatorFrequenz;
+    public void setRegulatorFrequency(float regulatorFrequency) {
+        this.regulatorFrequency = regulatorFrequency;
     }
 
     public int getSpeed() {
@@ -91,30 +80,4 @@ public class ControlData {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
-
-    public int getDrivingMode() {
-        return drivingMode;
-    }
-
-    public void setDrivingMode(int drivingMode) {
-        this.drivingMode = drivingMode;
-    }
-
-    public int getAngle() {
-        return angle;
-    }
-
-    public void setAngle(int angle) {
-        this.angle = angle;
-    }
-
-    public double getRadianAngle() {
-        return radianAngle;
-    }
-
-    public void setRadianAngle(double radianAngle) {
-        this.radianAngle = radianAngle;
-    }
-
-
 }
