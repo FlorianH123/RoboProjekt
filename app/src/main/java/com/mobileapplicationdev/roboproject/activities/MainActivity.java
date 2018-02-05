@@ -393,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             public void onClick(View v) {
                 //realTimeChart.invalidate();
                 realTimeChart.clear();
+                initDynamicGraph();
             }
         });
     }
