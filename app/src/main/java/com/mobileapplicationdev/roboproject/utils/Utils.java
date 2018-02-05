@@ -36,4 +36,8 @@ public class Utils {
     public static boolean isInFourthQuarter(float angle) {
         return angle > 90.0;
     }
+
+    public static float getTimeX(float herz){
+        return (1/herz);
+    }
 }

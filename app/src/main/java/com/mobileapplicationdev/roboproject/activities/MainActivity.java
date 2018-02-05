@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -22,10 +23,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.Viewport;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
@@ -48,8 +54,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
+    /*************************************************************/
+    private float xTest = 0f;
+    private LineChart realTimeChart;
+    /***graph stuff **********************************************/
+
     private final Random RANDOM = new Random();
-    private LineGraphSeries<DataPoint> series;
     private int lastX = 0;
 
     @Override
@@ -71,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButton();
         initLeftJoyStick();
         initRightJoyStick();
+        initDebugToggleButton();
         initDynamicGraph();
         initSpinner();
     }
@@ -327,53 +338,163 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // Tab 2 -------------------------------------------------------------------------------------------
 
-    private void initDynamicGraph() {
-        // we get graph view instance
-        GraphView graph = findViewById(R.id.graph);
-        // data
-        series = new LineGraphSeries<>();
-        graph.addSeries(series);
-        // customize a little bit viewport
-        Viewport viewport = graph.getViewport();
-        viewport.setYAxisBoundsManual(true);
-        viewport.setMinY(0);
-        viewport.setMaxY(10);
-        viewport.setScrollable(true);
+    private void initDynamicGraph(){
+        realTimeChart = (LineChart)findViewById(R.id.graph);
+        //enable description text
+        realTimeChart.getDescription().setEnabled(true);
+        //enable touch gesture
+        realTimeChart.setTouchEnabled(true);
+        // enable scaling and dragging
+        realTimeChart.setDragEnabled(true);
+        realTimeChart.setScaleEnabled(true);
+        realTimeChart.setDrawGridBackground(false);
+
+        //realTimeChart.setNoDataText("No data for the moment");
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        realTimeChart.setPinchZoom(true);
+
+        // set an alternative background color
+        realTimeChart.setBackgroundColor(Color.LTGRAY);
+
+        LineData data = new LineData();
+        data.setValueTextColor(Color.GREEN);
+        //adding clear data
+        realTimeChart.setData(data);
+        Legend legend = realTimeChart.getLegend();
+
+        // modify the legend ...
+        legend.setForm(Legend.LegendForm.LINE);
+        legend.setTextColor(Color.WHITE);
+
+        XAxis xl = realTimeChart.getXAxis();
+        xl.setTextColor(Color.BLUE);
+        xl.setDrawGridLines(false);
+        xl.setAvoidFirstLastClipping(true);
+        xl.setEnabled(true);
+        //xl.setAxisMinimum(0f);
+
+        YAxis leftAxis = realTimeChart.getAxisLeft();
+        leftAxis.setTextColor(Color.BLUE);
+        leftAxis.setAxisMaximum(2f);
+        leftAxis.setAxisMinimum(0f);
+        leftAxis.setDrawGridLines(true);
+
+        YAxis rightAxis = realTimeChart.getAxisRight();
+        rightAxis.setEnabled(false);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // we're going to simulate real time with thread that append data to the graph
-        new Thread(new Runnable() {
+    private void initDebugToggleButton(){
+        final ToggleButton toggle = findViewById(R.id.toggleButton_debug);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                feedMultiple();
+            }
+        });
+    }
+
+    private void addEntry(){
+        //reedit default data
+        LineData data = realTimeChart.getData();
+
+        if (data != null){
+            ILineDataSet set = data.getDataSetByIndex(0);
+            if(set == null){
+                set = createSet();
+                data.addDataSet(set);
+            }
+            float herz = Utils.getTimeX(10f);
+            //add entry to the data set
+            data.addEntry(new Entry(set.getEntryCount(),(float) (Math.random() * 1.5) ), 0);
+            data.notifyDataChanged();
+            xTest=+herz;
+
+            // let the chart know it's data has changed
+            realTimeChart.notifyDataSetChanged();
+
+            // limit the number of visible entries
+            realTimeChart.setVisibleXRangeMaximum(120);
+            // mChart.setVisibleYRange(30, AxisDependency.LEFT);
+
+            // move to the latest entry
+            realTimeChart.moveViewToX(data.getEntryCount());
+
+            // this automatically refreshes the chart (calls invalidate())
+            // mChart.moveViewTo(data.getXValCount()-7, 55f,
+            // AxisDependency.LEFT);
+        }
+    }
+    private Thread thread;
+
+    private void feedMultiple() {
+
+        if (thread != null)
+            thread.interrupt();
+
+        final Runnable runnable = new Runnable() {
 
             @Override
             public void run() {
-                // we add 100 new entries
-                for (int i = 0; i < 100; i++) {
-                    runOnUiThread(new Runnable() {
+                addEntry();
+            }
+        };
 
-                        @Override
-                        public void run() {
-                            addEntry();
-                        }
-                    });
+        thread = new Thread(new Runnable() {
 
-                    // sleep to slow down the add of entries
+            @Override
+            public void run() {
+                for (int i = 0; i < 1000; i++) {
+
+                    // Don't generate garbage runnables inside the loop.
+                    runOnUiThread(runnable);
+
                     try {
-                        Thread.sleep(600);
+                        Thread.sleep(0);
                     } catch (InterruptedException e) {
-                        // manage error ...
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
                 }
             }
-        }).start();
+        });
+
+        thread.start();
     }
 
-    // add random data to graph
-    private void addEntry() {
-        // here, we choose to display max 10 points on the viewport and we scroll to end
-        series.appendData(new DataPoint(lastX++, RANDOM.nextDouble() * 10d), true, 10);
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (thread != null) {
+            thread.interrupt();
+        }
+    }
+
+    private LineDataSet createSet() {
+
+        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.getHoloBlue());
+        set.setCircleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(false);
+        return set;
+    }
+
+    private Double[] testStrings(){
+        Double[] array= new Double[10000];
+
+        for(int i = 0;i<10000;i++){
+            array[i] = (RANDOM.nextDouble() *1.5);
+        }
+        return array;
     }
 
     private void initSpinner(){
@@ -395,6 +516,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             socketService.openPlottingSocket(ipAdress,Integer.parseInt(getPreferenceValue(1)));
         }
     }
+
 // -------------------------------------------------------------------------------------------------
 
 // Callbacks interface implementation --------------------------------------------------------------
