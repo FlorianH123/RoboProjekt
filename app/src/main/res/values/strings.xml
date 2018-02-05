@@ -86,6 +86,8 @@
         <item>Motor vorne rechts</item>
         <item>Motor hinten</item>
     </string-array>
+    <string name="error_msg_invalid_debug_input">Falsche Eingabe der Debug Control Data</string>
+    <string name="toggleButton_reset_debug">Reset Chart</string>
 <!-- -->
 
 <!-- TAB 3 Strings -->

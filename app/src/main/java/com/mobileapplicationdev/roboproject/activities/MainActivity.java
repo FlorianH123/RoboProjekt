@@ -14,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -39,6 +41,7 @@ import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float rot_z = 0.0f;
 
     /*************************************************************/
-    private float xTest = 0f;
+    private Thread thread;
     private LineChart realTimeChart;
     /***graph stuff **********************************************/
 
@@ -382,6 +385,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButton(toggleButton , editText, TAG_TAB_2);
     }
 
+    private void initResetButton(){
+        Button resetButton = findViewById(R.id.button_reset);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                realTimeChart.invalidate();
+                realTimeChart.clear();
+            }
+        });
+    }
+
     private void initDynamicGraph(){
         realTimeChart = (LineChart)findViewById(R.id.graph);
         //enable description text
@@ -430,29 +444,76 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private void initDebugToggleButton(){
         final ToggleButton toggle = findViewById(R.id.toggleButton_debug);
+        final EditText editIP = findViewById(R.id.editText_ipAddress_tab2);
+        final EditText editFrequency = findViewById(R.id.editTextFrequency);
+        final EditText editI = findViewById(R.id.editTextEnterI);
+        final EditText editP = findViewById(R.id.editTextEnterP);
+        final EditText editSpeed = findViewById(R.id.editText_enterDebug_speed);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                feedMultiple();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                String errMsgInvalidInput = getString(R.string.error_msg_invalid_debug_input);
+                if (isChecked){
+                    ControlData cData = getControlData();
+                    String I = String.valueOf(editI.getText());
+                    String P=String.valueOf(editIP.getText());
+                    String frequency=String.valueOf(editFrequency.getText());
+                    String speed = String.valueOf(editSpeed.getText());
+                    if (I.trim().isEmpty()||P.trim().isEmpty()||frequency.trim().isEmpty()||speed.trim().isEmpty()){
+                        toggle.setChecked(false);
+                        Toast.makeText(MainActivity.this,
+                                errMsgInvalidInput,Toast.LENGTH_SHORT).show();
+                    } else {
+                        editIP.setEnabled(false);
+                        editFrequency.setEnabled(false);
+                        editI.setEnabled(false);
+                        editP.setEnabled(false);
+                        editSpeed.setEnabled(false);
+                        feedMultiple();
+                    }
+                }else{
+                    editIP.setEnabled(true);
+                    editFrequency.setEnabled(true);
+                    editI.setEnabled(true);
+                    editP.setEnabled(true);
+                    editSpeed.setEnabled(true);
+                }
             }
         });
     }
-
+    int indexAddEntry = 0;
     private void addEntry(){
+        ControlData debugData = setControlDataDebug();
         //reedit default data
         LineData data = realTimeChart.getData();
 
         if (data != null){
+
             ILineDataSet set = data.getDataSetByIndex(0);
+            ILineDataSet setTwo;
+
             if(set == null){
+                //initialize setOne / Dynamic Graph
                 set = createSet();
+                setTwo = createSetTwo();
+
+                //initialize setTwo / static graph
                 data.addDataSet(set);
+                data.addDataSet(setTwo);
+
             }
-            float herz = Utils.getTimeX(10f);
-            //add entry to the data set
-            data.addEntry(new Entry(set.getEntryCount(),(float) (Math.random() * 1.5) ), 0);
+
+
+            float staticdata = (debugData.getSpeed()/(float)10);
+            Float[] array = testDebugStrings(staticdata);
+            float test = array[indexAddEntry];
+            indexAddEntry++;
+            //add first data set Entry for the dynamic data
+            data.addEntry(new Entry(set.getEntryCount(),test/*(float) (Math.random() * 1.5)*/ ), 0);
+            //add second data set Entry for the static allocated data
+            data.addEntry(new Entry(set.getEntryCount(),staticdata),1);
             data.notifyDataChanged();
-            xTest=+herz;
+
 
             // let the chart know it's data has changed
             realTimeChart.notifyDataSetChanged();
@@ -469,7 +530,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             // AxisDependency.LEFT);
         }
     }
-    private Thread thread;
 
     private void feedMultiple() {
 
@@ -488,13 +548,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void run() {
-                for (int i = 0; i < 1000; i++) {
 
+                for(int i=0; i<2500;i++){
                     // Don't generate garbage runnables inside the loop.
                     runOnUiThread(runnable);
 
                     try {
-                        Thread.sleep(0);
+                        Thread.sleep(2);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -515,6 +575,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    private LineDataSet createSetTwo(){
+        LineDataSet set = new LineDataSet(null,"Static Data");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.rgb("#B40404"));
+        set.setCircleColor(Color.RED);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(100, 170, 30));
+        set.setValueTextColor(Color.RED);
+        set.setValueTextSize(9f);
+        set.setDrawValues(true);
+        return set;
+    }
     private LineDataSet createSet() {
 
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
@@ -524,21 +600,39 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
+        set.setDrawFilled(true);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
+        set.setValueTextColor(Color.BLUE);
         set.setValueTextSize(9f);
-        set.setDrawValues(false);
+        set.setDrawValues(true);
         return set;
     }
 
-    private Double[] testStrings(){
-        Double[] array= new Double[10000];
+    private Float[] testStrings(){
+        Float[] array= new Float[10000];
 
         for(int i = 0;i<10000;i++){
-            array[i] = (RANDOM.nextDouble() *1.5);
+            array[i] = (RANDOM.nextFloat() *1.5f);
         }
         return array;
+    }
+
+    private Float[] testDebugStrings(float zielspeed){
+        Float[] array = new Float[2500];
+        float x =zielspeed/100;
+        float y = x;
+        for (int i = 0; i<2500;i++){
+            if (i<100){
+                array[i] = y;
+                y+=x;
+            }else if (i%2 ==0){
+                array[i] = y-0.1f;
+            }else if (i%2 ==1){
+                array[i] = y+0.1f;
+            }
+        }return array;
     }
 
     private void initSpinnerTab2(){
