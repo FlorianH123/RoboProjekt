@@ -392,7 +392,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onClick(View v) {
                 //realTimeChart.invalidate();
+                realTimeChart.clearValues();
                 realTimeChart.clear();
+                indexAddEntry =0;
                 initDynamicGraph();
             }
         });
@@ -456,11 +458,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 String errMsgInvalidInput = getString(R.string.error_msg_invalid_debug_input);
                 if (isChecked){
-                    ControlData cData = getControlData();
                     String I = String.valueOf(editI.getText());
-                    String P=String.valueOf(editIP.getText());
-                    String frequency=String.valueOf(editFrequency.getText());
+                    String P= String.valueOf(editIP.getText());
+                    String frequency = String.valueOf(editFrequency.getText());
                     String speed = String.valueOf(editSpeed.getText());
+
                     if (I.trim().isEmpty()||P.trim().isEmpty()||frequency.trim().isEmpty()||speed.trim().isEmpty()){
                         toggle.setChecked(false);
                         Toast.makeText(MainActivity.this,
