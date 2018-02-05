@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         xl.setDrawGridLines(false);
         xl.setAvoidFirstLastClipping(true);
         xl.setEnabled(true);
-        //xl.setAxisMinimum(0f);
+
 
         YAxis leftAxis = realTimeChart.getAxisLeft();
         leftAxis.setTextColor(Color.BLUE);
