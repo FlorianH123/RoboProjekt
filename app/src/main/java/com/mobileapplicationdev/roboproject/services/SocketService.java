@@ -93,18 +93,41 @@ public class SocketService extends Service {
                      ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
                      DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
 
-                    while (mainActivity.getDebugButtonStatus()) {
-                        ControlData controlData = mainActivity.setControlDataDebug();
-                        byteWriter.writeInt(swap(controlData.getSpeed()));
-                        byteWriter.writeFloat(swap(controlData.getVarI()));
-                        byteWriter.writeFloat(swap(controlData.getVarP()));
-                        byteWriter.writeFloat(swap(controlData.getRegulatorFrequency()));
+                    // TODO: 05.02.2018 send zero if no input
 
-                        debugData = byteArrayStream.toByteArray();
-                        byteArrayStream.reset();
-                        dataOS.write(debugData);
+                    while (mainActivity.getConnectionButtonTab2Status()) {
+                        if (mainActivity.getDebugButtonStatus()) {
+                            //set debug configurations
+                            ControlData controlData = mainActivity.getDebugControlData();
+                            byteWriter.writeInt(swap(controlData.getSpeed()));
+                            byteWriter.writeFloat(swap(controlData.getVarI()));
+                            byteWriter.writeFloat(swap(controlData.getVarP()));
+                            byteWriter.writeFloat(swap(controlData.getRegulatorFrequency()));
+                            byteWriter.writeInt(swap(mainActivity.getSpinnerEngine()));
 
-                        Thread.sleep(50);
+                            debugData = byteArrayStream.toByteArray();
+                            byteArrayStream.reset();
+                            dataOS.write(debugData);
+
+                            Thread.sleep(50);
+                        }else {
+                            //set default configurations
+                            //speed
+                            byteWriter.writeInt(swap(0));
+                            //var I
+                            byteWriter.writeFloat(swap(0));
+                            //varP
+                            byteWriter.writeFloat(swap(0));
+                            //regulator frequency
+                            byteWriter.writeFloat(swap(0));
+                            //engine
+                            byteWriter.writeInt(swap(0));
+                            debugData = byteArrayStream.toByteArray();
+                            byteArrayStream.reset();
+                            dataOS.write(debugData);
+
+                            Thread.sleep(50);
+                        }
                     }
                 } catch (IOException ex) {
                     exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
@@ -157,6 +180,9 @@ public class SocketService extends Service {
         boolean getDebugButtonStatus();
         ControlData setControlDataDebug();
         ToggleButton getToggleButton(String tagTab);
+        Boolean getConnectionButtonTab2Status();
+        int getSpinnerEngine();
+        ControlData getDebugControlData();
     }
 
     private String getErrorMessage(String exceptionMessage) {

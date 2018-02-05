@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +42,6 @@ import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -60,10 +60,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     /*************************************************************/
     private Thread thread;
     private LineChart realTimeChart;
-    /***graph stuff **********************************************/
-
+    int indexAddEntry = 0;
     private final Random RANDOM = new Random();
-    private int lastX = 0;
+    private float cDataI;
+    private float cDataP;
+    private float cDataFrequency;
+    private int cDataSpeed;
+    /***graph stuff **********************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -379,6 +382,18 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // TAB 2 -------------------------------------------------------------------------------------------
 
+    @Override
+    public ControlData getDebugControlData(){
+        ControlData cData = new ControlData();
+
+        cData.setRegulatorFrequency(cDataFrequency);
+        cData.setSpeed(cDataSpeed);
+        cData.setVarP(cDataP);
+        cData.setVarI(cDataI);
+
+        return cData;
+    }
+
     private void initConnectionButtonTab2() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
         EditText editText = findViewById(R.id.editText_ipAddress_tab2);
@@ -386,16 +401,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButton(toggleButton , editText, TAG_TAB_2);
     }
 
+
     private void initResetButton(){
         Button resetButton = findViewById(R.id.button_reset);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //realTimeChart.invalidate();
                 realTimeChart.clearValues();
                 realTimeChart.clear();
                 indexAddEntry =0;
                 initDynamicGraph();
+                getSpinnerEngine();
             }
         });
     }
@@ -485,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
         });
     }
-    int indexAddEntry = 0;
+
     private void addEntry(){
         ControlData debugData = setControlDataDebug();
         //reedit default data
@@ -639,6 +655,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }return array;
     }
 
+    @Override
+    public int getSpinnerEngine(){
+        Spinner spinner = findViewById(R.id.spinner);
+        int spinnerEngine = spinner.getSelectedItemPosition();
+        Log.d("spinnerDebug", "getSpinnerEngine: "+ spinnerEngine);
+        return spinnerEngine;
+    }
+
     private void initSpinnerTab2(){
         Spinner spinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -687,6 +711,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // -------------------------------------------------------------------------------------------------
 
 // Callbacks interface implementation --------------------------------------------------------------
+
+    @Override
+    public Boolean getConnectionButtonTab2Status(){
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
+        return toggleButton.isChecked();
+    }
 
     @Override
     public boolean getToggleButtonStatus() {
