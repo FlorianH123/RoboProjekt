@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initDynamicGraph();
         initSpinnerTab2();
         initSpinnerTab3();
+        initResetButton();
     }
 
     /**
@@ -390,7 +391,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                realTimeChart.invalidate();
+                //realTimeChart.invalidate();
                 realTimeChart.clear();
             }
         });
