@@ -7,6 +7,8 @@ package com.mobileapplicationdev.roboproject.models;
 
 public class ControlData {
     private int speed;
+    private Engines engine;
+    private Task task;
     private float varI;
     private float varP;
     private float regulatorFrequency;
@@ -79,5 +81,21 @@ public class ControlData {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public Engines getEngine() {
+        return engine;
+    }
+
+    public void setEngine(Engines engine) {
+        this.engine = engine;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 }
