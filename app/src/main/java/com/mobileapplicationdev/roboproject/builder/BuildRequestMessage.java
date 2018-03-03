@@ -2,6 +2,7 @@ package com.mobileapplicationdev.roboproject.builder;
 
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.models.MessageType;
+import com.mobileapplicationdev.roboproject.models.Task;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -15,12 +16,12 @@ import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
 
 public abstract class BuildRequestMessage {
     public static void sendSetTarget(DataOutputStream dataOutputStream,
-                                           ControlData controlData) throws IOException {
+                                     int engineId) throws IOException {
 
         int messageType = swap(MessageType.SET_TARGET.getMessageType());
         int packageSize = swap(4);
-        int taskId = swap(controlData.getTask().getTaskId());
-        int engineId = swap(controlData.getEngine().getEngineId());
+        int taskId = swap(Task.Antriebsregelung.getTaskId());
+        engineId = swap(engineId);
 
         byte[] debugData;
 

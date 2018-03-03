@@ -61,7 +61,7 @@ public class SocketService extends Service {
                      ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
                      DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
 
-                    while (mainActivity.getToggleButtonStatus()) {
+                    while (mainActivity.getConnectionButtonStatus(1)) {
                         ControlData controlData = mainActivity.getControlData();
 
                         byteWriter.writeFloat(swap(controlData.getX()));
@@ -92,58 +92,66 @@ public class SocketService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int messageType = -2;
-                int messageSize = 0;
-                float p;
-                float i;
-                float d;
+                final int tabId = 2;
+                int messageType;
+                int messageSize;
                 float[] dataMr;
 
                 try (Socket debugSocket = new Socket(ip, port);
+
                      DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
                      DataInputStream dataIS = new DataInputStream(debugSocket.getInputStream())) {
 
-                    while (mainActivity.getConnectionButtonTab2Status()) {
-                        if (mainActivity.getDebugButtonStatus()) {
-                            ControlData controlData = mainActivity.getDebugControlData();
+                    while (mainActivity.getConnectionButtonStatus(tabId)) {
+                        if (mainActivity.getDebugButtonStatus(tabId)) {
+                            ControlData controlData = new ControlData();
+                            controlData.setVarP(mainActivity.getP(tabId));
+                            controlData.setVarI(mainActivity.getI(tabId));
+                            controlData.setRegulatorFrequency(mainActivity.getD(tabId));
 
                             // Send target
-                            sendSetTarget(dataOS, controlData);
+                            sendSetTarget(dataOS, mainActivity.getSpinnerEngine(tabId));
                             messageType = dataIS.readInt();
+                            //messageSize = dataIS.readInt();
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim setzten des Targets");
                             }
 
+                            // Get current PID
                             sendGetPID(dataOS);
                             messageType = dataIS.readInt();
-                            messageSize = dataIS.readInt();
-                            p = dataIS.readFloat();
-                            i = dataIS.readFloat();
-                            d = dataIS.readFloat();
+                            //messageSize = dataIS.readInt();
+
+                            mainActivity.setP(dataIS.readFloat(), tabId);
+                            mainActivity.setI(dataIS.readFloat(), tabId);
+                            mainActivity.setD(dataIS.readFloat(), tabId);
                             //TODO was soll mit diesen Werten geschehen?
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim empfangen der PID Werte");
                             }
 
+                            // Send new PID
                             sendSetPID(dataOS, controlData);
                             messageType = dataIS.readInt();
-                            messageSize = dataIS.readInt();
+                            //messageSize = dataIS.readInt();
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim setzen der PID Werte");
                             }
 
-                            sendConnect(dataOS, port);
+                            // Connect to device
+                            sendConnect(dataOS, debugSocket.getLocalPort());
                             messageType = dataIS.readInt();
-                            messageSize = dataIS.readInt();
+                            //messageSize = dataIS.readInt();
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim connecten");
                             }
 
-                            while (mainActivity.getDebugButtonStatus()) {
+                            // Receive data
+                            while (mainActivity.getDebugButtonStatus(tabId)) {
                                 messageType = dataIS.readInt();
                                 messageSize = dataIS.readInt();
 
@@ -152,14 +160,13 @@ public class SocketService extends Service {
                                 if (messageType != MessageType.ERROR.getMessageType()) {
                                     dataMr = new float[256];
 
-                                    for (int j = 0 ; i < messageSize ; i++) {
+                                    for (int j = 0 ; j < messageSize ; j++) {
                                         dataMr[j] = dataIS.readFloat();
                                     }
                                     // TODO Geschwindigkeit in den Graph übernehemen
+                                    Thread.sleep(50);
                                 }
                             }
-
-                            Thread.sleep(50);
                         }
                     }
                 } catch (IOException ex) {
@@ -173,78 +180,19 @@ public class SocketService extends Service {
         }, "robot_debugPlot.socket.thread").start();
     }
 
-
-//    public void openPlottingSocket(final String ip, final int port) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
+    public void openRotatingEngineSocket(final String ip, final int port) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 //                byte[] debugData;
+//                final int tabId = 3;
 //
 //                try (Socket debugSocket = new Socket(ip, port);
 //                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
 //                     ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
 //                     DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
 //
-//                    // TODO: 05.02.2018 send zero if no input
-//
-//                    while (mainActivity.getConnectionButtonTab2Status()) {
-//                        if (mainActivity.getDebugButtonStatus()) {
-//                            //set debug configurations
-//                            ControlData controlData = mainActivity.getDebugControlData();
-//                            byteWriter.writeInt(swap(controlData.getSpeed()));
-//                            byteWriter.writeFloat(swap(controlData.getVarI()));
-//                            byteWriter.writeFloat(swap(controlData.getVarP()));
-//                            byteWriter.writeFloat(swap(controlData.getRegulatorFrequency()));
-//                            byteWriter.writeInt(swap(mainActivity.getSpinnerEngine()));
-//
-//                            debugData = byteArrayStream.toByteArray();
-//                            byteArrayStream.reset();
-//                            dataOS.write(debugData);
-//
-//                            Thread.sleep(50);
-//                        }else {
-//                            //set default configurations
-//                            //speed
-//                            byteWriter.writeInt(swap(0));
-//                            //var I
-//                            byteWriter.writeFloat(swap(0));
-//                            //varP
-//                            byteWriter.writeFloat(swap(0));
-//                            //regulator frequency
-//                            byteWriter.writeFloat(swap(0));
-//                            //engine
-//                            byteWriter.writeInt(swap(0));
-//                            debugData = byteArrayStream.toByteArray();
-//                            byteArrayStream.reset();
-//                            dataOS.write(debugData);
-//
-//                            Thread.sleep(50);
-//                        }
-//                    }
-//                } catch (IOException ex) {
-//                    exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
-//                } catch (InterruptedException ex) {
-//                    Log.e(className, ex.getMessage());
-//                }
-//
-//                stopSelf();
-//
-//            }
-//        }, "robot_debugPlot.socket.thread").start();
-//    }
-//
-//    public void openRotatingEngineSocket(final String ip, final int port) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                byte[] debugData;
-//
-//                try (Socket debugSocket = new Socket(ip, port);
-//                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
-//                     ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-//                     DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
-//
-//                    while (mainActivity.getDebugButtonStatus()) {
+//                    while (mainActivity.getDebugButtonStatus(tabId)) {
 //
 //                        Thread.sleep(50);
 //                    }
@@ -255,10 +203,9 @@ public class SocketService extends Service {
 //                }
 //
 //                stopSelf();
-//
-//            }
-//        }, "robot_rotatingEngine.socket.thread").start();
-//    }
+            }
+        }, "robot_rotatingEngine.socket.thread").start();
+    }
 
     // Register Activity to the service as Callbacks client
     public void registerClient(Activity activity) {
@@ -267,21 +214,27 @@ public class SocketService extends Service {
 
     // callbacks interface for communication with main activity!
     public interface Callbacks {
-        boolean getToggleButtonStatus();
+        boolean getConnectionButtonStatus(int tabId);
 
         ControlData getControlData();
 
-        boolean getDebugButtonStatus();
-
-        ControlData setControlDataDebug();
+        boolean getDebugButtonStatus(int tabId);
 
         ToggleButton getToggleButton(String tagTab);
 
-        Boolean getConnectionButtonTab2Status();
+        int getSpinnerEngine(int tabId);
 
-        int getSpinnerEngine();
+        void setP(float p, int tabId);
 
-        ControlData getDebugControlData();
+        int getP(int tabId);
+
+        void setI(float i, int tabId);
+
+        int getI(int tabId);
+
+        void setD(float d, int tabId);
+
+        int getD(int tabId);
     }
 
     private String getErrorMessage(String exceptionMessage) {
