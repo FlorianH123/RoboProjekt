@@ -530,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
 
 
-            float staticdata = (debugData.getSpeed() / (float) 10);
+            float staticdata = 0; //(debugData.getSpeed() / (float) 10);
             Float[] array = testDebugStrings(staticdata);
             float test = array[indexAddEntry];
             indexAddEntry++;

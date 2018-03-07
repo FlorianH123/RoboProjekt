@@ -70,7 +70,7 @@ public abstract class BuildRequestMessage {
         int packageSize = swap(5);
         float p = swap(controlData.getVarP());
         float i = swap(controlData.getVarI());
-        float d = swap(controlData.getRegulatorFrequency());
+        float d = 0; //swap(controlData.getRegulatorFrequency());
 
         byte[] debugData;
 
