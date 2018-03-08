@@ -495,7 +495,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         editI.setEnabled(false);
                         editP.setEnabled(false);
                         editSpeed.setEnabled(false);
-                        feedMultiple();
+                        startSocketService(TAG_TAB_2);
+                        //feedMultiple();
                     }
                 } else {
                     editIP.setEnabled(true);

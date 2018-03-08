@@ -21,9 +21,9 @@ public abstract class BuildRequestMessage {
                                      int engineId) throws IOException {
 
         int messageType = swap(MessageType.SET_TARGET.getMessageType());
-        int packageSize = swap(4);
+        int packageSize = swap(16);
         int taskId = swap(Task.Antriebsregelung.getTaskId());
-        engineId = swap(engineId);
+        engineId = swap(0);
 
         byte[] debugData;
 
@@ -51,7 +51,7 @@ public abstract class BuildRequestMessage {
 
     public static void sendGetPID(DataOutputStream dataOutputStream) throws IOException {
         int messageType = swap(MessageType.GET_PID.getMessageType());
-        int packageSize = swap(2);
+        int packageSize = swap(8);
 
         byte[] debugData;
 
@@ -77,7 +77,7 @@ public abstract class BuildRequestMessage {
                                      ControlData controlData) throws IOException {
 
         int messageType = swap(MessageType.SET_PID.getMessageType());
-        int packageSize = swap(5);
+        int packageSize = swap(20);
         float p = swap(controlData.getVarP());
         float i = swap(controlData.getVarI());
         float d = 0; //swap(controlData.getRegulatorFrequency());
@@ -108,11 +108,41 @@ public abstract class BuildRequestMessage {
         //dataOutputStream.close();
     }
 
+    public static void sendSetSpeed(DataOutputStream dataOutputStream,
+                                    ControlData controlData) throws IOException {
+
+        int messageType = swap(MessageType.SET_VALUE.getMessageType());
+        int packageSize = swap(12);
+        float speed = swap(controlData.getSpeed());
+
+        byte[] debugData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        byteWriter.writeInt(messageType);
+        Log.d("Test", "SET Speed \n");
+        Log.d("Test", "Message Type: " + messageType + "\n");
+        byteWriter.writeInt(packageSize);
+        Log.d("Test", "PackageSize: " + packageSize + "\n");
+        byteWriter.writeFloat(speed);
+        Log.d("Test", "Speed: " + speed + "\n");
+
+
+        debugData = byteArrayStream.toByteArray();
+        //byteArrayStream.reset();
+        dataOutputStream.write(debugData);
+
+        byteArrayStream.close();
+        byteWriter.close();
+        //dataOutputStream.close();
+    }
+
     public static void sendConnect(DataOutputStream dataOutputStream,
                                          int port) throws IOException {
 
-        int messageType = swap(MessageType.SET_PID.getMessageType());
-        int packageSize = swap(3);
+        int messageType = swap(MessageType.CONNECT.getMessageType());
+        int packageSize = swap(12);
         port = swap(port);
 
         byte[] debugData;

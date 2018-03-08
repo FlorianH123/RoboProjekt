@@ -12,7 +12,8 @@ public enum MessageType {
     CONNECT     (2),
     GET_PID     (3),
     SET_PID     (4),
-    DATA        (5);
+    DATA        (5),
+    SET_VALUE   (6);
 
     private final int messageType;
 

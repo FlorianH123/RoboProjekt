@@ -18,12 +18,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendConnect;
 import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendGetPID;
 import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendSetPID;
 import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendSetTarget;
+import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendSetSpeed;
 import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
 
 /**
@@ -95,7 +97,7 @@ public class SocketService extends Service {
                 final int tabId = 2;
                 int messageType;
                 int messageSize;
-                float[] dataMr;
+
 
                 try (Socket debugSocket = new Socket(ip, port);
 
@@ -105,16 +107,17 @@ public class SocketService extends Service {
                     while (mainActivity.getConnectionButtonStatus(tabId)) {
                         if (mainActivity.getDebugButtonStatus(tabId)) {
                             ControlData controlData = new ControlData();
-                            controlData.setVarP(mainActivity.getP(tabId));
-                            controlData.setVarI(mainActivity.getI(tabId));
-                            controlData.setRegulatorFrequency(mainActivity.getD(tabId));
+                            controlData.setVarP(0.8f);
+                            controlData.setVarI(5.35f);
+                            controlData.setRegulatorFrequency(1f);
+                            controlData.setSpeed(50);
 
                             // Send target
                             sendSetTarget(dataOS, mainActivity.getSpinnerEngine(tabId));
-                            messageType = dataIS.readInt();
+                            messageType = swap(dataIS.readInt());
                             Log.d("Test", "Read Set Target");
                             Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = dataIS.readInt();
+                            messageSize = swap(dataIS.readInt());
                             Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
@@ -123,18 +126,18 @@ public class SocketService extends Service {
 
                             // Get current PID
                             sendGetPID(dataOS);
-                            messageType = dataIS.readInt();
+                            messageType = swap(dataIS.readInt());
                             Log.d("Test", "Read Get PID");
                             Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = dataIS.readInt();
+                            messageSize = swap(dataIS.readInt());
                             Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                              //mainActivity.setP(dataIS.readFloat(), tabId);
-                            Log.d("Test", "Read P" + dataIS.readFloat());
+                            Log.d("Test", "Read P" + swap(dataIS.readFloat()));
                             //mainActivity.setI(dataIS.readFloat(), tabId);
-                            Log.d("Test", "Read I" + dataIS.readFloat());
+                            Log.d("Test", "Read I" + swap(dataIS.readFloat()));
                             //mainActivity.setD(dataIS.readFloat(), tabId);
-                            Log.d("Test", "Read D" + dataIS.readFloat());
+                            Log.d("Test", "Read D" + swap(dataIS.readFloat()));
                             //TODO was soll mit diesen Werten geschehen?
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
@@ -143,22 +146,76 @@ public class SocketService extends Service {
 
                             // Send new PID
                             sendSetPID(dataOS, controlData);
-                            messageType = dataIS.readInt();
+                            messageType = swap(dataIS.readInt());
                             Log.d("Test", "Read Set PID\n");
                             Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = dataIS.readInt();
+                            messageSize = swap(dataIS.readInt());
                             Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim setzen der PID Werte");
                             }
 
+                            sendSetSpeed(dataOS, controlData);
+                            messageType = swap(dataIS.readInt());
+                            Log.d("Test", "Read Set Speed\n");
+                            Log.d("Test", "MessageType: " + messageType + "\n");
+                            messageSize = swap(dataIS.readInt());
+                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
+
+                            if (messageType == MessageType.ERROR.getMessageType()) {
+                                throw new IOException("Fehler beim setzen der Geschwindigkeit");
+                            }
+
                             // Connect to device
-                            sendConnect(dataOS, debugSocket.getLocalPort());
-                            messageType = dataIS.readInt();
+                            final ServerSocket serverSocket = new ServerSocket(0);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Socket clientSocket;
+                                    int messageType;
+                                    int messageSize;
+                                    float[] dataMr;
+
+
+                                    try {
+                                        clientSocket = serverSocket.accept();
+                                        DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
+
+                                        while (mainActivity.getDebugButtonStatus(tabId)) {
+                                            messageType = swap(dataInputStream.readInt());
+                                            Log.d("Test", "MessageType: " + messageType + "\n");
+                                            messageSize = swap(dataInputStream.readInt());
+                                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
+
+                                            messageSize = messageSize - 8;
+
+                                            if (messageType != MessageType.ERROR.getMessageType()) {
+                                                dataMr = new float[256];
+
+                                                for (int j = 0 ; j < messageSize ; j++) {
+                                                    dataMr[j] = swap(dataInputStream.readFloat());
+                                                    Log.d("Test", "Geschwindigkeit" + dataMr[j] + "\n");
+                                                }
+                                                // TODO Geschwindigkeit in den Graph übernehemen
+
+                                            }
+                                        }
+
+                                        clientSocket.close();
+                                        serverSocket.close();
+
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).start();
+
+                            sendConnect(dataOS, serverSocket.getLocalPort());
+                            messageType = swap(dataIS.readInt());
                             Log.d("Test", "Receive Connect\n");
                             Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = dataIS.readInt();
+                            messageSize = swap(dataIS.readInt());
                             Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
@@ -166,31 +223,11 @@ public class SocketService extends Service {
                             }
 
                             // Receive data
-                            while (mainActivity.getDebugButtonStatus(tabId)) {
-                                messageType = dataIS.readInt();
-                                Log.d("Test", "MessageType: " + messageType + "\n");
-                                messageSize = dataIS.readInt();
-                                Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
-                                messageSize = messageSize - 2;
-
-                                if (messageType != MessageType.ERROR.getMessageType()) {
-                                    dataMr = new float[256];
-
-                                    for (int j = 0 ; j < messageSize ; j++) {
-                                        dataMr[j] = dataIS.readFloat();
-                                        Log.d("Test", "Geschwindigkeit" + dataMr[j] + "\n");
-                                    }
-                                    // TODO Geschwindigkeit in den Graph übernehemen
-                                    Thread.sleep(50);
-                                }
-                            }
                         }
                     }
                 } catch (IOException ex) {
                     exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
-                } catch (InterruptedException ex) {
-                    Log.e(className, ex.getMessage());
                 }
 
                 stopSelf();
