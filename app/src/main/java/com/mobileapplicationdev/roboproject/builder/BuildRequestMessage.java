@@ -1,5 +1,7 @@
 package com.mobileapplicationdev.roboproject.builder;
 
+import android.util.Log;
+
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.models.MessageType;
 import com.mobileapplicationdev.roboproject.models.Task;
@@ -29,17 +31,22 @@ public abstract class BuildRequestMessage {
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
         byteWriter.writeInt(messageType);
+        Log.d("Test", "Set Target \n");
+        Log.d("Test", "Message Type: " + messageType + "\n");
         byteWriter.writeInt(packageSize);
+        Log.d("Test", "PackageSize: " + packageSize + "\n");
         byteWriter.writeInt(taskId);
+        Log.d("Test", "TaskId: " + taskId + "\n");
         byteWriter.writeInt(engineId);
+        Log.d("Test", "Engine: " + engineId + "\n");
 
         debugData = byteArrayStream.toByteArray();
-        byteArrayStream.reset();
+        //byteArrayStream.reset();
         dataOutputStream.write(debugData);
 
         byteArrayStream.close();
         byteWriter.close();
-        dataOutputStream.close();
+        //dataOutputStream.close();
     }
 
     public static void sendGetPID(DataOutputStream dataOutputStream) throws IOException {
@@ -52,15 +59,18 @@ public abstract class BuildRequestMessage {
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
         byteWriter.writeInt(messageType);
+        Log.d("Test", "Get PID \n");
+        Log.d("Test", "Message Type: " + messageType + "\n");
         byteWriter.writeInt(packageSize);
+        Log.d("Test", "PackageSize: " + packageSize + "\n");
 
         debugData = byteArrayStream.toByteArray();
-        byteArrayStream.reset();
+        //byteArrayStream.reset();
         dataOutputStream.write(debugData);
 
         byteArrayStream.close();
         byteWriter.close();
-        dataOutputStream.close();
+        //dataOutputStream.close();
     }
 
     public static void sendSetPID(DataOutputStream dataOutputStream,
@@ -70,7 +80,7 @@ public abstract class BuildRequestMessage {
         int packageSize = swap(5);
         float p = swap(controlData.getVarP());
         float i = swap(controlData.getVarI());
-        float d = swap(controlData.getRegulatorFrequency());
+        float d = 0; //swap(controlData.getRegulatorFrequency());
 
         byte[] debugData;
 
@@ -78,18 +88,24 @@ public abstract class BuildRequestMessage {
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
         byteWriter.writeInt(messageType);
+        Log.d("Test", "SET PID \n");
+        Log.d("Test", "Message Type: " + messageType + "\n");
         byteWriter.writeInt(packageSize);
+        Log.d("Test", "PackageSize: " + packageSize + "\n");
         byteWriter.writeFloat(p);
+        Log.d("Test", "P: " + p + "\n");
         byteWriter.writeFloat(i);
-        byteWriter.writeFloat(d);
+        Log.d("Test", "I: " + i + "\n");
+        byteWriter.writeFloat(0f);
+        Log.d("Test", "D: " + 0 + "\n");
 
         debugData = byteArrayStream.toByteArray();
-        byteArrayStream.reset();
+        //byteArrayStream.reset();
         dataOutputStream.write(debugData);
 
         byteArrayStream.close();
         byteWriter.close();
-        dataOutputStream.close();
+        //dataOutputStream.close();
     }
 
     public static void sendConnect(DataOutputStream dataOutputStream,
@@ -105,15 +121,19 @@ public abstract class BuildRequestMessage {
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
         dataOutputStream.writeInt(messageType);
+        Log.d("Test", "SET PID \n");
+        Log.d("Test", "Message Type: " + messageType + "\n");
         dataOutputStream.writeInt(packageSize);
+        Log.d("Test", "PackageSize: " + packageSize + "\n");
         dataOutputStream.writeInt(port);
+        Log.d("Test", "Port: " + port + "\n");
 
         debugData = byteArrayStream.toByteArray();
-        byteArrayStream.reset();
+        //byteArrayStream.reset();
         dataOutputStream.write(debugData);
 
         byteArrayStream.close();
         byteWriter.close();
-        dataOutputStream.close();
+        //dataOutputStream.close();
     }
 }

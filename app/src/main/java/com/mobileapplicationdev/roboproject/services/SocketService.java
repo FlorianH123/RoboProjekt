@@ -112,7 +112,10 @@ public class SocketService extends Service {
                             // Send target
                             sendSetTarget(dataOS, mainActivity.getSpinnerEngine(tabId));
                             messageType = dataIS.readInt();
-                            //messageSize = dataIS.readInt();
+                            Log.d("Test", "Read Set Target");
+                            Log.d("Test", "MessageType: " + messageType + "\n");
+                            messageSize = dataIS.readInt();
+                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim setzten des Targets");
@@ -121,11 +124,17 @@ public class SocketService extends Service {
                             // Get current PID
                             sendGetPID(dataOS);
                             messageType = dataIS.readInt();
-                            //messageSize = dataIS.readInt();
+                            Log.d("Test", "Read Get PID");
+                            Log.d("Test", "MessageType: " + messageType + "\n");
+                            messageSize = dataIS.readInt();
+                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
-                            mainActivity.setP(dataIS.readFloat(), tabId);
-                            mainActivity.setI(dataIS.readFloat(), tabId);
-                            mainActivity.setD(dataIS.readFloat(), tabId);
+                             //mainActivity.setP(dataIS.readFloat(), tabId);
+                            Log.d("Test", "Read P" + dataIS.readFloat());
+                            //mainActivity.setI(dataIS.readFloat(), tabId);
+                            Log.d("Test", "Read I" + dataIS.readFloat());
+                            //mainActivity.setD(dataIS.readFloat(), tabId);
+                            Log.d("Test", "Read D" + dataIS.readFloat());
                             //TODO was soll mit diesen Werten geschehen?
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
@@ -135,7 +144,10 @@ public class SocketService extends Service {
                             // Send new PID
                             sendSetPID(dataOS, controlData);
                             messageType = dataIS.readInt();
-                            //messageSize = dataIS.readInt();
+                            Log.d("Test", "Read Set PID\n");
+                            Log.d("Test", "MessageType: " + messageType + "\n");
+                            messageSize = dataIS.readInt();
+                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim setzen der PID Werte");
@@ -144,7 +156,10 @@ public class SocketService extends Service {
                             // Connect to device
                             sendConnect(dataOS, debugSocket.getLocalPort());
                             messageType = dataIS.readInt();
-                            //messageSize = dataIS.readInt();
+                            Log.d("Test", "Receive Connect\n");
+                            Log.d("Test", "MessageType: " + messageType + "\n");
+                            messageSize = dataIS.readInt();
+                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                             if (messageType == MessageType.ERROR.getMessageType()) {
                                 throw new IOException("Fehler beim connecten");
@@ -153,7 +168,9 @@ public class SocketService extends Service {
                             // Receive data
                             while (mainActivity.getDebugButtonStatus(tabId)) {
                                 messageType = dataIS.readInt();
+                                Log.d("Test", "MessageType: " + messageType + "\n");
                                 messageSize = dataIS.readInt();
+                                Log.d("Test", "MessageSize: " + messageSize + "\n" );
 
                                 messageSize = messageSize - 2;
 
@@ -162,6 +179,7 @@ public class SocketService extends Service {
 
                                     for (int j = 0 ; j < messageSize ; j++) {
                                         dataMr[j] = dataIS.readFloat();
+                                        Log.d("Test", "Geschwindigkeit" + dataMr[j] + "\n");
                                     }
                                     // TODO Geschwindigkeit in den Graph übernehemen
                                     Thread.sleep(50);
