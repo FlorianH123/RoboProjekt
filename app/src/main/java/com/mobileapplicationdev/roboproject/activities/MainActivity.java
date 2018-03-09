@@ -495,7 +495,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         editI.setEnabled(false);
                         editP.setEnabled(false);
                         editSpeed.setEnabled(false);
-                        feedMultiple();
+                        startSocketService(TAG_TAB_2);
+                        //feedMultiple();
                     }
                 } else {
                     editIP.setEnabled(true);
@@ -530,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
 
 
-            float staticdata = 0; //(debugData.getSpeed() / (float) 10);
+            float staticdata = 0;//(debugData.getSpeed() / (float) 10);
             Float[] array = testDebugStrings(staticdata);
             float test = array[indexAddEntry];
             indexAddEntry++;

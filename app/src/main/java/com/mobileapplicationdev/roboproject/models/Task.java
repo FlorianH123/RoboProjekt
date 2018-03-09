@@ -5,9 +5,9 @@ package com.mobileapplicationdev.roboproject.models;
  */
 
 public enum Task {
-    Antriebsregelung(0),
-    StellmotorPositionsregelung(1),
-    StellmotorRPMRegelung(2);
+    Antriebsregelung(1),
+    StellmotorPositionsregelung(2),
+    StellmotorRPMRegelung(3);
 
     private final int task;
 
