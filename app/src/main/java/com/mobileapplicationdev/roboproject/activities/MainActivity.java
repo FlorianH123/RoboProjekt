@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -232,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 textView = findViewById(R.id.editText_ipAddress_tab2);
                 ipAddress = String.valueOf(textView.getText());
 
-                socketService.openPlottingSocket(ipAddress,
+                socketService.openDebugSocket(ipAddress,
                         Integer.parseInt(getPreferenceValue(1)));
             }
 
@@ -240,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 textView = findViewById(R.id.editText_ipAddress_tab3);
                 ipAddress = String.valueOf(textView.getText());
 
-                socketService.openRotatingEngineSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(2)));
+                //socketService.openRotatingEngineSocket(ipAddress,
+                 //       Integer.parseInt(getPreferenceValue(2)));
             }
         }
     }
@@ -389,24 +390,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // TAB 2 -------------------------------------------------------------------------------------------
 
-    public ControlData getDebugControlData() {
-        ControlData cData = new ControlData();
-
-        cData.setRegulatorFrequency(cDataFrequency);
-        cData.setSpeed(cDataSpeed);
-        cData.setVarP(cDataP);
-        cData.setVarI(cDataI);
-
-        return cData;
-    }
-
     private void initConnectionButtonTab2() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
         EditText editText = findViewById(R.id.editText_ipAddress_tab2);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_2);
     }
-
 
     private void initResetButton() {
         Button resetButton = findViewById(R.id.button_reset);
@@ -421,6 +410,314 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
         });
     }
+
+    private void initDebugToggleButton() {
+        final ToggleButton toggle = findViewById(R.id.toggleButton_debug);
+        final EditText editIP = findViewById(R.id.editText_ipAddress_tab2);
+        final EditText editFrequency = findViewById(R.id.editTextFrequency);
+        final EditText editI = findViewById(R.id.editTextEnterI);
+        final EditText editP = findViewById(R.id.editTextEnterP);
+        final EditText editSpeed = findViewById(R.id.editText_enterDebug_speed);
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                String errMsgInvalidInput = getString(R.string.error_msg_invalid_debug_input);
+
+                if (isChecked) {
+                    String I = String.valueOf(editI.getText());
+                    String P = String.valueOf(editIP.getText());
+                    String frequency = String.valueOf(editFrequency.getText());
+                    String speed = String.valueOf(editSpeed.getText());
+
+                    if (I.trim().isEmpty() || P.trim().isEmpty() || frequency.trim().isEmpty() || speed.trim().isEmpty()) {
+                        toggle.setChecked(false);
+                        Toast.makeText(MainActivity.this,
+                                errMsgInvalidInput, Toast.LENGTH_SHORT).show();
+                    } else {
+                        editIP.setEnabled(false);
+                        editFrequency.setEnabled(false);
+                        editI.setEnabled(false);
+                        editP.setEnabled(false);
+                        editSpeed.setEnabled(false);
+                        startSocketService(TAG_TAB_2);
+                        feedMultiple();
+                    }
+                } else {
+                    editIP.setEnabled(true);
+                    editFrequency.setEnabled(true);
+                    editI.setEnabled(true);
+                    editP.setEnabled(true);
+                    editSpeed.setEnabled(true);
+                }
+            }
+        });
+    }
+
+    private void initSpinnerTab2() {
+        Spinner spinner = findViewById(R.id.spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.engines, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// TAB 3 -------------------------------------------------------------------------------------------
+
+    private void initConnectionButtonTab3() {
+        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab3);
+        EditText editText = findViewById(R.id.editText_ipAddress_tab3);
+
+        initConnectionButton(toggleButton, editText, TAG_TAB_3);
+    }
+
+    private void initSpinnerTab3() {
+        Spinner spinner = findViewById(R.id.spinner_engines_tab3);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.engines, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+    }
+
+// -------------------------------------------------------------------------------------------------
+
+// Callbacks interface implementation --------------------------------------------------------------
+
+    @Override
+    public boolean getConnectionButtonStatus(int tabId) {
+        ToggleButton toggleButton;
+
+        if (tabId == TAB_TAB_ID_1) {
+            toggleButton = findViewById(R.id.toggleButton_connection_tab1);
+            return toggleButton.isChecked();
+        }
+
+        if (tabId == TAB_TAB_ID_2) {
+            toggleButton = findViewById(R.id.toggleButton_connection_tab2);
+            return toggleButton.isChecked();
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            toggleButton = findViewById(R.id.toggleButton_connection_tab3);
+            return toggleButton.isChecked();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean getDebugButtonStatus(int tabId) {
+        ToggleButton toggleButton;
+
+        if (tabId == TAB_TAB_ID_2) {
+            toggleButton = findViewById(R.id.toggleButton_debug);
+            return toggleButton.isChecked();
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            //TODO id für tab 3 anpassen
+            toggleButton = findViewById(R.id.toggleButton_debug);
+            return toggleButton.isChecked();
+        }
+
+        return false;
+    }
+
+    @Override
+    public void setP(float p, int tabId) {
+        TextView enterP;
+
+        if (tabId == TAB_TAB_ID_2) {
+            enterP = findViewById(R.id.editTextEnterP);
+            enterP.setText(String.valueOf(p));
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            enterP = findViewById(R.id.editText_p_tab3);
+            enterP.setText(String.valueOf(p));
+        }
+    }
+
+    @Override
+    public float getP(int tabId) {
+        TextView enteredPValue = null;
+        String pValue;
+
+
+        if (tabId == TAB_TAB_ID_2) {
+            enteredPValue = findViewById(R.id.editTextEnterP);
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            enteredPValue = findViewById(R.id.editText_p_tab3);
+        }
+
+        if (enteredPValue != null) {
+            pValue = enteredPValue.getText().toString().trim();
+
+            if (pValue.isEmpty()) {
+                Log.e("RobotProject", "P value is empty!");
+                return 0f;
+            }
+
+            return Float.parseFloat(pValue);
+        }
+
+        return 0f;
+    }
+
+    @Override
+    public void setI(float i, int tabId) {
+        TextView enterVarI;
+
+        if (tabId == TAB_TAB_ID_2) {
+            enterVarI = findViewById(R.id.editTextEnterI);
+            enterVarI.setText(String.valueOf(i));
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            enterVarI = findViewById(R.id.editText_i_tab3);
+            enterVarI.setText(String.valueOf(i));
+        }
+    }
+
+    @Override
+    public float getI(int tabId) {
+        TextView enteredIValue = null;
+        String iValue;
+
+        if (tabId == TAB_TAB_ID_2) {
+            enteredIValue = findViewById(R.id.editTextEnterI);
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            enteredIValue = findViewById(R.id.editText_i_tab3);
+        }
+
+        if (enteredIValue != null) {
+            iValue = enteredIValue.getText().toString().trim();
+
+            if (iValue.isEmpty()) {
+                Log.e("RobotProject", "I value is empty!");
+                return 0f;
+            }
+
+            return Integer.parseInt(iValue);
+        }
+
+        return 0F;
+    }
+
+    @Override
+    public void setD(float d, int tabId) {
+        TextView enterRegulatorFrequency;
+
+        if (tabId == TAB_TAB_ID_2) {
+            enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
+            enterRegulatorFrequency.setText(String.valueOf(d));
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            enterRegulatorFrequency = findViewById(R.id.editText_frequency_tab3);
+            enterRegulatorFrequency.setText(String.valueOf(d));
+        }
+    }
+
+    @Override
+    public float getD(int tabId) {
+        TextView enterRegulatorFrequency;
+
+        if (tabId == TAB_TAB_ID_2) {
+            enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
+            return Integer.parseInt(enterRegulatorFrequency.getText().toString());
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            enterRegulatorFrequency = findViewById(R.id.editText_frequency_tab3);
+            return Integer.parseInt(enterRegulatorFrequency.getText().toString());
+        }
+
+        return 0;
+    }
+
+    public float getSpeed() {
+        TextView enteredSpeed;
+        String speedValue;
+
+        enteredSpeed = findViewById(R.id.editText_enterDebug_speed);
+        speedValue = enteredSpeed.getText().toString().trim();
+
+        if (speedValue.isEmpty()) {
+            Log.e("RobotProject", "Speed value is empty!");
+            return 0f;
+        }
+
+        return Float.parseFloat(speedValue);
+    }
+
+    public int getAngle() {
+        TextView enterAngle;
+        enterAngle = findViewById(R.id.editText_angle_tab3);
+
+        return Integer.parseInt(enterAngle.getText().toString());
+    }
+
+    public ToggleButton getToggleButton(String tagTab) {
+        switch (tagTab) {
+            case TAG_TAB_1:
+                return findViewById(R.id.toggleButton_connection_tab1);
+            case TAG_TAB_2:
+                return findViewById(R.id.toggleButton_connection_tab2);
+            case TAG_TAB_3:
+                return findViewById(R.id.toggleButton_connection_tab3);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public ControlData getControlData() {
+        ControlData controlData = new ControlData();
+
+        controlData.setAngularVelocity(rot_z);
+        controlData.setX(x);
+        controlData.setY(y);
+
+        return controlData;
+    }
+
+    @Override
+    public int getSpinnerEngine(int tabId) {
+        Spinner spinner;
+
+        if (tabId == TAB_TAB_ID_2) {
+            spinner = findViewById(R.id.spinner);
+            return spinner.getSelectedItemPosition();
+        }
+
+        if (tabId == TAB_TAB_ID_3) {
+            spinner = findViewById(R.id.spinner_engines_tab3);
+            return spinner.getSelectedItemPosition();
+        }
+
+        return 0;
+    }
+
+//--------------------------------------------------------------------------------------------------
 
     private void initDynamicGraph() {
         realTimeChart = (LineChart) findViewById(R.id.graph);
@@ -466,47 +763,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         YAxis rightAxis = realTimeChart.getAxisRight();
         rightAxis.setEnabled(false);
-    }
-
-    private void initDebugToggleButton() {
-        final ToggleButton toggle = findViewById(R.id.toggleButton_debug);
-        final EditText editIP = findViewById(R.id.editText_ipAddress_tab2);
-        final EditText editFrequency = findViewById(R.id.editTextFrequency);
-        final EditText editI = findViewById(R.id.editTextEnterI);
-        final EditText editP = findViewById(R.id.editTextEnterP);
-        final EditText editSpeed = findViewById(R.id.editText_enterDebug_speed);
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                String errMsgInvalidInput = getString(R.string.error_msg_invalid_debug_input);
-                if (isChecked) {
-                    String I = String.valueOf(editI.getText());
-                    String P = String.valueOf(editIP.getText());
-                    String frequency = String.valueOf(editFrequency.getText());
-                    String speed = String.valueOf(editSpeed.getText());
-
-                    if (I.trim().isEmpty() || P.trim().isEmpty() || frequency.trim().isEmpty() || speed.trim().isEmpty()) {
-                        toggle.setChecked(false);
-                        Toast.makeText(MainActivity.this,
-                                errMsgInvalidInput, Toast.LENGTH_SHORT).show();
-                    } else {
-                        editIP.setEnabled(false);
-                        editFrequency.setEnabled(false);
-                        editI.setEnabled(false);
-                        editP.setEnabled(false);
-                        editSpeed.setEnabled(false);
-                        startSocketService(TAG_TAB_2);
-                        //feedMultiple();
-                    }
-                } else {
-                    editIP.setEnabled(true);
-                    editFrequency.setEnabled(true);
-                    editI.setEnabled(true);
-                    editP.setEnabled(true);
-                    editSpeed.setEnabled(true);
-                }
-            }
-        });
     }
 
     private void addEntry() {
@@ -664,231 +920,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return array;
     }
 
-    private void initSpinnerTab2() {
-        Spinner spinner = findViewById(R.id.spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.engines, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+    private void makeToasts(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
-
-// -------------------------------------------------------------------------------------------------
-
-// TAB 3 -------------------------------------------------------------------------------------------
-
-    private void initConnectionButtonTab3() {
-        ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab3);
-        EditText editText = findViewById(R.id.editText_ipAddress_tab3);
-
-        initConnectionButton(toggleButton, editText, TAG_TAB_3);
-    }
-
-    private void initSpinnerTab3() {
-        Spinner spinner = findViewById(R.id.spinner_engines_tab3);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.engines, android.R.layout.simple_spinner_item);
-
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-    }
-
-    private void startDebugSocket() {
-        TextView textView = findViewById(R.id.editText_ipAddress_tab2);
-        String ipAddress = String.valueOf(textView.getText());
-
-        if (mBound) {
-            socketService.openPlottingSocket(ipAddress, Integer.parseInt(getPreferenceValue(1)));
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-
-// Callbacks interface implementation --------------------------------------------------------------
-
-    @Override
-    public boolean getConnectionButtonStatus(int tabId) {
-        ToggleButton toggleButton;
-
-        if (tabId == TAB_TAB_ID_1) {
-            toggleButton = findViewById(R.id.toggleButton_connection_tab1);
-            return toggleButton.isChecked();
-        }
-
-        if (tabId == TAB_TAB_ID_2) {
-            toggleButton = findViewById(R.id.toggleButton_connection_tab2);
-            return toggleButton.isChecked();
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            toggleButton = findViewById(R.id.toggleButton_connection_tab3);
-            return toggleButton.isChecked();
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean getDebugButtonStatus(int tabId) {
-        ToggleButton toggleButton;
-
-        if (tabId == TAB_TAB_ID_2) {
-            toggleButton = findViewById(R.id.toggleButton_debug);
-            return toggleButton.isChecked();
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            //TODO id für tab 3 anpassen
-            toggleButton = findViewById(R.id.toggleButton_debug);
-            return toggleButton.isChecked();
-        }
-
-        return false;
-    }
-
-    @Override
-    public void setP(float p, int tabId) {
-        TextView enterP;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterP = findViewById(R.id.editTextEnterP);
-            enterP.setText(String.valueOf(p));
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            enterP = findViewById(R.id.editText_p_tab3);
-            enterP.setText(String.valueOf(p));
-        }
-    }
-
-    @Override
-    public int getP(int tabId) {
-        TextView enterVarP;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterVarP = findViewById(R.id.editTextEnterP);
-            return Integer.parseInt(enterVarP.getText().toString());
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            enterVarP = findViewById(R.id.editText_p_tab3);
-            return Integer.parseInt(enterVarP.getText().toString());
-        }
-
-        return 0;
-    }
-
-    @Override
-    public void setI(float i, int tabId) {
-        TextView enterVarI;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterVarI = findViewById(R.id.editTextEnterI);
-            enterVarI.setText(String.valueOf(i));
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            enterVarI = findViewById(R.id.editText_i_tab3);
-            enterVarI.setText(String.valueOf(i));
-        }
-    }
-
-    @Override
-    public int getI(int tabId) {
-        TextView enterVarI;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterVarI = findViewById(R.id.editTextEnterI);
-            return Integer.parseInt(enterVarI.getText().toString());
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            enterVarI = findViewById(R.id.editText_i_tab3);
-            return Integer.parseInt(enterVarI.getText().toString());
-        }
-
-        return 0;
-    }
-
-    @Override
-    public void setD(float d, int tabId) {
-        TextView enterRegulatorFrequency;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
-            enterRegulatorFrequency.setText(String.valueOf(d));
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            enterRegulatorFrequency = findViewById(R.id.editText_frequency_tab3);
-            enterRegulatorFrequency.setText(String.valueOf(d));
-        }
-    }
-
-    @Override
-    public int getD(int tabId) {
-        TextView enterRegulatorFrequency;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
-            return Integer.parseInt(enterRegulatorFrequency.getText().toString());
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            enterRegulatorFrequency = findViewById(R.id.editText_frequency_tab3);
-            return Integer.parseInt(enterRegulatorFrequency.getText().toString());
-        }
-
-        return 0;
-    }
-
-    public ToggleButton getToggleButton(String tagTab) {
-        switch (tagTab) {
-            case TAG_TAB_1:
-                return findViewById(R.id.toggleButton_connection_tab1);
-            case TAG_TAB_2:
-                return findViewById(R.id.toggleButton_connection_tab2);
-            case TAG_TAB_3:
-                return findViewById(R.id.toggleButton_connection_tab3);
-            default:
-                return null;
-        }
-    }
-
-    @Override
-    public ControlData getControlData() {
-        ControlData controlData = new ControlData();
-
-        controlData.setAngularVelocity(rot_z);
-        controlData.setX(x);
-        controlData.setY(y);
-
-        return controlData;
-    }
-
-    @Override
-    public int getSpinnerEngine(int tabId) {
-        Spinner spinner;
-
-        if (tabId == TAB_TAB_ID_2) {
-            spinner = findViewById(R.id.spinner);
-            return spinner.getSelectedItemPosition();
-        }
-
-        if (tabId == TAB_TAB_ID_3) {
-            spinner = findViewById(R.id.spinner_engines_tab3);
-            return spinner.getSelectedItemPosition();
-        }
-
-        return 0;
-    }
-
-//--------------------------------------------------------------------------------------------------
 }

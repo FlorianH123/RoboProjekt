@@ -13,6 +13,7 @@ import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.activities.MainActivity;
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.models.MessageType;
+import com.mobileapplicationdev.roboproject.models.Task;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -21,11 +22,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendConnect;
-import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendGetPID;
-import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendSetPID;
-import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendSetTarget;
-import static com.mobileapplicationdev.roboproject.builder.BuildRequestMessage.sendSetSpeed;
 import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
 
 /**
@@ -90,176 +86,296 @@ public class SocketService extends Service {
         }, "robot_control.socket.thread").start();
     }
 
-    public void openPlottingSocket(final String ip, final int port) {
+    public void openDebugSocket(final String ip, final int port) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final int tabId = 2;
-                int messageType;
-                int messageSize;
-
 
                 try (Socket debugSocket = new Socket(ip, port);
-
+                     ServerSocket serverSocket = new ServerSocket(0);
                      DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
                      DataInputStream dataIS = new DataInputStream(debugSocket.getInputStream())) {
 
-                    while (mainActivity.getConnectionButtonStatus(tabId)) {
-                        if (mainActivity.getDebugButtonStatus(tabId)) {
-                            ControlData controlData = new ControlData();
-                            controlData.setVarP(0.8f);
-                            controlData.setVarI(5.35f);
-                            controlData.setRegulatorFrequency(1f);
-                            controlData.setSpeed(50);
+                    // Send target
+                    sendTarget(dataIS, dataOS, tabId);
 
-                            // Send target
-                            sendSetTarget(dataOS, mainActivity.getSpinnerEngine(tabId));
-                            messageType = swap(dataIS.readInt());
-                            Log.d("Test", "Read Set Target");
-                            Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = swap(dataIS.readInt());
-                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
-
-                            if (messageType == MessageType.ERROR.getMessageType()) {
-                                throw new IOException("Fehler beim setzten des Targets");
-                            }
-
-                            // Get current PID
-                            sendGetPID(dataOS);
-                            messageType = swap(dataIS.readInt());
-                            Log.d("Test", "Read Get PID");
-                            Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = swap(dataIS.readInt());
-                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
-
-                             //mainActivity.setP(dataIS.readFloat(), tabId);
-                            Log.d("Test", "Read P" + swap(dataIS.readFloat()));
-                            //mainActivity.setI(dataIS.readFloat(), tabId);
-                            Log.d("Test", "Read I" + swap(dataIS.readFloat()));
-                            //mainActivity.setD(dataIS.readFloat(), tabId);
-                            Log.d("Test", "Read D" + swap(dataIS.readFloat()));
-                            //TODO was soll mit diesen Werten geschehen?
-
-                            if (messageType == MessageType.ERROR.getMessageType()) {
-                                throw new IOException("Fehler beim empfangen der PID Werte");
-                            }
-
-                            // Send new PID
-                            sendSetPID(dataOS, controlData);
-                            messageType = swap(dataIS.readInt());
-                            Log.d("Test", "Read Set PID\n");
-                            Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = swap(dataIS.readInt());
-                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
-
-                            if (messageType == MessageType.ERROR.getMessageType()) {
-                                throw new IOException("Fehler beim setzen der PID Werte");
-                            }
-
-                            sendSetSpeed(dataOS, controlData);
-                            messageType = swap(dataIS.readInt());
-                            Log.d("Test", "Read Set Speed\n");
-                            Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = swap(dataIS.readInt());
-                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
-
-                            if (messageType == MessageType.ERROR.getMessageType()) {
-                                throw new IOException("Fehler beim setzen der Geschwindigkeit");
-                            }
-
-                            // Connect to device
-                            final ServerSocket serverSocket = new ServerSocket(0);
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Socket clientSocket;
-                                    int messageType;
-                                    int messageSize;
-                                    float[] dataMr;
-
-
-                                    try {
-                                        clientSocket = serverSocket.accept();
-                                        DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
-
-                                        while (mainActivity.getDebugButtonStatus(tabId)) {
-                                            messageType = swap(dataInputStream.readInt());
-                                            Log.d("Test", "MessageType: " + messageType + "\n");
-                                            messageSize = swap(dataInputStream.readInt());
-                                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
-
-                                            messageSize = messageSize - 8;
-
-                                            if (messageType != MessageType.ERROR.getMessageType()) {
-                                                dataMr = new float[256];
-
-                                                for (int j = 0 ; j < messageSize ; j++) {
-                                                    dataMr[j] = swap(dataInputStream.readFloat());
-                                                    Log.d("Test", "Geschwindigkeit" + dataMr[j] + "\n");
-                                                }
-                                                // TODO Geschwindigkeit in den Graph übernehemen
-
-                                            }
-                                        }
-
-                                        clientSocket.close();
-                                        serverSocket.close();
-
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }).start();
-
-                            sendConnect(dataOS, serverSocket.getLocalPort());
-                            messageType = swap(dataIS.readInt());
-                            Log.d("Test", "Receive Connect\n");
-                            Log.d("Test", "MessageType: " + messageType + "\n");
-                            messageSize = swap(dataIS.readInt());
-                            Log.d("Test", "MessageSize: " + messageSize + "\n" );
-
-                            if (messageType == MessageType.ERROR.getMessageType()) {
-                                throw new IOException("Fehler beim connecten");
-                            }
-
-                            // Receive data
-
-                        }
-                    }
+//                    // Get current PID
+//                    requestPIDValues(dataIS, dataOS);
+//
+//                    // Send new PID
+//                    sendPIDValues(dataIS, dataOS, tabId);
+//
+//                    // Send velocity
+//                    sendVelocity(dataIS, dataOS);
+//
+//                    // TODO start new socket
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            final String logName = "receivingData";
+//                            Socket clientSocket;
+//                            DataInputStream dataInputStream;
+//                            int messageType;
+//                            int messageSize;
+//                            float[] dataMr;
+//
+//                            try {
+//                                clientSocket = serverSocket.accept();
+//                                dataInputStream = new DataInputStream(clientSocket.getInputStream());
+//
+//                                while (mainActivity.getDebugButtonStatus(tabId)) {
+//                                    messageType = swap(dataInputStream.readInt());
+//                                    messageSize = swap(dataInputStream.readInt());
+//
+//                                    Log.d(logName, "MessageType: " + messageType);
+//                                    Log.d(logName, "MessageSize: " + messageSize);
+//
+//                                    messageSize = messageSize - 8;
+//
+//                                    if (messageType != MessageType.ERROR.getMessageType()) {
+//                                        dataMr = new float[256];
+//
+//                                        for (int j = 0; j < messageSize; j++) {
+//                                            dataMr[j] = swap(dataInputStream.readFloat());
+//                                            Log.d(logName, "Geschwindigkeit" + dataMr[j] + "\n");
+//                                        }
+//                                        // TODO Geschwindigkeit in den Graph übernehemen
+//                                    }
+//                                }
+//                            } catch (IOException ex) {
+//                                ex.printStackTrace();
+//                            }
+//                        }
+//                    }, "robot_receive.socket.thread").start();
                 } catch (IOException ex) {
                     exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
                 }
 
                 stopSelf();
             }
-        }, "robot_debugPlot.socket.thread").start();
+        }, "robot_debug.socket.thread").start();
     }
 
-    public void openRotatingEngineSocket(final String ip, final int port) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-//                byte[] debugData;
-//                final int tabId = 3;
-//
-//                try (Socket debugSocket = new Socket(ip, port);
-//                     DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
-//                     ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-//                     DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
-//
-//                    while (mainActivity.getDebugButtonStatus(tabId)) {
-//
-//                        Thread.sleep(50);
-//                    }
-//                } catch (IOException ex) {
-//                    exceptionHandler(MainActivity.TAG_TAB_3, ex.getMessage());
-//                } catch (InterruptedException ex) {
-//                    Log.e(className, ex.getMessage());
-//                }
-//
-//                stopSelf();
-            }
-        }, "robot_rotatingEngine.socket.thread").start();
+    private void sendTarget(DataInputStream dataInputStream, DataOutputStream dataOutputStream, int tabId) throws IOException {
+        final String logName = "sendTarget";
+        int messageType;
+        int messageSize;
+        int taskId;
+        int engineId;
+        byte[] debugData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        messageType = swap(MessageType.SET_TARGET.getMessageType());
+        messageSize = swap(16);
+        taskId = swap(Task.Antriebsregelung.getTaskId());
+        engineId = swap(mainActivity.getSpinnerEngine(tabId));
+
+        byteWriter.writeInt(messageType);
+        byteWriter.writeInt(messageSize);
+        byteWriter.writeInt(taskId);
+        byteWriter.writeInt(engineId);
+
+        Log.d(logName, "Set Target");
+        Log.d(logName, "Message Type: " + messageType);
+        Log.d(logName, "PackageSize: " + messageSize);
+        Log.d(logName, "TaskId: " + taskId);
+        Log.d(logName, "Engine: " + engineId);
+
+        debugData = byteArrayStream.toByteArray();
+        dataOutputStream.write(debugData);
+
+        messageType = swap(dataInputStream.readInt());
+        messageSize = swap(dataInputStream.readInt());
+
+        Log.d(logName, "Read Set Target");
+        Log.d(logName, "MessageType: " + messageType + "\n");
+        Log.d(logName, "MessageSize: " + messageSize + "\n");
+
+        if (messageType == MessageType.ERROR.getMessageType()) {
+            throw new IOException("Error while sending target");
+        }
+
+        byteArrayStream.close();
+        byteWriter.close();
+        dataInputStream.close();
+        dataOutputStream.close();
+    }
+
+    private void requestPIDValues(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
+        final String logName = "requestPIDValues";
+        int messageType;
+        int messageSize;
+        byte[] debugData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        messageType = swap(MessageType.GET_PID.getMessageType());
+        messageSize = swap(8);
+
+        byteWriter.writeInt(messageType);
+        byteWriter.writeInt(messageSize);
+
+        Log.d(logName, "Send get pid");
+        Log.d(logName, "Message Type: " + messageType);
+        Log.d(logName, "PackageSize: " + messageSize);
+
+        debugData = byteArrayStream.toByteArray();
+        dataOutputStream.write(debugData);
+
+        messageType = swap(dataInputStream.readInt());
+        messageSize = swap(dataInputStream.readInt());
+
+        Log.d(logName, "Read get pid");
+        Log.d(logName, "MessageType: " + messageType);
+        Log.d(logName, "MessageSize: " + messageSize);
+
+        if (messageType == MessageType.ERROR.getMessageType()) {
+            throw new IOException("Error while requesting pid values");
+        } else {
+            //mainActivity.setP(dataIS.readFloat(), tabId);
+            Log.d(logName, "Read P" + swap(dataInputStream.readFloat()));
+            //mainActivity.setI(dataIS.readFloat(), tabId);
+            Log.d(logName, "Read I" + swap(dataInputStream.readFloat()));
+            //mainActivity.setD(dataIS.readFloat(), tabId);
+            Log.d(logName, "Read D" + swap(dataInputStream.readFloat()));
+            //TODO Werte in GUI eintragen
+        }
+
+        byteArrayStream.close();
+        byteWriter.close();
+        dataInputStream.close();
+        dataOutputStream.close();
+    }
+
+    private void sendPIDValues(DataInputStream dataInputStream, DataOutputStream dataOutputStream, int tabId) throws IOException {
+        final String logName = "sendPIDValues";
+        int messageType;
+        int messageSize;
+        byte[] debugData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        messageType = swap(MessageType.SET_PID.getMessageType());
+        messageSize = swap(20);
+
+        float p = swap(mainActivity.getP(tabId));
+        float i = swap(mainActivity.getI(tabId));
+        float d = 0f;
+
+        byteWriter.writeInt(messageType);
+        byteWriter.writeInt(messageSize);
+        byteWriter.writeFloat(p);
+        byteWriter.writeFloat(i);
+        byteWriter.writeFloat(d);
+
+        Log.d(logName, "SET PID");
+        Log.d(logName, "Message Type: " + messageType);
+        Log.d(logName, "PackageSize: " + messageSize);
+        Log.d(logName, "P: " + swap(p));
+        Log.d(logName, "I: " + swap(i));
+        Log.d(logName, "D: " + 0);
+
+        debugData = byteArrayStream.toByteArray();
+        dataOutputStream.write(debugData);
+
+        messageType = swap(dataInputStream.readInt());
+        messageSize = swap(dataInputStream.readInt());
+
+        Log.d(logName, "Read Set PID");
+        Log.d(logName, "MessageType: " + messageType);
+        Log.d(logName, "MessageSize: " + messageSize);
+
+        if (messageType == MessageType.ERROR.getMessageType()) {
+            throw new IOException("Error while sending pid values");
+        }
+
+        byteArrayStream.close();
+        byteWriter.close();
+        dataInputStream.close();
+        dataOutputStream.close();
+    }
+
+    private void sendVelocity(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
+        final String logName = "sendVelocity";
+        int messageType;
+        int messageSize;
+        byte[] debugData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        messageType = swap(MessageType.SET_VALUE.getMessageType());
+        messageSize = swap(12);
+        float speed = swap(mainActivity.getSpeed());
+
+        byteWriter.writeInt(messageType);
+        byteWriter.writeInt(messageSize);
+        byteWriter.writeFloat(speed);
+
+        Log.d(logName, "SET Speed");
+        Log.d(logName, "Message Type: " + messageType);
+        Log.d(logName, "PackageSize: " + messageSize);
+        Log.d(logName, "Speed: " + speed);
+
+
+        debugData = byteArrayStream.toByteArray();
+        byteArrayStream.reset();
+        dataOutputStream.write(debugData);
+
+        messageType = swap(dataInputStream.readInt());
+        messageSize = swap(dataInputStream.readInt());
+
+        Log.d(logName, "Read Set Speed");
+        Log.d(logName, "MessageType: " + messageType);
+        Log.d(logName, "MessageSize: " + messageSize);
+
+        if (messageType == MessageType.ERROR.getMessageType()) {
+            throw new IOException("Error while sending velocity");
+        }
+    }
+
+    private void sendConnect(DataInputStream dataInputStream, DataOutputStream dataOutputStream, int port) throws IOException {
+        final String logName = "sendConnect";
+        int messageType = swap(MessageType.CONNECT.getMessageType());
+        int messageSize = swap(12);
+        port = swap(port);
+        byte[] debugData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        dataOutputStream.writeInt(messageType);
+        dataOutputStream.writeInt(messageSize);
+        dataOutputStream.writeInt(port);
+
+        Log.d(logName, "SET PID");
+        Log.d(logName, "Message Type: " + messageType);
+        Log.d(logName, "PackageSize: "  + messageSize);
+        Log.d(logName, "Port: "         + port);
+
+        debugData = byteArrayStream.toByteArray();
+        dataOutputStream.write(debugData);
+
+        messageType = swap(dataInputStream.readInt());
+        messageSize = swap(dataInputStream.readInt());
+
+        Log.d(logName, "Receive Connect");
+        Log.d(logName, "MessageType: " + messageType);
+        Log.d(logName, "MessageSize: " + messageSize);
+
+        if (messageType == MessageType.ERROR.getMessageType()) {
+            throw new IOException("Error while connecting");
+        }
+
+        byteArrayStream.close();
+        byteWriter.close();
+        dataOutputStream.close();
+        dataInputStream.close();
     }
 
     // Register Activity to the service as Callbacks client
@@ -281,15 +397,17 @@ public class SocketService extends Service {
 
         void setP(float p, int tabId);
 
-        int getP(int tabId);
+        float getP(int tabId);
 
         void setI(float i, int tabId);
 
-        int getI(int tabId);
+        float getI(int tabId);
 
         void setD(float d, int tabId);
 
-        int getD(int tabId);
+        float getD(int tabId);
+
+        float getSpeed();
     }
 
     private String getErrorMessage(String exceptionMessage) {
