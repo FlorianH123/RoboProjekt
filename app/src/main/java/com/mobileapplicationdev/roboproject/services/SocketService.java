@@ -86,21 +86,21 @@ public class SocketService extends Service {
         }, "robot_control.socket.thread").start();
     }
 
-    public void openDebugSocket(final String ip, final int port, final Object waiter) {
+    public void openDebugSocket(final String ip, final int port, final Object waiter,
+                                final int tabId) {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final int tabId = 2;
-
                 try (Socket debugSocket = new Socket(ip, port);
                      ServerSocket serverSocket = new ServerSocket(0);
                      DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
                      DataInputStream dataIS = new DataInputStream(debugSocket.getInputStream())) {
 
-                    // Send target
+                    // send target
                     sendTarget(dataIS, dataOS, tabId);
 
-                    // Get current PID
+                    // get current P I D
                     requestPIDValues(dataIS, dataOS, tabId);
 
                     // wait until debug button is activated
@@ -112,50 +112,22 @@ public class SocketService extends Service {
                         }
                     }
 
-                    // Send new PID
+                    // send new P I D
                     sendPIDValues(dataIS, dataOS, tabId);
 
-                    // Send velocity
-                    sendVelocity(dataIS, dataOS);
+                    // send velocity or angle
+                    if (tabId == MainActivity.TAB_TAB_ID_2) {
+                        sendVelocity(dataIS, dataOS);
+                    } else if (tabId == MainActivity.TAB_TAB_ID_3){
+                        // TODO send angle
+                    }
 
-                    // TODO start new socket
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Socket clientSocket;
-                            DataInputStream dataInputStream;
-                            int messageType;
-                            int messageSize;
-                            float[] dataMr;
+                    // start new socket
+                    startServerSocket(serverSocket, tabId);
 
-                            try {
-                                clientSocket = serverSocket.accept();
-                                dataInputStream = new DataInputStream(clientSocket.getInputStream());
+                    // send connect
+                    sendConnect(dataIS, dataOS, serverSocket.getLocalPort());
 
-                                while (mainActivity.getDebugButtonStatus(tabId)) {
-                                    messageType = swap(dataInputStream.readInt());
-                                    messageSize = swap(dataInputStream.readInt());
-
-                                    Log.d(className, "MessageType: " + messageType);
-                                    Log.d(className, "MessageSize: " + messageSize);
-
-                                    messageSize = messageSize - 8;
-
-                                    if (messageType != MessageType.ERROR.getMessageType()) {
-                                        dataMr = new float[256];
-
-                                        for (int j = 0; j < messageSize; j++) {
-                                            dataMr[j] = swap(dataInputStream.readFloat());
-                                            Log.d(className, "Geschwindigkeit" + dataMr[j] + "\n");
-                                        }
-                                        // TODO Geschwindigkeit in den Graph übernehemen
-                                    }
-                                }
-                            } catch (IOException ex) {
-                                Log.e(className, ex.getMessage());
-                            }
-                        }
-                    }, "robot_receive.socket.thread").start();
                 } catch (IOException ex) {
                     exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
                 }
@@ -507,6 +479,50 @@ public class SocketService extends Service {
 
         byteArrayStream.close();
         byteWriter.close();
+    }
+
+    // TODO überarbeiten
+    private void startServerSocket(final ServerSocket serverSocket, final int tabId) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Socket clientSocket;
+                DataInputStream dataInputStream;
+                int messageType;
+                int messageSize;
+                float[] dataMr;
+
+                try {
+                    clientSocket = serverSocket.accept();
+                    dataInputStream = new DataInputStream(clientSocket.getInputStream());
+
+                    while (mainActivity.getDebugButtonStatus(tabId)) {
+                        messageType = swap(dataInputStream.readInt());
+                        messageSize = swap(dataInputStream.readInt());
+
+                        Log.d(className, "MessageType: " + messageType);
+                        Log.d(className, "MessageSize: " + messageSize);
+
+                        messageSize = messageSize - 8;
+
+                        if (messageType != MessageType.ERROR.getMessageType()) {
+                            dataMr = new float[256];
+
+                            for (int j = 0; j < messageSize; j++) {
+                                dataMr[j] = swap(dataInputStream.readFloat());
+                                Log.d(className, "Geschwindigkeit" + dataMr[j] + "\n");
+                            }
+                            // TODO Geschwindigkeit in den Graph übernehemen
+                        }
+                    }
+
+                    clientSocket.close();
+                    serverSocket.close();
+                } catch (IOException ex) {
+                    Log.e(className, ex.getMessage());
+                }
+            }
+        }, "robot_receive.socket.thread").start();
     }
 
     // Register Activity to the service as Callbacks client

@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 ipAddress = String.valueOf(textView.getText());
 
                 socketService.openDebugSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(1)), waiter);
+                        Integer.parseInt(getPreferenceValue(1)), waiter, TAB_TAB_ID_2);
             }
 
             if (tagTab.equals(TAG_TAB_3)) {
