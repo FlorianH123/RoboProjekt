@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final int TAB_TAB_ID_2 = 2;
     public static final int TAB_TAB_ID_3 = 3;
 
+    private Object waiter = new Object();
+
     private SocketService socketService;
     private boolean mBound = false;
 
@@ -234,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 ipAddress = String.valueOf(textView.getText());
 
                 socketService.openDebugSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(1)));
+                        Integer.parseInt(getPreferenceValue(1)), waiter);
             }
 
             if (tagTab.equals(TAG_TAB_3)) {

@@ -2,9 +2,8 @@ package com.mobileapplicationdev.roboproject.models;
 
 /**
  * Created by Florian on 02.03.2018.
- * MessageTypes fuer Debug Packete
+ * MessageTypes for debug messages
  */
-
 public enum MessageType {
     ERROR       (-1),
     UNDEFINED   (0),

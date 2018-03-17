@@ -96,6 +96,11 @@
 
 <!-- Socket Strings -->
     <string name="error_msg_socket_io_exception">Error while sending/receiving data!</string>
+    <string name="error_msg_sending_target">Error while sending target</string>
+    <string name="error_msg_requesting_pid">Error while requesting pid values</string>
+    <string name="error_msg_receiving_pid">Error while sending pid values</string>
+    <string name="error_msg_sending_velocity">Error while sending velocity</string>
+    <string name="error_msg_connecting">Error while connecting</string>
 <!-- -->
 
 </resources>

@@ -86,7 +86,7 @@ public class SocketService extends Service {
         }, "robot_control.socket.thread").start();
     }
 
-    public void openDebugSocket(final String ip, final int port) {
+    public void openDebugSocket(final String ip, final int port, final Object waiter) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -100,54 +100,62 @@ public class SocketService extends Service {
                     // Send target
                     sendTarget(dataIS, dataOS, tabId);
 
-//                    // Get current PID
-//                    requestPIDValues(dataIS, dataOS);
-//
-//                    // Send new PID
-//                    sendPIDValues(dataIS, dataOS, tabId);
-//
-//                    // Send velocity
-//                    sendVelocity(dataIS, dataOS);
-//
-//                    // TODO start new socket
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            final String logName = "receivingData";
-//                            Socket clientSocket;
-//                            DataInputStream dataInputStream;
-//                            int messageType;
-//                            int messageSize;
-//                            float[] dataMr;
-//
-//                            try {
-//                                clientSocket = serverSocket.accept();
-//                                dataInputStream = new DataInputStream(clientSocket.getInputStream());
-//
-//                                while (mainActivity.getDebugButtonStatus(tabId)) {
-//                                    messageType = swap(dataInputStream.readInt());
-//                                    messageSize = swap(dataInputStream.readInt());
-//
-//                                    Log.d(logName, "MessageType: " + messageType);
-//                                    Log.d(logName, "MessageSize: " + messageSize);
-//
-//                                    messageSize = messageSize - 8;
-//
-//                                    if (messageType != MessageType.ERROR.getMessageType()) {
-//                                        dataMr = new float[256];
-//
-//                                        for (int j = 0; j < messageSize; j++) {
-//                                            dataMr[j] = swap(dataInputStream.readFloat());
-//                                            Log.d(logName, "Geschwindigkeit" + dataMr[j] + "\n");
-//                                        }
-//                                        // TODO Geschwindigkeit in den Graph übernehemen
-//                                    }
-//                                }
-//                            } catch (IOException ex) {
-//                                ex.printStackTrace();
-//                            }
-//                        }
-//                    }, "robot_receive.socket.thread").start();
+                    // Get current PID
+                    requestPIDValues(dataIS, dataOS, tabId);
+
+                    // wait until debug button is activated
+                    synchronized (waiter) {
+                        try {
+                            waiter.wait();
+                        } catch (InterruptedException ex) {
+                            Log.e(className, ex.getMessage());
+                        }
+                    }
+
+                    // Send new PID
+                    sendPIDValues(dataIS, dataOS, tabId);
+
+                    // Send velocity
+                    sendVelocity(dataIS, dataOS);
+
+                    // TODO start new socket
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Socket clientSocket;
+                            DataInputStream dataInputStream;
+                            int messageType;
+                            int messageSize;
+                            float[] dataMr;
+
+                            try {
+                                clientSocket = serverSocket.accept();
+                                dataInputStream = new DataInputStream(clientSocket.getInputStream());
+
+                                while (mainActivity.getDebugButtonStatus(tabId)) {
+                                    messageType = swap(dataInputStream.readInt());
+                                    messageSize = swap(dataInputStream.readInt());
+
+                                    Log.d(className, "MessageType: " + messageType);
+                                    Log.d(className, "MessageSize: " + messageSize);
+
+                                    messageSize = messageSize - 8;
+
+                                    if (messageType != MessageType.ERROR.getMessageType()) {
+                                        dataMr = new float[256];
+
+                                        for (int j = 0; j < messageSize; j++) {
+                                            dataMr[j] = swap(dataInputStream.readFloat());
+                                            Log.d(className, "Geschwindigkeit" + dataMr[j] + "\n");
+                                        }
+                                        // TODO Geschwindigkeit in den Graph übernehemen
+                                    }
+                                }
+                            } catch (IOException ex) {
+                                Log.e(className, ex.getMessage());
+                            }
+                        }
+                    }, "robot_receive.socket.thread").start();
                 } catch (IOException ex) {
                     exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
                 }
@@ -157,225 +165,348 @@ public class SocketService extends Service {
         }, "robot_debug.socket.thread").start();
     }
 
-    private void sendTarget(DataInputStream dataInputStream, DataOutputStream dataOutputStream, int tabId) throws IOException {
-        final String logName = "sendTarget";
+    /**
+     * Send target information to the robot
+     *
+     * Send
+     *  - message type
+     *  - message size
+     *  - taskId
+     *  - engineId
+     *
+     * Receive response
+     *  - message type
+     *  - message size
+     *
+     * @param dataInputStream input stream from robot
+     * @param dataOutputStream output stream to robot
+     * @param tabId tab id of the gui
+     * @throws IOException io exception
+     */
+    private void sendTarget(DataInputStream dataInputStream,
+                            DataOutputStream dataOutputStream,
+                            int tabId) throws IOException {
+
         int messageType;
         int messageSize;
         int taskId;
         int engineId;
-        byte[] debugData;
+        byte[] targetData;
 
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
-        messageType = swap(MessageType.SET_TARGET.getMessageType());
-        messageSize = swap(16);
-        taskId = swap(Task.Antriebsregelung.getTaskId());
-        engineId = swap(mainActivity.getSpinnerEngine(tabId));
+        // Request ---------------------------------------------------------------------------------
+        messageType = MessageType.SET_TARGET.getMessageType();
+        messageSize = 16;
+        taskId      = Task.Antriebsregelung.getTaskId();
+        engineId    = mainActivity.getSpinnerEngine(tabId);
 
-        byteWriter.writeInt(messageType);
-        byteWriter.writeInt(messageSize);
-        byteWriter.writeInt(taskId);
-        byteWriter.writeInt(engineId);
+        Log.d(className, "Send Set Target");
+        Log.d(className, "Message Type: " + messageType);
+        Log.d(className, "PackageSize: "  + messageSize);
+        Log.d(className, "TaskId: "       + taskId);
+        Log.d(className, "Engine: "       + engineId);
 
-        Log.d(logName, "Set Target");
-        Log.d(logName, "Message Type: " + messageType);
-        Log.d(logName, "PackageSize: " + messageSize);
-        Log.d(logName, "TaskId: " + taskId);
-        Log.d(logName, "Engine: " + engineId);
+        byteWriter.writeInt(swap(messageType));
+        byteWriter.writeInt(swap(messageSize));
+        byteWriter.writeInt(swap(taskId));
+        byteWriter.writeInt(swap(engineId));
 
-        debugData = byteArrayStream.toByteArray();
-        dataOutputStream.write(debugData);
+        targetData = byteArrayStream.toByteArray();
+        dataOutputStream.write(targetData);
+        // -----------------------------------------------------------------------------------------
 
+        // Response --------------------------------------------------------------------------------
         messageType = swap(dataInputStream.readInt());
         messageSize = swap(dataInputStream.readInt());
 
-        Log.d(logName, "Read Set Target");
-        Log.d(logName, "MessageType: " + messageType + "\n");
-        Log.d(logName, "MessageSize: " + messageSize + "\n");
+        Log.d(className, "Receive Set Target");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "MessageSize: " + messageSize);
 
         if (messageType == MessageType.ERROR.getMessageType()) {
-            throw new IOException("Error while sending target");
+            throw new IOException(getString(R.string.error_msg_sending_target));
         }
+        // -----------------------------------------------------------------------------------------
 
         byteArrayStream.close();
         byteWriter.close();
-        dataInputStream.close();
-        dataOutputStream.close();
     }
 
-    private void requestPIDValues(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
-        final String logName = "requestPIDValues";
+    /**
+     * Request P I D values from robot
+     *
+     * Send
+     *  - message type
+     *  - message size
+     *
+     * Response
+     *  - message type
+     *  - message size
+     *  - p value
+     *  - i value
+     *  - d value
+     *
+     * @param dataInputStream input stream from robot
+     * @param dataOutputStream output stream to robot
+     * @param tabId tab id of the gui
+     * @throws IOException io exception
+     */
+    private void requestPIDValues(DataInputStream dataInputStream,
+                                  DataOutputStream dataOutputStream,
+                                  int tabId) throws IOException {
+
         int messageType;
         int messageSize;
-        byte[] debugData;
+        float p;
+        float i;
+        float d;
+        byte[] pidData;
 
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
-        messageType = swap(MessageType.GET_PID.getMessageType());
-        messageSize = swap(8);
+        // Request ---------------------------------------------------------------------------------
+        messageType = MessageType.GET_PID.getMessageType();
+        messageSize = 8;
 
-        byteWriter.writeInt(messageType);
-        byteWriter.writeInt(messageSize);
+        Log.d(className, "Send Get Pid");
+        Log.d(className, "Message Type: " + messageType);
+        Log.d(className, "PackageSize: "  + messageSize);
 
-        Log.d(logName, "Send get pid");
-        Log.d(logName, "Message Type: " + messageType);
-        Log.d(logName, "PackageSize: " + messageSize);
+        byteWriter.writeInt(swap(messageType));
+        byteWriter.writeInt(swap(messageSize));
 
-        debugData = byteArrayStream.toByteArray();
-        dataOutputStream.write(debugData);
+        pidData = byteArrayStream.toByteArray();
+        dataOutputStream.write(pidData);
+        // -----------------------------------------------------------------------------------------
 
+        // Response --------------------------------------------------------------------------------
         messageType = swap(dataInputStream.readInt());
         messageSize = swap(dataInputStream.readInt());
 
-        Log.d(logName, "Read get pid");
-        Log.d(logName, "MessageType: " + messageType);
-        Log.d(logName, "MessageSize: " + messageSize);
+        Log.d(className, "Receive get pid");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "MessageSize: " + messageSize);
 
         if (messageType == MessageType.ERROR.getMessageType()) {
-            throw new IOException("Error while requesting pid values");
+            throw new IOException(getString(R.string.error_msg_requesting_pid));
         } else {
-            //mainActivity.setP(dataIS.readFloat(), tabId);
-            Log.d(logName, "Read P" + swap(dataInputStream.readFloat()));
-            //mainActivity.setI(dataIS.readFloat(), tabId);
-            Log.d(logName, "Read I" + swap(dataInputStream.readFloat()));
-            //mainActivity.setD(dataIS.readFloat(), tabId);
-            Log.d(logName, "Read D" + swap(dataInputStream.readFloat()));
-            //TODO Werte in GUI eintragen
+
+            p = swap(dataInputStream.readFloat());
+            i = swap(dataInputStream.readFloat());
+            // Unused
+            d = swap(dataInputStream.readFloat());
+
+            Log.d(className, "P: " + p);
+            Log.d(className, "I: " + i);
+            Log.d(className, "D: " + d);
+
+            mainActivity.setP(p, tabId);
+            mainActivity.setI(i, tabId);
         }
+        // -----------------------------------------------------------------------------------------
 
         byteArrayStream.close();
         byteWriter.close();
-        dataInputStream.close();
-        dataOutputStream.close();
     }
 
-    private void sendPIDValues(DataInputStream dataInputStream, DataOutputStream dataOutputStream, int tabId) throws IOException {
-        final String logName = "sendPIDValues";
+    /**
+     * Receive P I D values
+     *
+     * Send
+     *  - message type
+     *  - message size
+     *  - p value
+     *  - i value
+     *  - d value
+     *
+     * Response
+     *  - message type
+     *  - message size
+     *
+     * @param dataInputStream input stream from robot
+     * @param dataOutputStream output stream to robot
+     * @param tabId tab id of the gui
+     * @throws IOException io exception
+     */
+    private void sendPIDValues(DataInputStream dataInputStream,
+                               DataOutputStream dataOutputStream,
+                               int tabId) throws IOException {
         int messageType;
         int messageSize;
-        byte[] debugData;
+        float p;
+        float i;
+        float d;
+        byte[] pidData;
 
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
-        messageType = swap(MessageType.SET_PID.getMessageType());
-        messageSize = swap(20);
+        // Request ---------------------------------------------------------------------------------
+        messageType = MessageType.SET_PID.getMessageType();
+        messageSize = 20;
 
-        float p = swap(mainActivity.getP(tabId));
-        float i = swap(mainActivity.getI(tabId));
-        float d = 0f;
+        p = mainActivity.getP(tabId);
+        i = mainActivity.getI(tabId);
+        d = 0f;
 
-        byteWriter.writeInt(messageType);
-        byteWriter.writeInt(messageSize);
-        byteWriter.writeFloat(p);
-        byteWriter.writeFloat(i);
-        byteWriter.writeFloat(d);
+        Log.d(className, "Send Set PID");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "MessageSize: " + messageSize);
+        Log.d(className, "P: " + p);
+        Log.d(className, "I: " + i);
+        Log.d(className, "D: " + d);
 
-        Log.d(logName, "SET PID");
-        Log.d(logName, "Message Type: " + messageType);
-        Log.d(logName, "PackageSize: " + messageSize);
-        Log.d(logName, "P: " + swap(p));
-        Log.d(logName, "I: " + swap(i));
-        Log.d(logName, "D: " + 0);
+        byteWriter.writeInt(swap(messageType));
+        byteWriter.writeInt(swap(messageSize));
+        byteWriter.writeFloat(swap(p));
+        byteWriter.writeFloat(swap(i));
+        byteWriter.writeFloat(swap(d));
 
-        debugData = byteArrayStream.toByteArray();
-        dataOutputStream.write(debugData);
+        pidData = byteArrayStream.toByteArray();
+        dataOutputStream.write(pidData);
+        // -----------------------------------------------------------------------------------------
 
+        // Response --------------------------------------------------------------------------------
         messageType = swap(dataInputStream.readInt());
         messageSize = swap(dataInputStream.readInt());
 
-        Log.d(logName, "Read Set PID");
-        Log.d(logName, "MessageType: " + messageType);
-        Log.d(logName, "MessageSize: " + messageSize);
+        Log.d(className, "Receive Set PID");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "MessageSize: " + messageSize);
 
         if (messageType == MessageType.ERROR.getMessageType()) {
-            throw new IOException("Error while sending pid values");
+            throw new IOException(getString(R.string.error_msg_receiving_pid));
         }
+        // -----------------------------------------------------------------------------------------
 
         byteArrayStream.close();
         byteWriter.close();
-        dataInputStream.close();
-        dataOutputStream.close();
     }
 
-    private void sendVelocity(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
-        final String logName = "sendVelocity";
+    /**
+     * Send velocity to robot
+     *
+     * Send
+     *  - message type
+     *  - message size
+     *  - velocity
+     *
+     * Response
+     *  - message type
+     *  - message size
+     *
+     * @param dataInputStream input stream from robot
+     * @param dataOutputStream output stream to robot
+     * @throws IOException io exception
+     */
+    private void sendVelocity(DataInputStream dataInputStream,
+                              DataOutputStream dataOutputStream) throws IOException {
         int messageType;
         int messageSize;
-        byte[] debugData;
+        byte[] velocityData;
+        float velocity;
 
         ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
         DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
 
-        messageType = swap(MessageType.SET_VALUE.getMessageType());
-        messageSize = swap(12);
-        float speed = swap(mainActivity.getSpeed());
+        // Request ---------------------------------------------------------------------------------
+        messageType = MessageType.SET_VALUE.getMessageType();
+        messageSize = 12;
+        velocity = mainActivity.getSpeed();
 
-        byteWriter.writeInt(messageType);
-        byteWriter.writeInt(messageSize);
-        byteWriter.writeFloat(speed);
+        Log.d(className, "Send Set Speed");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "PackageSize: " + messageSize);
+        Log.d(className, "Speed: " + velocity);
 
-        Log.d(logName, "SET Speed");
-        Log.d(logName, "Message Type: " + messageType);
-        Log.d(logName, "PackageSize: " + messageSize);
-        Log.d(logName, "Speed: " + speed);
+        byteWriter.writeInt(swap(messageType));
+        byteWriter.writeInt(swap(messageSize));
+        byteWriter.writeFloat(swap(velocity));
 
+        velocityData = byteArrayStream.toByteArray();
+        dataOutputStream.write(velocityData);
+        // -----------------------------------------------------------------------------------------
 
-        debugData = byteArrayStream.toByteArray();
-        byteArrayStream.reset();
-        dataOutputStream.write(debugData);
-
+        // Response --------------------------------------------------------------------------------
         messageType = swap(dataInputStream.readInt());
         messageSize = swap(dataInputStream.readInt());
 
-        Log.d(logName, "Read Set Speed");
-        Log.d(logName, "MessageType: " + messageType);
-        Log.d(logName, "MessageSize: " + messageSize);
+        Log.d(className, "Receive Set Speed");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "MessageSize: " + messageSize);
 
         if (messageType == MessageType.ERROR.getMessageType()) {
-            throw new IOException("Error while sending velocity");
+            throw new IOException(getString(R.string.error_msg_sending_velocity));
         }
-    }
-
-    private void sendConnect(DataInputStream dataInputStream, DataOutputStream dataOutputStream, int port) throws IOException {
-        final String logName = "sendConnect";
-        int messageType = swap(MessageType.CONNECT.getMessageType());
-        int messageSize = swap(12);
-        port = swap(port);
-        byte[] debugData;
-
-        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
-
-        dataOutputStream.writeInt(messageType);
-        dataOutputStream.writeInt(messageSize);
-        dataOutputStream.writeInt(port);
-
-        Log.d(logName, "SET PID");
-        Log.d(logName, "Message Type: " + messageType);
-        Log.d(logName, "PackageSize: "  + messageSize);
-        Log.d(logName, "Port: "         + port);
-
-        debugData = byteArrayStream.toByteArray();
-        dataOutputStream.write(debugData);
-
-        messageType = swap(dataInputStream.readInt());
-        messageSize = swap(dataInputStream.readInt());
-
-        Log.d(logName, "Receive Connect");
-        Log.d(logName, "MessageType: " + messageType);
-        Log.d(logName, "MessageSize: " + messageSize);
-
-        if (messageType == MessageType.ERROR.getMessageType()) {
-            throw new IOException("Error while connecting");
-        }
+        // -----------------------------------------------------------------------------------------
 
         byteArrayStream.close();
         byteWriter.close();
-        dataOutputStream.close();
-        dataInputStream.close();
+    }
+
+    /**
+     * Send connect
+     *
+     * Send
+     *  - message type
+     *  - message size
+     *  - port
+     *
+     * Response
+     *  - message type
+     *  - message size
+     *
+     * @param dataInputStream input stream from robot
+     * @param dataOutputStream output stream to robot
+     * @param port port of the data server socket
+     * @throws IOException io exception
+     */
+    private void sendConnect(DataInputStream dataInputStream,
+                             DataOutputStream dataOutputStream,
+                             int port) throws IOException {
+
+        int messageType;
+        int messageSize;
+        byte[] connectionData;
+
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        DataOutputStream byteWriter = new DataOutputStream(byteArrayStream);
+
+        // Request ---------------------------------------------------------------------------------
+        messageType = MessageType.CONNECT.getMessageType();
+        messageSize = 12;
+
+        Log.d(className, "Send Connect");
+        Log.d(className, "Message Type: " + messageType);
+        Log.d(className, "PackageSize: "  + messageSize);
+        Log.d(className, "Port: "         + port);
+
+        dataOutputStream.writeInt(swap(messageType));
+        dataOutputStream.writeInt(swap(messageSize));
+        dataOutputStream.writeInt(swap(port));
+
+        connectionData = byteArrayStream.toByteArray();
+        dataOutputStream.write(connectionData);
+        // -----------------------------------------------------------------------------------------
+
+        // Response --------------------------------------------------------------------------------
+        messageType = swap(dataInputStream.readInt());
+        messageSize = swap(dataInputStream.readInt());
+
+        Log.d(className, "Receive Connect");
+        Log.d(className, "MessageType: " + messageType);
+        Log.d(className, "MessageSize: " + messageSize);
+
+        if (messageType == MessageType.ERROR.getMessageType()) {
+            throw new IOException(getString(R.string.error_msg_connecting));
+        }
+        // -----------------------------------------------------------------------------------------
+
+        byteArrayStream.close();
+        byteWriter.close();
     }
 
     // Register Activity to the service as Callbacks client
