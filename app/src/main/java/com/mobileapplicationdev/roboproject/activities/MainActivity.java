@@ -421,6 +421,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         final EditText editP = findViewById(R.id.editTextEnterP);
         final EditText editSpeed = findViewById(R.id.editText_enterDebug_speed);
 
+        toggle.setEnabled(false);
+
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -442,7 +444,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         editI.setEnabled(false);
                         editP.setEnabled(false);
                         editSpeed.setEnabled(false);
-                        startSocketService(TAG_TAB_2);
+
+                        // Notify debug socket thread p and i value are updated
+                        waiter.notify();
+
                         feedMultiple();
                     }
                 } else {
