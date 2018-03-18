@@ -100,33 +100,33 @@ public class SocketService extends Service {
                     // send target
                     sendTarget(dataIS, dataOS, tabId);
 
-                    // get current P I D
-                    requestPIDValues(dataIS, dataOS, tabId);
-
-                    // wait until debug button is activated
-                    synchronized (waiter) {
-                        try {
-                            waiter.wait();
-                        } catch (InterruptedException ex) {
-                            Log.e(className, ex.getMessage());
-                        }
-                    }
-
-                    // send new P I D
-                    sendPIDValues(dataIS, dataOS, tabId);
-
-                    // send velocity or angle
-                    if (tabId == MainActivity.TAB_TAB_ID_2) {
-                        sendVelocity(dataIS, dataOS);
-                    } else if (tabId == MainActivity.TAB_TAB_ID_3){
-                        // TODO send angle
-                    }
-
-                    // start new socket
-                    startServerSocket(serverSocket, tabId);
-
-                    // send connect
-                    sendConnect(dataIS, dataOS, serverSocket.getLocalPort());
+//                    // get current P I D
+//                    requestPIDValues(dataIS, dataOS, tabId);
+//
+//                    // wait until debug button is activated
+//                    synchronized (waiter) {
+//                        try {
+//                            waiter.wait();
+//                        } catch (InterruptedException ex) {
+//                            Log.e(className, ex.getMessage());
+//                        }
+//                    }
+//
+//                    // send new P I D
+//                    sendPIDValues(dataIS, dataOS, tabId);
+//
+//                    // send velocity or angle
+//                    if (tabId == MainActivity.TAB_TAB_ID_2) {
+//                        sendVelocity(dataIS, dataOS);
+//                    } else if (tabId == MainActivity.TAB_TAB_ID_3){
+//                        // TODO send angle
+//                    }
+//
+//                    // start new socket
+//                    startServerSocket(serverSocket, tabId);
+//
+//                    // send connect
+//                    sendConnect(dataIS, dataOS, serverSocket.getLocalPort());
 
                 } catch (IOException ex) {
                     exceptionHandler(MainActivity.TAG_TAB_2, ex.getMessage());
