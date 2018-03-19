@@ -32,9 +32,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
@@ -64,22 +62,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
-    /*************************************************************/
     private Thread thread;
-    private LineChart realTimeChart;
+    private LineChart debugVelocityChart;
+    private LineChart debugAngleChart;
     int indexAddEntry = 0;
     private final Random RANDOM = new Random();
-    private float cDataI;
-    private float cDataP;
-    private float cDataFrequency;
-    private int cDataSpeed;
-
-    /***graph stuff **********************************************/
 
     private String dbIpAdress;
     private DatabaseHelper dbh;
-
-    /***Datenbank*************************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         realTimeChart.setScaleEnabled(true);
         realTimeChart.setDrawGridBackground(false);
 
-        //realTimeChart.setNoDataText("No data for the moment");
+        //debugVelocityChart.setNoDataText("No data for the moment");
 
         // if disabled, scaling can be done on x- and y-axis separately
         realTimeChart.setPinchZoom(true);
@@ -468,7 +458,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initGraphTab2() {
-        initDynamicGraph((LineChart) findViewById(R.id.graph_tab2));
+        debugVelocityChart = findViewById(R.id.graph_tab2);
+        initDynamicGraph(debugVelocityChart);
     }
 
     private void initResetButton() {
@@ -476,8 +467,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                realTimeChart.clearValues();
-                realTimeChart.clear();
+                debugVelocityChart.clearValues();
+                debugVelocityChart.clear();
                 indexAddEntry = 0;
                 initDynamicGraph((LineChart) findViewById(R.id.graph_tab2));
                 getSpinnerEngine(TAB_ID_2);
@@ -569,7 +560,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initGraphTab3() {
-        initDynamicGraph((LineChart) findViewById(R.id.graph_tab3));
+        debugAngleChart = findViewById(R.id.graph_tab3);
+        initDynamicGraph(debugAngleChart);
     }
 
     private void initDebugToggleButtonTab3() {
@@ -918,10 +910,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 
 
-    private void addEntry() {
+    private void addEntry(LineChart lineChart) {
         // TODO ControlData debugData = setControlDataDebug();
         //reedit default data
-        LineData data = realTimeChart.getData();
+        LineData data = lineChart.getData();
 
         if (data != null) {
 
@@ -930,8 +922,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             if (set == null) {
                 //initialize setOne / Dynamic Graph
-                set = createSet();
-                setTwo = createSetTwo();
+                set = Utils.createSet();
+                setTwo = Utils.createSetTwo();
 
                 //initialize setTwo / static graph
                 data.addDataSet(set);
@@ -952,14 +944,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 
             // let the chart know it's data has changed
-            realTimeChart.notifyDataSetChanged();
+            lineChart.notifyDataSetChanged();
 
             // limit the number of visible entries
-            realTimeChart.setVisibleXRangeMaximum(120);
+            lineChart.setVisibleXRangeMaximum(120);
             // mChart.setVisibleYRange(30, AxisDependency.LEFT);
 
             // move to the latest entry
-            realTimeChart.moveViewToX(data.getEntryCount());
+            lineChart.moveViewToX(data.getEntryCount());
 
             // this automatically refreshes the chart (calls invalidate())
             // mChart.moveViewTo(data.getXValCount()-7, 55f,
@@ -967,7 +959,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
-    private void feedMultiple() {
+    private void feedMultiple(final LineChart lineChart) {
 
         if (thread != null)
             thread.interrupt();
@@ -976,7 +968,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void run() {
-                addEntry();
+                addEntry(lineChart);
             }
         };
 
@@ -1011,42 +1003,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
-    private LineDataSet createSetTwo() {
-        LineDataSet set = new LineDataSet(null, "Static Data");
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.rgb("#B40404"));
-        set.setCircleColor(Color.RED);
-        set.setLineWidth(2f);
-        set.setCircleRadius(4f);
-        set.setFillAlpha(65);
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(100, 170, 30));
-        set.setValueTextColor(Color.RED);
-        set.setValueTextSize(9f);
-        set.setDrawValues(true);
-        return set;
-    }
-
-    private LineDataSet createSet() {
-
-        LineDataSet set = new LineDataSet(null, "Dynamic Data");
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
-        set.setLineWidth(2f);
-        set.setCircleRadius(4f);
-        set.setFillAlpha(65);
-        set.setDrawFilled(true);
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.BLUE);
-        set.setValueTextSize(9f);
-        set.setDrawValues(true);
-        return set;
-    }
-
     private Float[] testStrings() {
         Float[] array = new Float[10000];
 
@@ -1071,9 +1027,5 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
         }
         return array;
-    }
-
-    private void makeToasts(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 }

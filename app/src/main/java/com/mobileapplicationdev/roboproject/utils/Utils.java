@@ -1,5 +1,11 @@
 package com.mobileapplicationdev.roboproject.utils;
 
+import android.graphics.Color;
+
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
 public class Utils {
     /**
      * Returns if the joystick is in the first quarter of the square
@@ -66,5 +72,44 @@ public class Utils {
 
     public static float getTimeX(float herz){
         return (1/herz);
+    }
+
+    public static LineDataSet createSetTwo() {
+        LineDataSet set = new LineDataSet(null, "Static Data");
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.rgb("#B40404"));
+        set.setCircleColor(Color.RED);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(100, 170, 30));
+        set.setValueTextColor(Color.RED);
+        set.setValueTextSize(9f);
+        set.setDrawValues(true);
+
+        return set;
+    }
+
+    public static LineDataSet createSet() {
+        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(ColorTemplate.getHoloBlue());
+        set.setCircleColor(Color.WHITE);
+        set.setLineWidth(2f);
+        set.setCircleRadius(4f);
+        set.setFillAlpha(65);
+        set.setDrawFilled(true);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.BLUE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(true);
+
+        return set;
     }
 }
