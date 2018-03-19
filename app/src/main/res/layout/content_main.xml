@@ -157,7 +157,7 @@
                             app:layout_constraintTop_toBottomOf="@+id/editText_enterDebug_speed" />
 
                         <Button
-                            android:id="@+id/button_reset"
+                            android:id="@+id/button_reset_tab2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
@@ -359,6 +359,25 @@
                             android:textSize="@dimen/toggleButton_connection_text_size"
                             app:layout_constraintBaseline_toBaselineOf="@+id/editText_ipAddress_tab3"
                             app:layout_constraintStart_toEndOf="@+id/editText_ipAddress_tab3" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButton_debug_tab3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textOff="@string/graph_toggle_button_start"
+                            android:textOn="@string/graph_toggle_button_stop"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.3"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <Button
+                            android:id="@+id/button_reset_tab3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/toggleButton_reset_debug"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.7"
+                            app:layout_constraintStart_toStartOf="parent" />
 
                         <Spinner
                             android:id="@+id/spinner_engines_tab3"

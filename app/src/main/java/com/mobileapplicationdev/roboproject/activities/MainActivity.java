@@ -252,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 textView = findViewById(R.id.editText_ipAddress_tab3);
                 ipAddress = String.valueOf(textView.getText());
 
-                //socketService.openRotatingEngineSocket(ipAddress,
-                 //       Integer.parseInt(getPreferenceValue(2)));
+                socketService.openDebugSocket(ipAddress,
+                        Integer.parseInt(getPreferenceValue(2)), waiter, TAB_ID_3);
             }
         }
     }
@@ -413,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initResetButton() {
-        Button resetButton = findViewById(R.id.button_reset);
+        Button resetButton = findViewById(R.id.button_reset_tab2);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initDebugToggleButton() {
-        final ToggleButton toggle = findViewById(R.id.toggleButton_debug_tab2);
+        final ToggleButton debugButton = findViewById(R.id.toggleButton_debug_tab2);
         final ToggleButton connectButton = findViewById(R.id.toggleButton_connection_tab2);
         final EditText editIP = findViewById(R.id.editText_ipAddress_tab2);
         final EditText editFrequency = findViewById(R.id.editTextFrequency);
@@ -435,9 +435,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         final EditText editP = findViewById(R.id.editTextEnterP);
         final EditText editSpeed = findViewById(R.id.editText_enterDebug_speed);
 
-        toggle.setEnabled(false);
+        debugButton.setEnabled(false);
 
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        debugButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 String errMsgInvalidInput = getString(R.string.error_msg_invalid_debug_input);
@@ -449,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     String speed = String.valueOf(editSpeed.getText());
 
                     if (I.trim().isEmpty() || P.trim().isEmpty() || frequency.trim().isEmpty() || speed.trim().isEmpty()) {
-                        toggle.setChecked(false);
+                        debugButton.setChecked(false);
                         Toast.makeText(MainActivity.this,
                                 errMsgInvalidInput, Toast.LENGTH_SHORT).show();
                     } else {
@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 } else {
                     connectButton.setEnabled(true);
                     connectButton.setChecked(false);
-                    toggle.setEnabled(false);
+                    debugButton.setEnabled(false);
                     editIP.setEnabled(true);
                     editFrequency.setEnabled(true);
                     editI.setEnabled(true);
@@ -559,8 +559,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
 
         if (tabId == TAB_ID_3) {
-            //TODO id für tab 3 anpassen
-            toggleButton = findViewById(R.id.toggleButton_debug_tab2);
+            toggleButton = findViewById(R.id.toggleButton_debug_tab3);
             return toggleButton.isChecked();
         }
 
@@ -740,7 +739,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             case TAG_TAB_2:
                 return findViewById(R.id.toggleButton_debug_tab2);
             case TAG_TAB_3:
-                // TODO implementieren
+                return findViewById(R.id.toggleButton_debug_tab3);
             default:
                 return null;
         }
@@ -786,7 +785,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
 
         if (tabId == TAB_ID_3) {
-            // TODO implement
+            final ToggleButton toggleButton = findViewById(R.id.toggleButton_debug_tab3);
+            toggleButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    toggleButton.setEnabled(true);
+                }
+            });
         }
     }
 
