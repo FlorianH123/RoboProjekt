@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private String dbIpAdress;
     private DatabaseHelper dbh;
+
     /***Datenbank*************************************************/
 
     @Override
@@ -104,8 +105,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButtonTab3();
         initLeftJoyStick();
         initRightJoyStick();
-        initDebugToggleButton();
-        initDynamicGraph();
+        initDebugToggleButtonTab2();
+        initDebugToggleButtonTab3();
+        initGraphTab2();
+        initGraphTab3();
         initSpinnerTab2();
         initSpinnerTab3();
         initResetButton();
@@ -163,6 +166,58 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 unCheckAllConnectionButtons();
             }
         });
+    }
+
+    private void initDynamicGraph(LineChart realTimeChart) {
+        LineData data = new LineData();
+        Legend legend;
+        XAxis xAxis;
+        YAxis left_Y_Axis;
+        YAxis right_Y_Axis;
+
+        //enable description text
+        realTimeChart.getDescription().setEnabled(true);
+
+        //enable touch gesture
+        realTimeChart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        realTimeChart.setDragEnabled(true);
+        realTimeChart.setScaleEnabled(true);
+        realTimeChart.setDrawGridBackground(false);
+
+        //realTimeChart.setNoDataText("No data for the moment");
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        realTimeChart.setPinchZoom(true);
+
+        // set an alternative background color
+        realTimeChart.setBackgroundColor(Color.LTGRAY);
+
+        data.setValueTextColor(Color.GREEN);
+
+        //adding clear data
+        realTimeChart.setData(data);
+        legend = realTimeChart.getLegend();
+
+        // modify the legend ...
+        legend.setForm(Legend.LegendForm.LINE);
+        legend.setTextColor(Color.WHITE);
+
+        xAxis = realTimeChart.getXAxis();
+        xAxis.setTextColor(Color.BLUE);
+        xAxis.setDrawGridLines(false);
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setEnabled(true);
+
+        left_Y_Axis = realTimeChart.getAxisLeft();
+        left_Y_Axis.setTextColor(Color.BLUE);
+        left_Y_Axis.setAxisMaximum(2f);
+        left_Y_Axis.setAxisMinimum(0f);
+        left_Y_Axis.setDrawGridLines(true);
+
+        right_Y_Axis = realTimeChart.getAxisRight();
+        right_Y_Axis.setEnabled(false);
     }
 
 // -------------------------------------------------------------------------------------------------
@@ -412,6 +467,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButton(toggleButton, editText, TAG_TAB_2);
     }
 
+    private void initGraphTab2() {
+        initDynamicGraph((LineChart) findViewById(R.id.graph_tab2));
+    }
+
     private void initResetButton() {
         Button resetButton = findViewById(R.id.button_reset_tab2);
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -420,13 +479,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 realTimeChart.clearValues();
                 realTimeChart.clear();
                 indexAddEntry = 0;
-                initDynamicGraph();
+                initDynamicGraph((LineChart) findViewById(R.id.graph_tab2));
                 getSpinnerEngine(TAB_ID_2);
             }
         });
     }
 
-    private void initDebugToggleButton() {
+    private void initDebugToggleButtonTab2() {
         final ToggleButton debugButton = findViewById(R.id.toggleButton_debug_tab2);
         final ToggleButton connectButton = findViewById(R.id.toggleButton_connection_tab2);
         final EditText editIP = findViewById(R.id.editText_ipAddress_tab2);
@@ -507,6 +566,66 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         editText.setText(dbIpAdress);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_3);
+    }
+
+    private void initGraphTab3() {
+        initDynamicGraph((LineChart) findViewById(R.id.graph_tab3));
+    }
+
+    private void initDebugToggleButtonTab3() {
+        final ToggleButton debugButton = findViewById(R.id.toggleButton_debug_tab3);
+        final ToggleButton connectButton = findViewById(R.id.toggleButton_connection_tab3);
+        final EditText editIP = findViewById(R.id.editText_ipAddress_tab3);
+        final EditText editFrequency = findViewById(R.id.editText_frequency_tab3);
+        final EditText editI = findViewById(R.id.editText_i_tab3);
+        final EditText editP = findViewById(R.id.editText_p_tab3);
+        final EditText editAngle = findViewById(R.id.editText_angle_tab3);
+
+        debugButton.setEnabled(false);
+
+        debugButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                String errMsgInvalidInput = getString(R.string.error_msg_invalid_debug_input);
+
+                if (isChecked) {
+                    String I = String.valueOf(editI.getText());
+                    String P = String.valueOf(editIP.getText());
+                    String frequency = String.valueOf(editFrequency.getText());
+                    String speed = String.valueOf(editAngle.getText());
+
+                    if (I.trim().isEmpty() || P.trim().isEmpty() || frequency.trim().isEmpty() || speed.trim().isEmpty()) {
+                        debugButton.setChecked(false);
+                        Toast.makeText(MainActivity.this,
+                                errMsgInvalidInput, Toast.LENGTH_SHORT).show();
+                    } else {
+                        connectButton.setEnabled(false);
+                        editIP.setEnabled(false);
+                        editFrequency.setEnabled(false);
+                        editI.setEnabled(false);
+                        editP.setEnabled(false);
+                        editAngle.setEnabled(false);
+
+
+                        // Notify debug socket thread p and i value are updated
+                        synchronized (waiter) {
+                            waiter.notify();
+                        }
+
+                        //feedMultiple();
+                    }
+                } else {
+                    connectButton.setEnabled(true);
+                    connectButton.setChecked(false);
+                    debugButton.setEnabled(false);
+                    editIP.setEnabled(true);
+                    editFrequency.setEnabled(true);
+                    editI.setEnabled(true);
+                    editP.setEnabled(true);
+                    editAngle.setEnabled(true);
+                }
+            }
+        });
     }
 
     private void initSpinnerTab3() {
@@ -797,51 +916,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 //--------------------------------------------------------------------------------------------------
 
-    private void initDynamicGraph() {
-        realTimeChart = (LineChart) findViewById(R.id.graph);
-        //enable description text
-        realTimeChart.getDescription().setEnabled(true);
-        //enable touch gesture
-        realTimeChart.setTouchEnabled(true);
-        // enable scaling and dragging
-        realTimeChart.setDragEnabled(true);
-        realTimeChart.setScaleEnabled(true);
-        realTimeChart.setDrawGridBackground(false);
 
-        //realTimeChart.setNoDataText("No data for the moment");
-
-        // if disabled, scaling can be done on x- and y-axis separately
-        realTimeChart.setPinchZoom(true);
-
-        // set an alternative background color
-        realTimeChart.setBackgroundColor(Color.LTGRAY);
-
-        LineData data = new LineData();
-        data.setValueTextColor(Color.GREEN);
-        //adding clear data
-        realTimeChart.setData(data);
-        Legend legend = realTimeChart.getLegend();
-
-        // modify the legend ...
-        legend.setForm(Legend.LegendForm.LINE);
-        legend.setTextColor(Color.WHITE);
-
-        XAxis xl = realTimeChart.getXAxis();
-        xl.setTextColor(Color.BLUE);
-        xl.setDrawGridLines(false);
-        xl.setAvoidFirstLastClipping(true);
-        xl.setEnabled(true);
-
-
-        YAxis leftAxis = realTimeChart.getAxisLeft();
-        leftAxis.setTextColor(Color.BLUE);
-        leftAxis.setAxisMaximum(2f);
-        leftAxis.setAxisMinimum(0f);
-        leftAxis.setDrawGridLines(true);
-
-        YAxis rightAxis = realTimeChart.getAxisRight();
-        rightAxis.setEnabled(false);
-    }
 
     private void addEntry() {
         // TODO ControlData debugData = setControlDataDebug();

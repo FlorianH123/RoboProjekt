@@ -163,7 +163,6 @@ public class SocketService extends Service {
                 int messageType;
                 int messageSize;
 
-
                 try {
                     clientSocket = serverSocket.accept();
                     dataInputStream = new DataInputStream(clientSocket.getInputStream());
@@ -195,8 +194,6 @@ public class SocketService extends Service {
                     Log.e(className, ex.getMessage());
                     exceptionHandler(tabTag, ex.getMessage());
                 }
-
-                stopSelf();
             }
         }, RECEIVE_DATA_THREAD_NAME).start();
     }
