@@ -720,6 +720,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    public ToggleButton getDebugButton(String tagTab) {
+        switch (tagTab) {
+            case TAG_TAB_2:
+                return findViewById(R.id.toggleButton_debug_tab2);
+            case TAG_TAB_3:
+                // TODO implementieren
+            default:
+                return null;
+        }
+    }
+
     @Override
     public ControlData getControlData() {
         ControlData controlData = new ControlData();

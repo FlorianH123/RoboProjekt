@@ -79,6 +79,7 @@ public class SocketService extends Service {
                         Thread.sleep(SOCKET_SLEEP_MILLIS);
                     }
                 } catch (IOException ex) {
+                    Log.e(className, ex.getMessage());
                     exceptionHandler(MainActivity.TAG_TAB_1, ex.getMessage());
                 } catch (InterruptedException ex) {
                     Log.e(className, ex.getMessage());
@@ -95,7 +96,7 @@ public class SocketService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String tab_tag = null;
+                String tabTag = null;
 
                 try (Socket debugSocket = new Socket(ip, port);
                      ServerSocket serverSocket = new ServerSocket(0);
@@ -103,9 +104,9 @@ public class SocketService extends Service {
                      DataInputStream dataIS = new DataInputStream(debugSocket.getInputStream())) {
 
                     if (tabId == MainActivity.TAB_ID_2) {
-                        tab_tag = MainActivity.TAG_TAB_2;
+                        tabTag = MainActivity.TAG_TAB_2;
                     } else if (tabId == MainActivity.TAB_ID_3) {
-                        tab_tag = MainActivity.TAG_TAB_3;
+                        tabTag = MainActivity.TAG_TAB_3;
                     }
 
                     // send target
@@ -133,14 +134,15 @@ public class SocketService extends Service {
                         sendAngle(dataIS, dataOS);
                     }
 
-//                    // start new socket
-//                    startServerSocket(serverSocket, tabId);
+                    // start new socket
+                    startServerSocket(serverSocket, tabId, tabTag);
 
                     // send connect
                     sendConnect(dataIS, dataOS, serverSocket.getLocalPort());
 
                 } catch (IOException ex) {
-                    exceptionHandler(tab_tag, ex.getMessage());
+                    Log.e(className, ex.getMessage());
+                    exceptionHandler(tabTag, ex.getMessage());
                 }
 
                 stopSelf();
@@ -148,8 +150,10 @@ public class SocketService extends Service {
         }, DEBUG_THREAD_NAME).start();
     }
 
-    // TODO überarbeiten
-    private void startServerSocket(final ServerSocket serverSocket, final int tabId) {
+    private void startServerSocket(final ServerSocket serverSocket,
+                                   final int tabId,
+                                   final String tabTag) {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -157,7 +161,7 @@ public class SocketService extends Service {
                 DataInputStream dataInputStream;
                 int messageType;
                 int messageSize;
-                float[] dataMr;
+
 
                 try {
                     clientSocket = serverSocket.accept();
@@ -173,23 +177,50 @@ public class SocketService extends Service {
                         messageSize = messageSize - 8;
 
                         if (messageType != MessageType.ERROR.getMessageType()) {
-                            dataMr = new float[256];
-
-                            for (int j = 0; j < messageSize; j++) {
-                                dataMr[j] = swap(dataInputStream.readFloat());
-                                Log.d(className, "Geschwindigkeit" + dataMr[j] + "\n");
+                            if (tabId == MainActivity.TAB_ID_2) {
+                                receiveVelocity(dataInputStream, messageSize);
+                            } else if (tabId == MainActivity.TAB_ID_3) {
+                                receiveAngle(dataInputStream, messageSize);
                             }
-                            // TODO Geschwindigkeit in den Graph übernehemen
+                        } else {
+                            throw new IOException(getString(R.string.error_msg_receiving_data));
                         }
                     }
 
+                    dataInputStream.close();
                     clientSocket.close();
                     serverSocket.close();
                 } catch (IOException ex) {
                     Log.e(className, ex.getMessage());
+                    exceptionHandler(tabTag, ex.getMessage());
                 }
             }
         }, RECEIVE_DATA_THREAD_NAME).start();
+    }
+
+    private void receiveVelocity(DataInputStream dataInputStream,
+                                 int messageSize) throws IOException {
+
+        float[] velocityArray = new float[messageSize];
+
+        for (int i = 0; i < messageSize; i++) {
+            velocityArray[i] = swap(dataInputStream.readFloat());
+            Log.d(className, "Velocity" + velocityArray[i]);
+        }
+        // TODO Geschwindigkeit in den Graph übernehemen
+    }
+
+    private void receiveAngle(DataInputStream dataInputStream,
+                              int messageSize) throws IOException {
+
+        int[] angleArray = new int[messageSize];
+
+        for (int i = 0 ; i < messageSize ; i++) {
+            angleArray[i] = swap(dataInputStream.readInt());
+            Log.d(className, "Angle" + angleArray[i]);
+        }
+
+        // TODO Winkel in den Graph übernehemen
     }
 
     /**
@@ -614,6 +645,8 @@ public class SocketService extends Service {
 
         ToggleButton getToggleButton(String tagTab);
 
+        ToggleButton getDebugButton(String tagTab);
+
         int getSpinnerEngine(int tabId);
 
         void setP(float p, int tabId);
@@ -643,19 +676,29 @@ public class SocketService extends Service {
     }
 
     private void exceptionHandler(String tagTab, String ex) {
-        final ToggleButton toggleButton = mainActivity.
-                getToggleButton(tagTab);
         final String errorString = getErrorMessage(ex);
 
-        Log.e(className, errorString);
+        if (tagTab.equals(MainActivity.TAG_TAB_1)) {
+            final ToggleButton connectionButton = mainActivity.getToggleButton(tagTab);
+            connectionButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(SocketService.this, errorString,
+                            Toast.LENGTH_LONG).show();
+                    connectionButton.setChecked(false);
+                }
+            });
+        } else if (tagTab.equals(MainActivity.TAG_TAB_2) || tagTab.equals(MainActivity.TAG_TAB_3)) {
+            final ToggleButton debugButton = mainActivity.getDebugButton(tagTab);
 
-        toggleButton.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(SocketService.this, errorString,
-                        Toast.LENGTH_LONG).show();
-                toggleButton.setChecked(false);
-            }
-        });
+            debugButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(SocketService.this, errorString,
+                            Toast.LENGTH_LONG).show();
+                    debugButton.setChecked(false);
+                }
+            });
+        }
     }
 }
