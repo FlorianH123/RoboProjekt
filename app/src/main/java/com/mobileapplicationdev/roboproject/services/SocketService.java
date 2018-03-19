@@ -145,8 +145,6 @@ public class SocketService extends Service {
                     Log.e(className, ex.getMessage());
                     exceptionHandler(tabTag, ex.getMessage());
                 }
-
-                stopSelf();
             }
         }, DEBUG_THREAD_NAME).start();
     }
@@ -158,20 +156,20 @@ public class SocketService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Socket clientSocket;
-                DataInputStream dataInputStream;
+
+
                 int messageType;
                 int messageSize;
 
-                try {
-                    clientSocket = serverSocket.accept();
-                    dataInputStream = new DataInputStream(clientSocket.getInputStream());
+                try (Socket clientSocket = serverSocket.accept();
+                     DataInputStream dataInputStream =
+                             new DataInputStream(clientSocket.getInputStream())){
 
                     while (mainActivity.getDebugButtonStatus(tabId)) {
-                        Log.d(className, "ReceiveData: ");
                         messageType = swap(dataInputStream.readInt());
                         messageSize = swap(dataInputStream.readInt());
 
+                        Log.d(className, "ReceiveData: ");
                         Log.d(className, "MessageType: " + messageType);
                         Log.d(className, "MessageSize: " + messageSize);
 
@@ -188,12 +186,19 @@ public class SocketService extends Service {
                         }
                     }
 
-                    dataInputStream.close();
-                    clientSocket.close();
                     serverSocket.close();
                 } catch (IOException ex) {
                     Log.e(className, ex.getMessage());
                     exceptionHandler(tabTag, ex.getMessage());
+                } finally {
+                    try {
+                        if (serverSocket != null) {
+                            serverSocket.close();
+                        }
+                    } catch (IOException ex) {
+                        Log.e(className, ex.getMessage());
+                        exceptionHandler(tabTag, ex.getMessage());
+                    }
                 }
             }
         }, RECEIVE_DATA_THREAD_NAME).start();
@@ -216,7 +221,7 @@ public class SocketService extends Service {
 
         int[] angleArray = new int[messageSize];
 
-        for (int i = 0 ; i < messageSize ; i++) {
+        for (int i = 0; i < messageSize; i++) {
             angleArray[i] = swap(dataInputStream.readInt());
             Log.d(className, "Angle" + angleArray[i]);
         }

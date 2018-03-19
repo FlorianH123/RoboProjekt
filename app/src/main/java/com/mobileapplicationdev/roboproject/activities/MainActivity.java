@@ -524,7 +524,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initDebugToggleButtonTab2() {
-
         debugButtonTab2.setEnabled(false);
 
         debugButtonTab2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
