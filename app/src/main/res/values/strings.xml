@@ -101,6 +101,8 @@
     <string name="error_msg_receiving_pid">Error while sending pid values</string>
     <string name="error_msg_sending_velocity">Error while sending velocity</string>
     <string name="error_msg_connecting">Error while connecting</string>
+    <string name="error_msg_sending_angle">Error while sending angle</string>
+    <string name="error_msg_receiving_data">Error while receiving data</string>
 <!-- -->
 
 </resources>
