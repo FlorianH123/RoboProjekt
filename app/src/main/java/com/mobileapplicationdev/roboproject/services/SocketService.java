@@ -98,17 +98,17 @@ public class SocketService extends Service {
             public void run() {
                 String tabTag = null;
 
+                if (tabId == MainActivity.TAB_ID_2) {
+                    tabTag = MainActivity.TAG_TAB_2;
+                } else if (tabId == MainActivity.TAB_ID_3) {
+                    tabTag = MainActivity.TAG_TAB_3;
+                }
+
                 try (Socket debugSocket = new Socket(ip, port);
                      DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
                      DataInputStream dataIS = new DataInputStream(debugSocket.getInputStream())) {
 
                     ServerSocket serverSocket = new ServerSocket(0);
-
-                    if (tabId == MainActivity.TAB_ID_2) {
-                        tabTag = MainActivity.TAG_TAB_2;
-                    } else if (tabId == MainActivity.TAB_ID_3) {
-                        tabTag = MainActivity.TAG_TAB_3;
-                    }
 
                     // send target
                     sendTarget(dataIS, dataOS, tabId);

@@ -778,7 +778,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public void setD(float d, int tabId) {
         // TODO löschen
         if (tabId == TAB_ID_2) {
-
             editFrequencyTab2.setText(String.valueOf(d));
         }
 
