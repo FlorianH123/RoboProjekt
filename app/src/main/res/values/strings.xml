@@ -20,6 +20,7 @@
     <string name="settings_port_title">Port Einstellungen</string>
     <string name="settings_speed_title">Geschwindigkeiten</string>
 
+    <string name="settings_ip">IP</string>
     <string name="settings_port_1">Port 1</string>
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
@@ -28,6 +29,7 @@
     <string name="maximum_y">Maximum Y</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
 
+    <string name="settings_ip_key">IP</string>
     <string name="settings_port_1_key">PORT_1</string>
     <string name="settings_port_2_key">PORT_2</string>
     <string name="settings_port_3_key">PORT_3</string>
@@ -35,6 +37,7 @@
     <string name="settings_maximum_x_key">MAXIMUM_X</string>
     <string name="settings_maximum_y_key">MAXIMUM_Y</string>
 
+    <string name="ip_default_value">0.0.0.0</string>
     <string name="port_1_default_value">1000</string>
     <string name="port_2_default_value">1000</string>
     <string name="port_3_default_value">1000</string>
