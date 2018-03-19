@@ -38,6 +38,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
@@ -75,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /***graph stuff **********************************************/
 
+    private String dbIpAdress;
+    private DatabaseHelper dbh;
+    /***Datenbank*************************************************/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        dbh = new DatabaseHelper(this);
+        dbIpAdress = dbh.getIp();
+
         // Initialise components inside  the main activity
         initTabHost();
         initConnectionButtonTab1();
@@ -101,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab2();
         initSpinnerTab3();
         initResetButton();
+
     }
 
     /**
@@ -282,6 +291,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void initConnectionButtonTab1() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab1);
         EditText editText = findViewById(R.id.editText_ipAddress_tab1);
+        dbIpAdress = dbh.getIp();
+        editText.setText(dbIpAdress);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_1);
     }
@@ -395,6 +406,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void initConnectionButtonTab2() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab2);
         EditText editText = findViewById(R.id.editText_ipAddress_tab2);
+        dbIpAdress = dbh.getIp();
+        editText.setText(dbIpAdress);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_2);
     }
@@ -482,6 +495,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void initConnectionButtonTab3() {
         ToggleButton toggleButton = findViewById(R.id.toggleButton_connection_tab3);
         EditText editText = findViewById(R.id.editText_ipAddress_tab3);
+        dbIpAdress = dbh.getIp();
+        editText.setText(dbIpAdress);
 
         initConnectionButton(toggleButton, editText, TAG_TAB_3);
     }

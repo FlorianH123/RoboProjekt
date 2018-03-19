@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 
 /**
  * Created by Florian on 16.01.2018.
@@ -17,11 +18,14 @@ import com.mobileapplicationdev.roboproject.R;
 public class SettingsActivity extends PreferenceActivity {
     private static final int MIN_PORT = 0;
     private static final int MAX_PORT = 65535;
+    private DatabaseHelper dbh;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
+
+        dbh = new DatabaseHelper(this);
         initOnPreferenceChange();
     }
 
@@ -51,6 +55,14 @@ public class SettingsActivity extends PreferenceActivity {
                     portNumber = Integer.parseInt(portNumberString);
 
                     validatePortNumber(portNumber, key, defaultValue, sharedPreferences);
+                }
+
+                if(key.equals("ip")){
+                    defaultValue = dbh.getIp();
+                    String newIp = sharedPreferences.getString(key, defaultValue);
+                    if(!dbh.updateIp(newIp)){
+                        Toast.makeText(SettingsActivity.this, "Ungültige IP konnte nicht gespeichert werden!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
