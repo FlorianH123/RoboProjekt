@@ -57,7 +57,7 @@ public class SettingsActivity extends PreferenceActivity {
                     validatePortNumber(portNumber, key, defaultValue, sharedPreferences);
                 }
 
-                if(key.equals("ip")){
+                if(key.equals(getString(R.string.settings_ip_key))){
                     defaultValue = dbh.getIp();
                     String newIp = sharedPreferences.getString(key, defaultValue);
                     if(!dbh.updateIp(newIp)){

@@ -5,11 +5,11 @@
     <PreferenceCategory android:title="@string/settings_port_title">
 
         <EditTextPreference
-            android:defaultValue="0.0.0.0"
-            android:key="ip"
+            android:defaultValue="@string/ip_default_value"
+            android:key="@string/settings_ip_key"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="IP" />
+            android:title="@string/settings_ip" />
         <EditTextPreference
             android:defaultValue="@string/port_1_default_value"
             android:key="@string/settings_port_1_key"
