@@ -112,4 +112,11 @@ public class Utils {
 
         return set;
     }
+
+    public static boolean validateInput(String iValue, String pValue, String frequency,
+                                        String velocity) {
+        return iValue.trim().isEmpty() || pValue.trim().isEmpty() || frequency.trim().isEmpty() ||
+                frequency.trim().isEmpty() || velocity.trim().isEmpty();
+
+    }
 }
