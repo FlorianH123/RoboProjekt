@@ -168,13 +168,14 @@ public class SocketService extends Service {
                     dataInputStream = new DataInputStream(clientSocket.getInputStream());
 
                     while (mainActivity.getDebugButtonStatus(tabId)) {
+                        Log.d(className, "ReceiveData: ");
                         messageType = swap(dataInputStream.readInt());
                         messageSize = swap(dataInputStream.readInt());
 
                         Log.d(className, "MessageType: " + messageType);
                         Log.d(className, "MessageSize: " + messageSize);
 
-                        messageSize = messageSize - 8;
+                        messageSize = messageSize / 4 - 2;
 
                         if (messageType != MessageType.ERROR.getMessageType()) {
                             if (tabId == MainActivity.TAB_ID_2) {
@@ -205,7 +206,7 @@ public class SocketService extends Service {
 
         for (int i = 0; i < messageSize; i++) {
             velocityArray[i] = swap(dataInputStream.readFloat());
-            Log.d(className, "Velocity" + velocityArray[i]);
+            Log.d(className, "Velocity " + velocityArray[i]);
         }
         // TODO Geschwindigkeit in den Graph übernehemen
     }
