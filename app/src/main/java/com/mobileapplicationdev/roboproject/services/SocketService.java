@@ -99,9 +99,10 @@ public class SocketService extends Service {
                 String tabTag = null;
 
                 try (Socket debugSocket = new Socket(ip, port);
-                     ServerSocket serverSocket = new ServerSocket(0);
                      DataOutputStream dataOS = new DataOutputStream(debugSocket.getOutputStream());
                      DataInputStream dataIS = new DataInputStream(debugSocket.getInputStream())) {
+
+                    ServerSocket serverSocket = new ServerSocket(0);
 
                     if (tabId == MainActivity.TAB_ID_2) {
                         tabTag = MainActivity.TAG_TAB_2;
@@ -194,6 +195,8 @@ public class SocketService extends Service {
                     Log.e(className, ex.getMessage());
                     exceptionHandler(tabTag, ex.getMessage());
                 }
+
+                stopSelf();
             }
         }, RECEIVE_DATA_THREAD_NAME).start();
     }
@@ -257,7 +260,14 @@ public class SocketService extends Service {
         // Request ---------------------------------------------------------------------------------
         messageType = MessageType.SET_TARGET.getMessageType();
         messageSize = 16;
-        taskId = Task.Antriebsregelung.getTaskId();
+        taskId = 0;
+
+        if (tabId == MainActivity.TAB_ID_2) {
+            taskId = Task.Antriebsregelung.getTaskId();
+        } else if (tabId == MainActivity.TAB_ID_3) {
+            taskId = Task.StellmotorPositionsregelung.getTaskId();
+        }
+
         engineId = mainActivity.getSpinnerEngine(tabId);
 
         Log.d(className, "Send Set Target");
