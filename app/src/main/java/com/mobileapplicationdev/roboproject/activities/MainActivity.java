@@ -50,11 +50,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final String TAG_TAB_2 = "Tag_Tab2";
     public static final String TAG_TAB_3 = "Tag_Tab3";
 
-    public static final int TAB_TAB_ID_1 = 1;
-    public static final int TAB_TAB_ID_2 = 2;
-    public static final int TAB_TAB_ID_3 = 3;
+    public static final int TAB_ID_1 = 1;
+    public static final int TAB_ID_2 = 2;
+    public static final int TAB_ID_3 = 3;
 
-    private Object waiter = new Object();
+    private final Object waiter = new Object();
 
     private SocketService socketService;
     private boolean mBound = false;
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 ipAddress = String.valueOf(textView.getText());
 
                 socketService.openDebugSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(1)), waiter, TAB_TAB_ID_2);
+                        Integer.parseInt(getPreferenceValue(1)), waiter, TAB_ID_2);
             }
 
             if (tagTab.equals(TAG_TAB_3)) {
@@ -408,13 +408,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 realTimeChart.clear();
                 indexAddEntry = 0;
                 initDynamicGraph();
-                getSpinnerEngine(TAB_TAB_ID_2);
+                getSpinnerEngine(TAB_ID_2);
             }
         });
     }
 
     private void initDebugToggleButton() {
-        final ToggleButton toggle = findViewById(R.id.toggleButton_debug);
+        final ToggleButton toggle = findViewById(R.id.toggleButton_debug_tab2);
+        final ToggleButton connectButton = findViewById(R.id.toggleButton_connection_tab2);
         final EditText editIP = findViewById(R.id.editText_ipAddress_tab2);
         final EditText editFrequency = findViewById(R.id.editTextFrequency);
         final EditText editI = findViewById(R.id.editTextEnterI);
@@ -439,18 +440,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         Toast.makeText(MainActivity.this,
                                 errMsgInvalidInput, Toast.LENGTH_SHORT).show();
                     } else {
+                        connectButton.setEnabled(false);
                         editIP.setEnabled(false);
                         editFrequency.setEnabled(false);
                         editI.setEnabled(false);
                         editP.setEnabled(false);
                         editSpeed.setEnabled(false);
 
-                        // Notify debug socket thread p and i value are updated
-                        waiter.notify();
 
-                        feedMultiple();
+                        // Notify debug socket thread p and i value are updated
+                        synchronized (waiter) {
+                            waiter.notify();
+                        }
+
+                        //feedMultiple();
                     }
                 } else {
+                    connectButton.setEnabled(true);
+                    connectButton.setChecked(false);
+                    toggle.setEnabled(false);
                     editIP.setEnabled(true);
                     editFrequency.setEnabled(true);
                     editI.setEnabled(true);
@@ -508,17 +516,17 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public boolean getConnectionButtonStatus(int tabId) {
         ToggleButton toggleButton;
 
-        if (tabId == TAB_TAB_ID_1) {
+        if (tabId == TAB_ID_1) {
             toggleButton = findViewById(R.id.toggleButton_connection_tab1);
             return toggleButton.isChecked();
         }
 
-        if (tabId == TAB_TAB_ID_2) {
+        if (tabId == TAB_ID_2) {
             toggleButton = findViewById(R.id.toggleButton_connection_tab2);
             return toggleButton.isChecked();
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             toggleButton = findViewById(R.id.toggleButton_connection_tab3);
             return toggleButton.isChecked();
         }
@@ -530,14 +538,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public boolean getDebugButtonStatus(int tabId) {
         ToggleButton toggleButton;
 
-        if (tabId == TAB_TAB_ID_2) {
-            toggleButton = findViewById(R.id.toggleButton_debug);
+        if (tabId == TAB_ID_2) {
+            toggleButton = findViewById(R.id.toggleButton_debug_tab2);
             return toggleButton.isChecked();
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             //TODO id für tab 3 anpassen
-            toggleButton = findViewById(R.id.toggleButton_debug);
+            toggleButton = findViewById(R.id.toggleButton_debug_tab2);
             return toggleButton.isChecked();
         }
 
@@ -545,17 +553,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public void setP(float p, int tabId) {
-        TextView enterP;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterP = findViewById(R.id.editTextEnterP);
-            enterP.setText(String.valueOf(p));
+    public void setP(final float p, int tabId) {
+        if (tabId == TAB_ID_2) {
+            final TextView enterP = findViewById(R.id.editTextEnterP);
+            enterP.post(new Runnable() {
+                @Override
+                public void run() {
+                    enterP.setText(String.valueOf(p));
+                }
+            });
         }
 
-        if (tabId == TAB_TAB_ID_3) {
-            enterP = findViewById(R.id.editText_p_tab3);
-            enterP.setText(String.valueOf(p));
+        if (tabId == TAB_ID_3) {
+            final TextView enterP = findViewById(R.id.editText_p_tab3);
+            enterP.post(new Runnable() {
+                @Override
+                public void run() {
+                    enterP.setText(String.valueOf(p));
+                }
+            });
         }
     }
 
@@ -565,11 +581,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String pValue;
 
 
-        if (tabId == TAB_TAB_ID_2) {
+        if (tabId == TAB_ID_2) {
             enteredPValue = findViewById(R.id.editTextEnterP);
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             enteredPValue = findViewById(R.id.editText_p_tab3);
         }
 
@@ -588,17 +604,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public void setI(float i, int tabId) {
-        TextView enterVarI;
-
-        if (tabId == TAB_TAB_ID_2) {
-            enterVarI = findViewById(R.id.editTextEnterI);
-            enterVarI.setText(String.valueOf(i));
+    public void setI(final float i, int tabId) {
+        if (tabId == TAB_ID_2) {
+            final TextView enterVarI = findViewById(R.id.editTextEnterI);
+            enterVarI.post(new Runnable() {
+                @Override
+                public void run() {
+                    enterVarI.setText(String.valueOf(i));
+                }
+            });
         }
 
-        if (tabId == TAB_TAB_ID_3) {
-            enterVarI = findViewById(R.id.editText_i_tab3);
-            enterVarI.setText(String.valueOf(i));
+        if (tabId == TAB_ID_3) {
+            final TextView enterVarI = findViewById(R.id.editText_i_tab3);
+            enterVarI.post(new Runnable() {
+                @Override
+                public void run() {
+                    enterVarI.setText(String.valueOf(i));
+                }
+            });
         }
     }
 
@@ -607,11 +631,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         TextView enteredIValue = null;
         String iValue;
 
-        if (tabId == TAB_TAB_ID_2) {
+        if (tabId == TAB_ID_2) {
             enteredIValue = findViewById(R.id.editTextEnterI);
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             enteredIValue = findViewById(R.id.editText_i_tab3);
         }
 
@@ -623,22 +647,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 return 0f;
             }
 
-            return Integer.parseInt(iValue);
+            return Float.parseFloat(iValue);
         }
 
-        return 0F;
+        return 0f;
     }
 
     @Override
     public void setD(float d, int tabId) {
         TextView enterRegulatorFrequency;
 
-        if (tabId == TAB_TAB_ID_2) {
+        if (tabId == TAB_ID_2) {
             enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
             enterRegulatorFrequency.setText(String.valueOf(d));
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             enterRegulatorFrequency = findViewById(R.id.editText_frequency_tab3);
             enterRegulatorFrequency.setText(String.valueOf(d));
         }
@@ -648,12 +672,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public float getD(int tabId) {
         TextView enterRegulatorFrequency;
 
-        if (tabId == TAB_TAB_ID_2) {
+        if (tabId == TAB_ID_2) {
             enterRegulatorFrequency = findViewById(R.id.editTextFrequency);
             return Integer.parseInt(enterRegulatorFrequency.getText().toString());
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             enterRegulatorFrequency = findViewById(R.id.editText_frequency_tab3);
             return Integer.parseInt(enterRegulatorFrequency.getText().toString());
         }
@@ -661,7 +685,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return 0;
     }
 
-    public float getSpeed() {
+    public float getVelocity() {
         TextView enteredSpeed;
         String speedValue;
 
@@ -711,17 +735,33 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public int getSpinnerEngine(int tabId) {
         Spinner spinner;
 
-        if (tabId == TAB_TAB_ID_2) {
+        if (tabId == TAB_ID_2) {
             spinner = findViewById(R.id.spinner);
             return spinner.getSelectedItemPosition();
         }
 
-        if (tabId == TAB_TAB_ID_3) {
+        if (tabId == TAB_ID_3) {
             spinner = findViewById(R.id.spinner_engines_tab3);
             return spinner.getSelectedItemPosition();
         }
 
         return 0;
+    }
+
+    public void enableDebugButton(int tabId) {
+        if (tabId == TAB_ID_2) {
+            final ToggleButton toggleButton = findViewById(R.id.toggleButton_debug_tab2);
+            toggleButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    toggleButton.setEnabled(true);
+                }
+            });
+        }
+
+        if (tabId == TAB_ID_3) {
+            // TODO implement
+        }
     }
 
 //--------------------------------------------------------------------------------------------------
@@ -794,7 +834,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
 
 
-            float staticdata = 0;//(debugData.getSpeed() / (float) 10);
+            float staticdata = 0;//(debugData.getVelocity() / (float) 10);
             Float[] array = testDebugStrings(staticdata);
             float test = array[indexAddEntry];
             indexAddEntry++;
