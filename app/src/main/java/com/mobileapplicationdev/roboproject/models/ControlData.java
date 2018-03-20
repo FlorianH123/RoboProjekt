@@ -5,6 +5,7 @@ package com.mobileapplicationdev.roboproject.models;
  * Data Packet which contains all necessary control data
  */
 
+@SuppressWarnings("unused")
 public class ControlData {
     private int speed;
     private Engines engine;

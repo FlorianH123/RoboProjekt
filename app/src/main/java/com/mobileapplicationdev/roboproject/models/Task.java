@@ -2,8 +2,10 @@ package com.mobileapplicationdev.roboproject.models;
 
 /**
  * Created by Florian on 02.03.2018.
+ * Task Enum
  */
 
+@SuppressWarnings("unused")
 public enum Task {
     Antriebsregelung(1),
     StellmotorPositionsregelung(2),

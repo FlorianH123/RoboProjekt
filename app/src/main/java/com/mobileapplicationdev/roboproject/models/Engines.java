@@ -2,8 +2,10 @@ package com.mobileapplicationdev.roboproject.models;
 
 /**
  * Created by Florian on 02.03.2018.
+ * Engine Enum
  */
 
+@SuppressWarnings("unused")
 public enum Engines {
     ENGINE_1(0),
     ENGINE_2(1),

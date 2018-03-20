@@ -6,6 +6,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+@SuppressWarnings("unused")
 public class Utils {
     /**
      * Returns if the joystick is in the first quarter of the square
@@ -70,8 +71,8 @@ public class Utils {
         return Float.intBitsToFloat(intValue);
     }
 
-    public static float getTimeX(float herz){
-        return (1/herz);
+    public static float getTimeX(float hertz){
+        return (1/hertz);
     }
 
     public static LineDataSet createSetTwo() {
