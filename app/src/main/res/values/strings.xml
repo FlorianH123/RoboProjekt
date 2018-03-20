@@ -25,6 +25,7 @@
     <string name="settings_port_2">Port 2</string>
     <string name="settings_port_3">Port 3</string>
     <string name="settings_robot_speed">Lineargeschwindigkeit</string>
+    <string name="settings_robot_profile">Roboter Profile</string>
     <string name="maximum_x">Maximum X</string>
     <string name="maximum_y">Maximum Y</string>
     <string name="settings_angular_velocity">Winkelgeschwindigkeit</string>
@@ -36,6 +37,7 @@
     <string name="settings_angular_velocity_key">ANGULAR_VELOCITY</string>
     <string name="settings_maximum_x_key">MAXIMUM_X</string>
     <string name="settings_maximum_y_key">MAXIMUM_Y</string>
+    <string name="settings_profile_key">PROFILE</string>
 
     <string name="ip_default_value">0.0.0.0</string>
     <string name="port_1_default_value">1000</string>

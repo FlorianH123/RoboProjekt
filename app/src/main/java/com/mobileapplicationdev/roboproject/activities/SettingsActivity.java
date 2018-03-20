@@ -1,14 +1,24 @@
 package com.mobileapplicationdev.roboproject.activities;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
+import com.mobileapplicationdev.roboproject.models.RobotProfile;
+
+import java.util.ArrayList;
 
 /**
  * Created by Florian on 16.01.2018.
@@ -19,14 +29,30 @@ public class SettingsActivity extends PreferenceActivity {
     private static final int MIN_PORT = 0;
     private static final int MAX_PORT = 65535;
     private DatabaseHelper dbh;
+    private ListView profileListView;
+    private AlertDialog profileDialog;
+    private ArrayList<RobotProfile> profileList;
+    private ArrayAdapter<RobotProfile> profilesAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-
+        initProfileListView();
         dbh = new DatabaseHelper(this);
         initOnPreferenceChange();
+        initDialog();
+
+        Preference profileButton = getPreferenceManager().findPreference(getString(R.string.settings_profile_key));
+        if (profileButton != null) {
+            profileButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference arg0) {
+                    profileDialog.show();
+                    return true;
+                }
+            });
+        }
     }
 
     private void initOnPreferenceChange() {
@@ -86,5 +112,45 @@ public class SettingsActivity extends PreferenceActivity {
     private void reset(CharSequence key, String defaultValue) {
         EditTextPreference myPrefText = (EditTextPreference) super.findPreference(key);
         myPrefText.setText(defaultValue);
+    }
+
+    private void initProfileListView() {
+        profileListView = new ListView(this);
+        loadProfiles();
+        profilesAdapter = new ArrayAdapter<>(this, R.layout.profile_list_item, R.id.profileListItem, profileList);
+        profileListView.setAdapter(profilesAdapter);
+        profileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+    }
+
+    private void initDialog() {
+        AlertDialog.Builder dialogBuilder;
+
+        Log.d("Preference", "true");
+        dialogBuilder = new AlertDialog.Builder(SettingsActivity.this);
+        dialogBuilder.setCancelable(true);
+        dialogBuilder.setPositiveButton("Ok", null);
+        dialogBuilder.setView(profileListView);
+        profileDialog = dialogBuilder.create();
+    }
+
+    /**
+     * load all profiles from the database and insert them into an array
+     */
+    private void loadProfiles() {
+        profileList = new ArrayList<>();
+        //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
+        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f);
+        profileList.add(robo);
+
+    }
+
+    private void addProfile(RobotProfile robotProfile) {
+        profileList.add(robotProfile);
+        profilesAdapter.notifyDataSetChanged();
     }
 }
