@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.activities.MainActivity;
 import com.mobileapplicationdev.roboproject.models.ControlData;
@@ -213,6 +214,7 @@ public class SocketService extends Service {
             velocityArray[i] = swap(dataInputStream.readFloat());
             Log.d(className, "Velocity " + velocityArray[i]);
         }
+
         // TODO Geschwindigkeit in den Graph übernehemen
     }
 
@@ -679,6 +681,10 @@ public class SocketService extends Service {
         int getAngle();
 
         void enableDebugButton(int tabId);
+
+        void addEntry(LineChart lineChart, float entry);
+
+        LineChart getCurrentVelocityChart();
     }
 
     private String getErrorMessage(String exceptionMessage) {

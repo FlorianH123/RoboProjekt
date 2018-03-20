@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab2();
         initSpinnerTab3();
         initResetButton();
+
     }
 
     private void initAllComponents() {
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         //debugVelocityChart.setNoDataText("No data for the moment");
 
         // if disabled, scaling can be done on x- and y-axis separately
-        realTimeChart.setPinchZoom(true);
+        realTimeChart.setPinchZoom(false);
 
         // set an alternative background color
         realTimeChart.setBackgroundColor(Color.LTGRAY);
@@ -518,7 +519,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 debugVelocityChart.clear();
                 indexAddEntry = 0;
                 initDynamicGraph(debugVelocityChart);
-                getSpinnerEngine(TAB_ID_2);
+
+                //getSpinnerEngine(TAB_ID_2);
             }
         });
     }
@@ -554,7 +556,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                             waiter.notify();
                         }
 
-                        //feedMultiple();
+                        //startAddEntry();
                     }
                 } else {
                     connectionButtonTab2.setEnabled(true);
@@ -660,6 +662,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // -------------------------------------------------------------------------------------------------
 
 // Callbacks interface implementation --------------------------------------------------------------
+
+    @Override
+    public LineChart getCurrentVelocityChart(){
+        return debugVelocityChart;
+    }
 
     @Override
     public boolean getConnectionButtonStatus(int tabId) {
@@ -894,90 +901,77 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 //--------------------------------------------------------------------------------------------------
 
-
-    private void addEntry(LineChart lineChart) {
-        // TODO ControlData debugData = setControlDataDebug();
-        //reedit default data
-        LineData data = lineChart.getData();
-
-        if (data != null) {
-
-            ILineDataSet set = data.getDataSetByIndex(0);
-            ILineDataSet setTwo;
-
-            if (set == null) {
-                //initialize setOne / Dynamic Graph
-                set = Utils.createSet();
-                setTwo = Utils.createSetTwo();
-
-                //initialize setTwo / static graph
-                data.addDataSet(set);
-                data.addDataSet(setTwo);
-
-            }
-
-
-            float staticdata = 0;//(debugData.getVelocity() / (float) 10);
-            Float[] array = testDebugStrings(staticdata);
-            float test = array[indexAddEntry];
-            indexAddEntry++;
-            //add first data set Entry for the dynamic data
-            data.addEntry(new Entry(set.getEntryCount(), test/*(float) (Math.random() * 1.5)*/), 0);
-            //add second data set Entry for the static allocated data
-            data.addEntry(new Entry(set.getEntryCount(), staticdata), 1);
-            data.notifyDataChanged();
-
-
-            // let the chart know it's data has changed
-            lineChart.notifyDataSetChanged();
-
-            // limit the number of visible entries
-            lineChart.setVisibleXRangeMaximum(120);
-            // mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-            // move to the latest entry
-            lineChart.moveViewToX(data.getEntryCount());
-
-            // this automatically refreshes the chart (calls invalidate())
-            // mChart.moveViewTo(data.getXValCount()-7, 55f,
-            // AxisDependency.LEFT);
-        }
-    }
-
-    private void feedMultiple(final LineChart lineChart) {
-
-        if (thread != null)
-            thread.interrupt();
-
-        final Runnable runnable = new Runnable() {
-
+    public void startAddEntry(){
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                addEntry(lineChart);
-            }
-        };
-
-        thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                for (int i = 0; i < 2500; i++) {
-                    // Don't generate garbage runnables inside the loop.
-                    runOnUiThread(runnable);
-
+                while(debugButtonTab2.isChecked()){
+                    addEntry(debugVelocityChart, (float)Math.random()*1.5f);
                     try {
-                        Thread.sleep(2);
+                        Thread.sleep(25);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
             }
-        });
-
-        thread.start();
+        }).start();
     }
+
+    public void addEntry(final LineChart lineChart, final float entry) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // TODO ControlData debugData = setControlDataDebug();
+                //reedit default data
+                LineData data = lineChart.getData();
+
+                if (data != null) {
+
+                    ILineDataSet set = data.getDataSetByIndex(0);
+                    ILineDataSet setTwo;
+
+                    if (set == null) {
+                        //initialize setOne / Dynamic Graph
+                        set = Utils.createSet();
+                        setTwo = Utils.createSetTwo();
+
+                        //initialize setTwo / static graph
+                        data.addDataSet(set);
+                        data.addDataSet(setTwo);
+
+                    }
+
+
+                    float staticdata = 1;//(debugData.getVelocity() / (float) 10);
+                    Float[] array = testDebugStrings(staticdata);
+                    float test = array[indexAddEntry];
+                    indexAddEntry++;
+                    //add first data set Entry for the dynamic data
+                    data.addEntry(new Entry( /*System.currentTimeMillis()*/set.getEntryCount(), entry/*(float) (Math.random() * 1.5)*/), 0);
+                    //add second data set Entry for the static allocated data
+                    data.addEntry(new Entry(set.getEntryCount(), staticdata), 1);
+                    data.notifyDataChanged();
+
+
+                    // let the chart know it's data has changed
+                    lineChart.notifyDataSetChanged();
+
+                    // limit the number of visible entries
+                    lineChart.setVisibleXRangeMaximum(120);
+                    // mChart.setVisibleYRange(30, AxisDependency.LEFT);
+
+                    // move to the latest entry
+                    lineChart.moveViewToX(data.getEntryCount());
+
+                    // this automatically refreshes the chart (calls invalidate())
+                    // mChart.moveViewTo(data.getXValCount()-7, 55f,
+                    // AxisDependency.LEFT);
+                }
+            }
+        });
+    }
+
+
 
     @Override
     protected void onPause() {
@@ -986,15 +980,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         if (thread != null) {
             thread.interrupt();
         }
-    }
-
-    private Float[] testStrings() {
-        Float[] array = new Float[10000];
-
-        for (int i = 0; i < 10000; i++) {
-            array[i] = (RANDOM.nextFloat() * 1.5f);
-        }
-        return array;
     }
 
     private Float[] testDebugStrings(float zielspeed) {
