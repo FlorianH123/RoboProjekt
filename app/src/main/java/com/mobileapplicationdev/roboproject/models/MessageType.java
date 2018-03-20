@@ -4,6 +4,7 @@ package com.mobileapplicationdev.roboproject.models;
  * Created by Florian on 02.03.2018.
  * MessageTypes for debug messages
  */
+@SuppressWarnings("unused")
 public enum MessageType {
     ERROR       (-1),
     UNDEFINED   (0),

@@ -37,7 +37,7 @@ public class SocketService extends Service {
     private static final String RECEIVE_DATA_THREAD_NAME = "robot_receive_data.server_socket.thread";
 
     private final IBinder mBinder = new LocalBinder();
-    private final String className = SocketService.class.getName();
+    private final String className = SocketService.class.getSimpleName();
 
     private Callbacks mainActivity;
 
@@ -98,6 +98,7 @@ public class SocketService extends Service {
             @Override
             public void run() {
                 String tabTag = null;
+                AddEntryGraphThread addEntryGraphThread = null;
 
                 if (tabId == MainActivity.TAB_ID_2) {
                     tabTag = MainActivity.TAG_TAB_2;
@@ -132,12 +133,19 @@ public class SocketService extends Service {
                     // send velocity or angle
                     if (tabId == MainActivity.TAB_ID_2) {
                         sendVelocity(dataIS, dataOS);
+                        addEntryGraphThread = new AddEntryGraphThread(
+                                mainActivity.getLineChart(tabId), mainActivity.getVelocity());
                     } else if (tabId == MainActivity.TAB_ID_3) {
                         sendAngle(dataIS, dataOS);
+                        addEntryGraphThread = new AddEntryGraphThread(
+                                mainActivity.getLineChart(tabId), mainActivity.getAngle());
                     }
 
                     // start new socket
-                    startServerSocket(serverSocket, tabId, tabTag);
+                    if (addEntryGraphThread != null) {
+                        addEntryGraphThread.startThread();
+                    }
+                    startServerSocket(serverSocket, tabId, tabTag, addEntryGraphThread);
 
                     // send connect
                     sendConnect(dataIS, dataOS, serverSocket.getLocalPort());
@@ -152,7 +160,8 @@ public class SocketService extends Service {
 
     private void startServerSocket(final ServerSocket serverSocket,
                                    final int tabId,
-                                   final String tabTag) {
+                                   final String tabTag,
+                                   final AddEntryGraphThread addEntryGraphThread) {
 
         new Thread(new Runnable() {
             @Override
@@ -178,9 +187,9 @@ public class SocketService extends Service {
 
                         if (messageType != MessageType.ERROR.getMessageType()) {
                             if (tabId == MainActivity.TAB_ID_2) {
-                                receiveVelocity(dataInputStream, messageSize);
+                                receiveVelocity(dataInputStream, messageSize, addEntryGraphThread);
                             } else if (tabId == MainActivity.TAB_ID_3) {
-                                receiveAngle(dataInputStream, messageSize);
+                                receiveAngle(dataInputStream, messageSize, addEntryGraphThread);
                             }
                         } else {
                             throw new IOException(getString(R.string.error_msg_receiving_data));
@@ -188,6 +197,7 @@ public class SocketService extends Service {
                     }
 
                     serverSocket.close();
+                    addEntryGraphThread.stop();
                 } catch (IOException ex) {
                     Log.e(className, ex.getMessage());
                     exceptionHandler(tabTag, ex.getMessage());
@@ -206,26 +216,29 @@ public class SocketService extends Service {
     }
 
     private void receiveVelocity(DataInputStream dataInputStream,
-                                 int messageSize) throws IOException {
+                                 int messageSize,
+                                 AddEntryGraphThread addEntryGraphThread) throws IOException {
 
-        float[] velocityArray = new float[messageSize];
+        float velocityValue;
 
         for (int i = 0; i < messageSize; i++) {
-            velocityArray[i] = swap(dataInputStream.readFloat());
-            Log.d(className, "Velocity " + velocityArray[i]);
+            velocityValue = swap(dataInputStream.readFloat());
+            addEntryGraphThread.addEntry(velocityValue);
+            Log.d(className, "Velocity " + velocityValue);
         }
 
         // TODO Geschwindigkeit in den Graph übernehemen
     }
 
     private void receiveAngle(DataInputStream dataInputStream,
-                              int messageSize) throws IOException {
-
-        int[] angleArray = new int[messageSize];
+                              int messageSize,
+                              AddEntryGraphThread addEntryGraphThread) throws IOException {
+        int angleValue;
 
         for (int i = 0; i < messageSize; i++) {
-            angleArray[i] = swap(dataInputStream.readInt());
-            Log.d(className, "Angle" + angleArray[i]);
+            angleValue = swap(dataInputStream.readInt());
+            addEntryGraphThread.addEntry(angleValue);
+            Log.d(className, "Angle" + angleValue);
         }
 
         // TODO Winkel in den Graph übernehemen
@@ -684,7 +697,7 @@ public class SocketService extends Service {
 
         void addEntry(LineChart lineChart, float entry);
 
-        LineChart getCurrentVelocityChart();
+        LineChart getLineChart(int tabId);
     }
 
     private String getErrorMessage(String exceptionMessage) {

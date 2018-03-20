@@ -42,7 +42,6 @@ import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
 import java.util.Locale;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
     private ToggleButton connectionButtonTab1;
@@ -99,9 +98,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private Thread thread;
 
     int indexAddEntry = 0;
-    private final Random RANDOM = new Random();
 
-    private String dbIpAdress;
+    private String dbIpAddress;
     private DatabaseHelper dbh;
 
     @Override
@@ -119,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         setSupportActionBar(toolbar);
 
         dbh = new DatabaseHelper(this);
-        dbIpAdress = dbh.getIp();
+        dbIpAddress = dbh.getIp();
 
         // Initialise components inside  the main activity
         initAllComponents();
@@ -397,8 +395,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // TAB 1 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab1() {
-        dbIpAdress = dbh.getIp();
-        ipAddressTextFieldTab1.setText(dbIpAdress);
+        dbIpAddress = dbh.getIp();
+        ipAddressTextFieldTab1.setText(dbIpAddress);
 
         initConnectionButton(connectionButtonTab1, ipAddressTextFieldTab1, TAG_TAB_1);
     }
@@ -501,8 +499,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // TAB 2 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab2() {
-        dbIpAdress = dbh.getIp();
-        ipAddressTextFieldTab2.setText(dbIpAdress);
+        dbIpAddress = dbh.getIp();
+        ipAddressTextFieldTab2.setText(dbIpAddress);
 
         initConnectionButton(connectionButtonTab2, ipAddressTextFieldTab2, TAG_TAB_2);
     }
@@ -589,8 +587,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // TAB 3 -------------------------------------------------------------------------------------------
 
     private void initConnectionButtonTab3() {
-        dbIpAdress = dbh.getIp();
-        ipAddressTextFieldTab3.setText(dbIpAdress);
+        dbIpAddress = dbh.getIp();
+        ipAddressTextFieldTab3.setText(dbIpAddress);
 
         initConnectionButton(connectionButtonTab3, ipAddressTextFieldTab3, TAG_TAB_3);
     }
@@ -664,8 +662,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // Callbacks interface implementation --------------------------------------------------------------
 
     @Override
-    public LineChart getCurrentVelocityChart(){
-        return debugVelocityChart;
+    public LineChart getLineChart(int tabId) {
+        if (tabId == MainActivity.TAB_ID_2) {
+            return debugVelocityChart;
+        } else if (tabId == MainActivity.TAB_ID_3) {
+            return debugAngleChart;
+        }
+
+        return null;
     }
 
     @Override
@@ -901,12 +905,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 //--------------------------------------------------------------------------------------------------
 
-    public void startAddEntry(){
+    public void startAddEntry() {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(debugButtonTab2.isChecked()){
-                    addEntry(debugVelocityChart, (float)Math.random()*1.5f);
+                while (debugButtonTab2.isChecked()) {
+                    addEntry(debugVelocityChart, (float) Math.random() * 1.5f);
                     try {
                         Thread.sleep(25);
                     } catch (InterruptedException e) {
@@ -970,7 +974,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             }
         });
     }
-
 
 
     @Override
