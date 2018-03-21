@@ -523,8 +523,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onClick(View v) {
                 debugVelocityChart.clearValues();
+                debugVelocityChart.invalidate();
                 debugVelocityChart.clear();
-                indexAddEntry = 0;
                 initDynamicGraph(debugVelocityChart);
 
                 //getSpinnerEngine(TAB_ID_2);
