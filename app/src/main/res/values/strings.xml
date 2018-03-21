@@ -21,9 +21,9 @@
     <string name="settings_speed_title">Geschwindigkeiten</string>
 
     <string name="settings_ip">IP</string>
-    <string name="settings_port_1">Port 1</string>
-    <string name="settings_port_2">Port 2</string>
-    <string name="settings_port_3">Port 3</string>
+    <string name="settings_port_1">Roboter Steuer-Port </string>
+    <string name="settings_port_2">Antriebsmotoren Port </string>
+    <string name="settings_port_3">Stellmotoren Port</string>
     <string name="settings_robot_speed">Lineargeschwindigkeit</string>
     <string name="settings_robot_profile">Roboter Profile</string>
     <string name="maximum_x">Maximum X</string>
