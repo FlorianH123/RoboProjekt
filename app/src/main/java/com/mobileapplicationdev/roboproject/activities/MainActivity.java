@@ -30,9 +30,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
@@ -95,11 +93,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
-    private Thread lineGraphThread;
-
-    int indexAddEntry = 0;
-
-
     private String dbIpAddress;
     private DatabaseHelper dbh;
 
@@ -136,15 +129,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab3();
         initResetButtonTab2();
         initResetButtonTab3();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (lineGraphThread != null) {
-            lineGraphThread.interrupt();
-        }
     }
 
     private void initAllComponents() {
@@ -561,8 +545,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         synchronized (waiter) {
                             waiter.notify();
                         }
-
-                        //startAddEntry();
                     }
                 } else {
                     connectionButtonTab2.setEnabled(true);
@@ -648,8 +630,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         synchronized (waiter) {
                             waiter.notify();
                         }
-
-                        //feedMultiple();
                     }
                 } else {
                     connectionButtonTab3.setEnabled(true);
@@ -924,94 +904,4 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
 //--------------------------------------------------------------------------------------------------
-
-    public void startAddEntry() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (debugButtonTab2.isChecked()) {
-                    addEntry(debugVelocityChart, (float) Math.random() * 1.5f);
-                    try {
-                        Thread.sleep(25);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
-
-    public void addEntry(final LineChart lineChart, final float entry) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO ControlData debugData = setControlDataDebug();
-                //reedit default data
-                LineData data = lineChart.getData();
-
-                if (data != null) {
-
-                    ILineDataSet set = data.getDataSetByIndex(0);
-                    ILineDataSet setTwo;
-
-                    if (set == null) {
-                        //initialize setOne / Dynamic Graph
-                        set = Utils.createSet();
-                        setTwo = Utils.createSetTwo();
-
-                        //initialize setTwo / static graph
-                        data.addDataSet(set);
-                        data.addDataSet(setTwo);
-
-                    }
-
-
-                    float staticdata = 1;//(debugData.getVelocity() / (float) 10);
-                    Float[] array = testDebugStrings(staticdata);
-                    float test = array[indexAddEntry];
-                    indexAddEntry++;
-                    //add first data set Entry for the dynamic data
-                    data.addEntry(new Entry( /*System.currentTimeMillis()*/set.getEntryCount(), entry/*(float) (Math.random() * 1.5)*/), 0);
-                    //add second data set Entry for the static allocated data
-                    data.addEntry(new Entry(set.getEntryCount(), staticdata), 1);
-                    data.notifyDataChanged();
-
-
-                    // let the chart know it's data has changed
-                    lineChart.notifyDataSetChanged();
-
-                    // limit the number of visible entries
-                    lineChart.setVisibleXRangeMaximum(120);
-                    // mChart.setVisibleYRange(30, AxisDependency.LEFT);
-
-                    // move to the latest entry
-                    lineChart.moveViewToX(data.getEntryCount());
-
-                    // this automatically refreshes the chart (calls invalidate())
-                    // mChart.moveViewTo(data.getXValCount()-7, 55f,
-                    // AxisDependency.LEFT);
-                }
-            }
-        });
-    }
-
-
-
-
-    private Float[] testDebugStrings(float zielspeed) {
-        Float[] array = new Float[2500];
-        float x = zielspeed / 100;
-        float y = x;
-        for (int i = 0; i < 2500; i++) {
-            if (i < 100) {
-                array[i] = y;
-                y += x;
-            } else if (i % 2 == 0) {
-                array[i] = y - 0.1f;
-            } else if (i % 2 == 1) {
-                array[i] = y + 0.1f;
-            }
-        }
-        return array;
-    }
 }

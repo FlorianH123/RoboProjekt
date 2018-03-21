@@ -695,8 +695,6 @@ public class SocketService extends Service {
 
         void enableDebugButton(int tabId);
 
-        void addEntry(LineChart lineChart, float entry);
-
         LineChart getLineChart(int tabId);
     }
 
