@@ -65,7 +65,7 @@ public class SocketService extends Service {
                      ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
                      DataOutputStream byteWriter = new DataOutputStream(byteArrayStream)) {
 
-                    while (mainActivity.getConnectionButtonStatus(1)) {
+                    while (mainActivity.getConnectionButtonStatus()) {
                         ControlData controlData = mainActivity.getControlData();
 
                         byteWriter.writeFloat(swap(controlData.getX()));
@@ -138,7 +138,7 @@ public class SocketService extends Service {
                     realTimeChart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
                         @Override
                         public String getFormattedValue(float value, AxisBase axis) {
-                            return String.valueOf(value*mainActivity.getD(tabId)+" ms");
+                            return String.valueOf(value*mainActivity.getFrequency(tabId)+" ms");
                         }
                     });
 
@@ -673,7 +673,7 @@ public class SocketService extends Service {
 
     // callbacks interface for communication with main activity!
     public interface Callbacks {
-        boolean getConnectionButtonStatus(int tabId);
+        boolean getConnectionButtonStatus();
 
         ControlData getControlData();
 
@@ -693,7 +693,7 @@ public class SocketService extends Service {
 
         float getI(int tabId);
 
-        float getD(int tabId);
+        float getFrequency(int tabId);
 
         float getVelocity();
 
@@ -746,7 +746,6 @@ public class SocketService extends Service {
                     }
                 });
             }
-
         }
     }
 }
