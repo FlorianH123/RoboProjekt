@@ -69,24 +69,18 @@
 
     <!-- hints -->
     <string name="robot_name_hint">Name</string>
-    <string name="robot_ip_hint">0.0.0.0</string>
-    <string name="robot_port_hint">0</string>
-    <string name="robot_angular_velocity_hint">0.0</string>
-    <string name="robot_linear_velocity_hint">0.0</string>
-    <string name="robot_frequency_hint">0.0</string>
+    <string name="robot_ip_hint">Robot IP</string>
+    <string name="robot_control_port_hint">Roboter Steuer-Port</string>
+    <string name="robot_drive_motor_port_hint">Antriebsmotoren Port</string>
+    <string name="robot_servomotor_port_hint">Stellmotoren Port</string>
+    <string name="robot_angular_velocity_hint">Max. Winkelgeschw.</string>
+    <string name="robot_linear_x_velocity_hint">Max. X Lineargeschw.</string>
+    <string name="robot_linear_y_velocity_hint">Max. Y Lineargeschw.</string>
+    <string name="robot_frequency_hint">Regler Frequenz kHz</string>
 
     <!--  -->
-    <string name="robot_name">Name</string>
-    <string name="robot_ip">IP</string>
-    <string name="robot_control_port">Roboter Steuer-Port</string>
-    <string name="robot_drive_motor_port">Antriebsmotoren Port</string>
-    <string name="robot_servomotor_port">Stellmotoren Port</string>
-    <string name="robot_max_angular_velocity">Max Winkelgeschwindigkeit</string>
-    <string name="robot_linear_velocity_max_x">Max X</string>
-    <string name="robot_linear_velocity_max_y">Max Y</string>
-    <string name="robot_frequency">Frequenz</string>
     <string name="robot_save">Speichern</string>
-    <string name="robot_cancel">Abbruch</string>
+    <string name="robot_cancel">Abbrechen</string>
 <!-- -->
 
 <!-- TAB 1 Strings -->
@@ -105,7 +99,7 @@
 
     <string name="enter_P_Factor">Enter P</string>
     <string name="enter_I_Factor">Enter I</string>
-    <string name="Enter_frequency">Enter regulator frequency</string>
+    <string name="Enter_frequency">Regler Frequenz kHz</string>
 
     <string-array name="engines">
         <item>Motor vorne links</item>
@@ -117,7 +111,7 @@
 <!-- -->
 
 <!-- TAB 3 Strings -->
-    <string name="enter_angle">Enter angle</string>
+    <string name="enter_angle">Winkel °</string>
 <!-- -->
 
 <!-- Socket Strings -->
