@@ -1,5 +1,8 @@
 package com.mobileapplicationdev.roboproject.services;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -40,6 +43,7 @@ public class AddEntryGraphThread implements Runnable {
     }
 
     private void addEntryIntoGraph() {
+
         lineChart.post(new Runnable() {
             @Override
             public void run() {
@@ -92,6 +96,11 @@ public class AddEntryGraphThread implements Runnable {
         while (isRunning) {
             if (!entryData.isEmpty()) {
                 addEntryIntoGraph();
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
