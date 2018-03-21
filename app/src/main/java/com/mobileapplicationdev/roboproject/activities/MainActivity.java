@@ -95,9 +95,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
-    private Thread thread;
+    private Thread lineGraphThread;
 
     int indexAddEntry = 0;
+
 
     private String dbIpAddress;
     private DatabaseHelper dbh;
@@ -134,7 +135,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab2();
         initSpinnerTab3();
         initResetButton();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (lineGraphThread != null) {
+            lineGraphThread.interrupt();
+        }
     }
 
     private void initAllComponents() {
@@ -816,7 +825,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         speedValue = velocityTextField.getText().toString().trim();
 
         if (speedValue.isEmpty()) {
-            Log.e("RobotProject", "Speed value is empty!");
+            Log.e("RobotProject", "Velocity value is empty!");
             return 0f;
         }
 
@@ -897,7 +906,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             debugButtonTab3.post(new Runnable() {
                 @Override
                 public void run() {
-                    debugButtonTab2.setEnabled(true);
+                    debugButtonTab3.setEnabled(true);
                 }
             });
         }
@@ -976,14 +985,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
 
-    @Override
-    protected void onPause() {
-        super.onPause();
 
-        if (thread != null) {
-            thread.interrupt();
-        }
-    }
 
     private Float[] testDebugStrings(float zielspeed) {
         Float[] array = new Float[2500];
