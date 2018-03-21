@@ -80,9 +80,10 @@ public class Utils {
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.rgb("#B40404"));
-        set.setCircleColor(Color.RED);
+        //set.setCircleColor(Color.RED);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
+        set.setDrawCircles(false);
         set.setFillAlpha(65);
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set.setFillColor(ColorTemplate.getHoloBlue());
