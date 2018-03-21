@@ -106,7 +106,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editRobotMaxX" />
 
     <EditText
-        android:id="@+id/editRobotAngularVelocityPort"
+        android:id="@+id/editRobotAngularVelocity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -127,9 +127,9 @@
         android:hint="@string/robot_frequency_hint"
         android:inputType="textPersonName"
         android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="@+id/editRobotAngularVelocityPort"
-        app:layout_constraintStart_toStartOf="@+id/editRobotAngularVelocityPort"
-        app:layout_constraintTop_toBottomOf="@+id/editRobotAngularVelocityPort" />
+        app:layout_constraintEnd_toEndOf="@+id/editRobotAngularVelocity"
+        app:layout_constraintStart_toStartOf="@+id/editRobotAngularVelocity"
+        app:layout_constraintTop_toBottomOf="@+id/editRobotAngularVelocity" />
 
     <Button
         android:id="@+id/saveButton"
