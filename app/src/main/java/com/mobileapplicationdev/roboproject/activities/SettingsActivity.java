@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobileapplicationdev.roboproject.R;
@@ -173,6 +175,15 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     private void editProfileDialog(RobotProfile robotProfile) {
+        View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
+        EditText robotName = profileEditView.findViewById(R.id.editRobotName);
+        if (robotProfile != null) {
+            Log.d("Preference", "hallo");
+            robotName.setText(robotProfile.getName(), TextView.BufferType.EDITABLE);
+            Log.d("Preference", robotName.getText().toString());
+        }
+
+        robotName.refreshDrawableState();
         profileEditDialog.show();
     }
 }
