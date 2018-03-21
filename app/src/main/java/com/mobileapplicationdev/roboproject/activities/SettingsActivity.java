@@ -9,6 +9,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -154,6 +155,11 @@ public class SettingsActivity extends PreferenceActivity {
         dialogProfileEditBuilder.setView(profileEditView);
 
         profileEditDialog = dialogProfileEditBuilder.create();
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(profileEditDialog.getWindow().getAttributes());
+        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        profileEditDialog.getWindow().setAttributes(layoutParams);
     }
 
     /**
@@ -182,6 +188,7 @@ public class SettingsActivity extends PreferenceActivity {
             robotName.setText(robotProfile.getName(), TextView.BufferType.EDITABLE);
             Log.d("Preference", robotName.getText().toString());
         }
+
 
         robotName.refreshDrawableState();
         profileEditDialog.show();
