@@ -30,7 +30,8 @@ public class SettingsActivity extends PreferenceActivity {
     private static final int MAX_PORT = 65535;
     private DatabaseHelper dbh;
     private ListView profileListView;
-    private AlertDialog profileDialog;
+    private AlertDialog profileListDialog;
+    private AlertDialog profileEditDialog;
     private ArrayList<RobotProfile> profileList;
     private ArrayAdapter<RobotProfile> profilesAdapter;
 
@@ -48,7 +49,7 @@ public class SettingsActivity extends PreferenceActivity {
             profileButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference arg0) {
-                    profileDialog.show();
+                    profileListDialog.show();
                     return true;
                 }
             });
@@ -128,14 +129,29 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     private void initDialog() {
-        AlertDialog.Builder dialogBuilder;
+        AlertDialog.Builder dialogProfileListBuilder;
+        AlertDialog.Builder dialogProfileEditBuilder;
+        View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
 
-        Log.d("Preference", "true");
-        dialogBuilder = new AlertDialog.Builder(SettingsActivity.this);
-        dialogBuilder.setCancelable(true);
-        dialogBuilder.setPositiveButton("Ok", null);
-        dialogBuilder.setView(profileListView);
-        profileDialog = dialogBuilder.create();
+        dialogProfileListBuilder = new AlertDialog.Builder(SettingsActivity.this);
+        dialogProfileListBuilder.setCancelable(true);
+        dialogProfileListBuilder.setPositiveButton("Ok", null);
+        dialogProfileListBuilder.setView(profileListView);
+        profileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RobotProfile robotProfile = (RobotProfile) profileListView.getItemAtPosition(position);
+                Log.d("Preference", robotProfile.toString());
+                editProfileDialog(robotProfile);
+            }
+        });
+        profileListDialog = dialogProfileListBuilder.create();
+
+        //init dialog for editing a profile
+        dialogProfileEditBuilder = new AlertDialog.Builder(SettingsActivity.this);
+        dialogProfileEditBuilder.setView(profileEditView);
+
+        profileEditDialog = dialogProfileEditBuilder.create();
     }
 
     /**
@@ -144,7 +160,9 @@ public class SettingsActivity extends PreferenceActivity {
     private void loadProfiles() {
         profileList = new ArrayList<>();
         //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
-        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f);
+        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f, 4f);
+        RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
+        profileList.add(standardProfile);
         profileList.add(robo);
 
     }
@@ -152,5 +170,9 @@ public class SettingsActivity extends PreferenceActivity {
     private void addProfile(RobotProfile robotProfile) {
         profileList.add(robotProfile);
         profilesAdapter.notifyDataSetChanged();
+    }
+
+    private void editProfileDialog(RobotProfile robotProfile) {
+        profileEditDialog.show();
     }
 }

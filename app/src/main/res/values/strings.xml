@@ -66,6 +66,27 @@
     </string-array>
 
     <string name="error_msg_invalid_port">Der Port liegt nicht im Gueltigkeitsbereich!</string>
+
+    <!-- hints -->
+    <string name="robot_name_hint">Name</string>
+    <string name="robot_ip_hint">0.0.0.0</string>
+    <string name="robot_port_hint">0</string>
+    <string name="robot_angular_velocity_hint">0.0</string>
+    <string name="robot_linear_velocity_hint">0.0</string>
+    <string name="robot_frequency_hint">0.0</string>
+
+    <!--  -->
+    <string name="robot_name">Name</string>
+    <string name="robot_ip">IP</string>
+    <string name="robot_control_port">Roboter Steuer-Port</string>
+    <string name="robot_drive_motor_port">Antriebsmotoren Port</string>
+    <string name="robot_servomotor_port">Stellmotoren Port</string>
+    <string name="robot_max_angular_velocity">Max Winkelgeschwindigkeit</string>
+    <string name="robot_linear_velocity_max_x">Max X</string>
+    <string name="robot_linear_velocity_max_y">Max Y</string>
+    <string name="robot_frequency">Frequenz</string>
+    <string name="robot_save">Speichern</string>
+    <string name="robot_cancel">Abbruch</string>
 <!-- -->
 
 <!-- TAB 1 Strings -->

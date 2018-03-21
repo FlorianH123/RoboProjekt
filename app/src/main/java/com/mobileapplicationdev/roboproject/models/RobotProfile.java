@@ -14,8 +14,10 @@ public class RobotProfile {
     private float maxAngularSpeed;
     private float maxX;
     private float maxY;
+    private int id;
+    private float frequenz;
 
-    public RobotProfile (String name, String ip, int portOne, int portTwo, int portThree, float maxAngularSpeed, float maxX, float maxY) {
+    public RobotProfile (String name, String ip, int portOne, int portTwo, int portThree, float maxAngularSpeed, float maxX, float maxY, float frequenz) {
         this.name = name;
         this.ip = ip;
         this.portOne = portOne;
@@ -24,6 +26,7 @@ public class RobotProfile {
         this.maxAngularSpeed = maxAngularSpeed;
         this.maxX = maxX;
         this.maxY = maxY;
+        this.frequenz = frequenz;
     }
 
     public String getName() {
@@ -72,6 +75,22 @@ public class RobotProfile {
 
     public void setMaxAngularSpeed(float maxAngularSpeed) {
         this.maxAngularSpeed = maxAngularSpeed;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public float getFrequenz() {
+        return frequenz;
+    }
+
+    public void setFrequenz(float frequenz) {
+        this.frequenz = frequenz;
     }
 
     public float getMaxX() {
