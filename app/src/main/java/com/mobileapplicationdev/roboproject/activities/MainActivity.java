@@ -134,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initGraphTab3();
         initSpinnerTab2();
         initSpinnerTab3();
-        initResetButton();
+        initResetButtonTab2();
+        initResetButtonTab3();
     }
 
     @Override
@@ -243,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         YAxis right_Y_Axis;
 
         //enable description text
-        realTimeChart.getDescription().setEnabled(true);
+        realTimeChart.getDescription().setEnabled(false);
 
         //enable touch gesture
         realTimeChart.setTouchEnabled(true);
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         realTimeChart.setPinchZoom(false);
 
         // set an alternative background color
-        realTimeChart.setBackgroundColor(Color.LTGRAY);
+        realTimeChart.setBackgroundColor(0xEEEEEE);
 
         data.setValueTextColor(Color.GREEN);
 
@@ -269,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // modify the legend ...
         legend.setForm(Legend.LegendForm.LINE);
-        legend.setTextColor(Color.WHITE);
+        legend.setTextColor(Color.BLACK);
 
         xAxis = realTimeChart.getXAxis();
         xAxis.setTextColor(Color.BLUE);
@@ -518,7 +519,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initDynamicGraph(debugVelocityChart);
     }
 
-    private void initResetButton() {
+    private void initResetButtonTab2() {
         resetButtonTab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -526,8 +527,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 debugVelocityChart.invalidate();
                 debugVelocityChart.clear();
                 initDynamicGraph(debugVelocityChart);
-
-                //getSpinnerEngine(TAB_ID_2);
             }
         });
     }
@@ -594,6 +593,18 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 // -------------------------------------------------------------------------------------------------
 
 // TAB 3 -------------------------------------------------------------------------------------------
+
+    private void initResetButtonTab3() {
+        resetButtonTab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                debugAngleChart.clearValues();
+                debugAngleChart.invalidate();
+                debugAngleChart.clear();
+                initDynamicGraph(debugAngleChart);
+            }
+        });
+    }
 
     private void initConnectionButtonTab3() {
         dbIpAddress = dbh.getIp();

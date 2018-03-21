@@ -76,7 +76,7 @@ public class Utils {
     }
 
     public static LineDataSet createSetTwo() {
-        LineDataSet set = new LineDataSet(null, "Static Data");
+        LineDataSet set = new LineDataSet(null, "Soll-Wert");
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.rgb("#B40404"));
@@ -96,7 +96,7 @@ public class Utils {
     }
 
     public static LineDataSet createSet() {
-        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+        LineDataSet set = new LineDataSet(null, "Ist-Wert");
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
