@@ -4,8 +4,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
@@ -63,7 +65,6 @@ public class AddEntryGraphThread implements Runnable {
                         data.addDataSet(set);
                         data.addDataSet(setTwo);
                     }
-
                     //add first data set Entry for the dynamic data
                     data.addEntry(new Entry(set.getEntryCount(), getFirstData()), 0);
                     removeData();

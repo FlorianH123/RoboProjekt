@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <resources>
-    <dimen name="text_size">15sp</dimen>
+    <dimen name="text_size">24sp</dimen>
 
     <dimen name="editText_ip_text_size">@dimen/text_size</dimen>
 
-    <dimen name="toggleButton_connection_text_size">15sp</dimen>
+    <dimen name="toggleButton_connection_text_size">18sp</dimen>
 
 
-    <dimen name="stick_size">50dp</dimen>
-    <dimen name="base_size">100dp</dimen>
+    <dimen name="stick_size">180dp</dimen>
+    <dimen name="base_size">300dp</dimen>
 
 
+    <dimen name="graph_size">350dp</dimen>
+
+    <dimen name="toggle_button_debug_size">18sp</dimen>
+
+    <dimen name="spinner_list_engine_height">60dp</dimen>
 </resources>

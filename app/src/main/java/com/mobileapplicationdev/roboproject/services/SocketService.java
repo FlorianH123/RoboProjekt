@@ -10,6 +10,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.activities.MainActivity;
 import com.mobileapplicationdev.roboproject.models.ControlData;
@@ -99,6 +101,7 @@ public class SocketService extends Service {
             public void run() {
                 String tabTag = null;
                 AddEntryGraphThread addEntryGraphThread = null;
+                LineChart realTimeChart;
 
                 if (tabId == MainActivity.TAB_ID_2) {
                     tabTag = MainActivity.TAG_TAB_2;
@@ -130,15 +133,24 @@ public class SocketService extends Service {
                     // send new P I D
                     sendPIDValues(dataIS, dataOS, tabId);
 
+                    //formatting the xAxis Labels to to frequency
+                    realTimeChart = mainActivity.getLineChart(tabId);
+                    realTimeChart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
+                        @Override
+                        public String getFormattedValue(float value, AxisBase axis) {
+                            return String.valueOf(value*mainActivity.getD(tabId)+" ms");
+                        }
+                    });
+
                     // send velocity or angle
                     if (tabId == MainActivity.TAB_ID_2) {
                         sendVelocity(dataIS, dataOS);
                         addEntryGraphThread = new AddEntryGraphThread(
-                                mainActivity.getLineChart(tabId), mainActivity.getVelocity());
+                                realTimeChart, mainActivity.getVelocity());
                     } else if (tabId == MainActivity.TAB_ID_3) {
                         sendAngle(dataIS, dataOS);
                         addEntryGraphThread = new AddEntryGraphThread(
-                                mainActivity.getLineChart(tabId), mainActivity.getAngle());
+                                realTimeChart, mainActivity.getAngle());
                     }
 
                     // start new socket
