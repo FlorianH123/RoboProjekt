@@ -122,4 +122,5 @@ public class Utils {
                 frequency.trim().isEmpty() || velocity.trim().isEmpty();
 
     }
+
 }

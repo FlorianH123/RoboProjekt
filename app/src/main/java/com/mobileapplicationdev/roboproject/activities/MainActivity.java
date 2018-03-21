@@ -676,17 +676,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public boolean getConnectionButtonStatus(int tabId) {
-        if (tabId == TAB_ID_1) {
-            return connectionButtonTab1.isChecked();
-        }
-
-        if (tabId == TAB_ID_2) {
-            return connectionButtonTab2.isChecked();
-        }
-
-        return tabId == TAB_ID_3 && connectionButtonTab3.isChecked();
-
+    public boolean getConnectionButtonStatus() {
+        return connectionButtonTab1.isChecked();
     }
 
     @Override
@@ -781,9 +772,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public float getD(int tabId) {
-        TextView enterRegulatorFrequency;
-        //TODO löschen
+    public float getFrequency(int tabId) {
         if (tabId == TAB_ID_2) {
             return Integer.parseInt(editFrequencyTab2.getText().toString());
         }
