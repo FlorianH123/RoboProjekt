@@ -276,6 +276,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // Socket connection -------------------------------------------------------------------------------
 
+    /**
+     * On tab switch toggle all connection buttons
+     */
     private void unCheckAllConnectionButtons() {
         connectionButtonTab1.setChecked(false);
         connectionButtonTab2.setChecked(false);
@@ -283,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     /**
-     * Initialise connection button
+     * Initialise connection buttons
      */
     private void initConnectionButton(final ToggleButton toggle, final EditText editText_ipAddress,
                                       final String tagTab) {
@@ -682,11 +685,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             return connectionButtonTab2.isChecked();
         }
 
-        if (tabId == TAB_ID_3) {
-            return connectionButtonTab3.isChecked();
-        }
+        return tabId == TAB_ID_3 && connectionButtonTab3.isChecked();
 
-        return false;
     }
 
     @Override
@@ -695,11 +695,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             return debugButtonTab2.isChecked();
         }
 
-        if (tabId == TAB_ID_3) {
-            return debugButtonTab3.isChecked();
-        }
-
-        return false;
+        return tabId == TAB_ID_3 && debugButtonTab3.isChecked();
     }
 
     @Override
@@ -782,18 +778,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
 
         return Float.parseFloat(iValue);
-    }
-
-    @Override
-    public void setD(float d, int tabId) {
-        // TODO löschen
-        if (tabId == TAB_ID_2) {
-            editFrequencyTab2.setText(String.valueOf(d));
-        }
-
-        if (tabId == TAB_ID_3) {
-            editFrequencyTab3.setText(String.valueOf(d));
-        }
     }
 
     @Override

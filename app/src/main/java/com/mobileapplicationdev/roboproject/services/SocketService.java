@@ -81,7 +81,7 @@ public class SocketService extends Service {
                     }
                 } catch (IOException ex) {
                     Log.e(className, ex.getMessage());
-                    exceptionHandler(MainActivity.TAG_TAB_1, ex.getMessage());
+                    exceptionHandler(MainActivity.TAG_TAB_1, MainActivity.TAB_ID_1, ex.getMessage());
                 } catch (InterruptedException ex) {
                     Log.e(className, ex.getMessage());
                 }
@@ -152,7 +152,7 @@ public class SocketService extends Service {
 
                 } catch (IOException ex) {
                     Log.e(className, ex.getMessage());
-                    exceptionHandler(tabTag, ex.getMessage());
+                    exceptionHandler(tabTag, tabId, ex.getMessage());
                 }
             }
         }, DEBUG_THREAD_NAME).start();
@@ -200,7 +200,7 @@ public class SocketService extends Service {
                     addEntryGraphThread.stop();
                 } catch (IOException ex) {
                     Log.e(className, ex.getMessage());
-                    exceptionHandler(tabTag, ex.getMessage());
+                    exceptionHandler(tabTag, tabId, ex.getMessage());
                 } finally {
                     try {
                         if (serverSocket != null) {
@@ -208,7 +208,7 @@ public class SocketService extends Service {
                         }
                     } catch (IOException ex) {
                         Log.e(className, ex.getMessage());
-                        exceptionHandler(tabTag, ex.getMessage());
+                        exceptionHandler(tabTag, tabId, ex.getMessage());
                     }
                 }
             }
@@ -226,8 +226,6 @@ public class SocketService extends Service {
             addEntryGraphThread.addEntry(velocityValue);
             Log.d(className, "Velocity " + velocityValue);
         }
-
-        // TODO Geschwindigkeit in den Graph übernehemen
     }
 
     private void receiveAngle(DataInputStream dataInputStream,
@@ -240,8 +238,6 @@ public class SocketService extends Service {
             addEntryGraphThread.addEntry(angleValue);
             Log.d(className, "Angle" + angleValue);
         }
-
-        // TODO Winkel in den Graph übernehemen
     }
 
     /**
@@ -685,8 +681,6 @@ public class SocketService extends Service {
 
         float getI(int tabId);
 
-        void setD(float d, int tabId);
-
         float getD(int tabId);
 
         float getVelocity();
@@ -705,11 +699,11 @@ public class SocketService extends Service {
         return ioExceptionLoggerMsg + " " + exceptionMessage;
     }
 
-    private void exceptionHandler(String tagTab, String ex) {
+    private void exceptionHandler(String tagTab, int tabId, String ex) {
         final String errorString = getErrorMessage(ex);
+        final ToggleButton connectionButton = mainActivity.getToggleButton(tagTab);
 
         if (tagTab.equals(MainActivity.TAG_TAB_1)) {
-            final ToggleButton connectionButton = mainActivity.getToggleButton(tagTab);
             connectionButton.post(new Runnable() {
                 @Override
                 public void run() {
@@ -721,14 +715,26 @@ public class SocketService extends Service {
         } else if (tagTab.equals(MainActivity.TAG_TAB_2) || tagTab.equals(MainActivity.TAG_TAB_3)) {
             final ToggleButton debugButton = mainActivity.getDebugButton(tagTab);
 
-            debugButton.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(SocketService.this, errorString,
-                            Toast.LENGTH_LONG).show();
-                    debugButton.setChecked(false);
-                }
-            });
+            if (mainActivity.getDebugButtonStatus(tabId)) {
+                debugButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SocketService.this, errorString,
+                                Toast.LENGTH_LONG).show();
+                        debugButton.setChecked(false);
+                    }
+                });
+            } else {
+                connectionButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SocketService.this, errorString,
+                                Toast.LENGTH_LONG).show();
+                        connectionButton.setChecked(false);
+                    }
+                });
+            }
+
         }
     }
 }
