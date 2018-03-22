@@ -42,8 +42,8 @@ public class SettingsActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-        initProfileListView();
         dbh = new DatabaseHelper(this);
+        initProfileListView();
         initOnPreferenceChange();
         initDialog();
 
@@ -159,7 +159,8 @@ public class SettingsActivity extends PreferenceActivity {
         profileList.add(standardProfile);
 
         //TODO lol
-        profileList.addAll(dbh.getAllProfiles());
+        ArrayList<RobotProfile> list = dbh.getAllProfiles();
+        profileList.addAll(list);
     }
 
     private void addProfile(RobotProfile robotProfile) {
