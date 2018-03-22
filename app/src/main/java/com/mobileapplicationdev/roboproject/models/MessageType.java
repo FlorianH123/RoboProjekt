@@ -1,19 +1,19 @@
 package com.mobileapplicationdev.roboproject.models;
 
 /**
- * Created by Florian on 02.03.2018.
+ * Created by Frenchtoast on 02.03.2018.
  * MessageTypes for debug messages
  */
 @SuppressWarnings("unused")
 public enum MessageType {
-    ERROR       (-1),
-    UNDEFINED   (0),
-    SET_TARGET  (1),
-    CONNECT     (2),
-    GET_PID     (3),
-    SET_PID     (4),
-    DATA        (5),
-    SET_VALUE   (6);
+    ERROR(-1),
+    UNDEFINED(0),
+    SET_TARGET(1),
+    CONNECT(2),
+    GET_PID(3),
+    SET_PID(4),
+    DATA(5),
+    SET_VALUE(6);
 
     private final int messageType;
 

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Florian on 20.03.2018.
+ * Created by Frenchtoast on 20.03.2018.
  * Thread that will insert values into the line graph
  */
 

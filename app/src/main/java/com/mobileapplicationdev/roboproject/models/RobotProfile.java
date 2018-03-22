@@ -1,12 +1,7 @@
 package com.mobileapplicationdev.roboproject.models;
 
-import android.util.Log;
-import android.widget.Toast;
-
-import com.mobileapplicationdev.roboproject.activities.SettingsActivity;
-
 /**
- * Created by Cedric on 20.03.2018.
+ * Created by Frenchtoast on 20.03.2018.
  * This class contains all information about a robot profile
  */
 
@@ -29,34 +24,34 @@ public class RobotProfile {
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
 
-    public RobotProfile (String name, String ip, int portOne, int portTwo, int portThree, float maxAngularSpeed, float maxX, float maxY, float frequenz) {
-            this.name = name;
-            checkIp(ip);
-            this.ip = ip;
-            checkPort(portOne);
-            this.portOne = portOne;
-            checkPort(portTwo);
-            this.portTwo = portTwo;
-            checkPort(portThree);
-            this.portThree = portThree;
-            this.maxAngularSpeed = maxAngularSpeed;
-            this.maxX = maxX;
-            this.maxY = maxY;
-            this.frequenz = frequenz;
+    public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree, float maxAngularSpeed, float maxX, float maxY, float frequenz) {
+        this.name = name;
+        checkIp(ip);
+        this.ip = ip;
+        checkPort(portOne);
+        this.portOne = portOne;
+        checkPort(portTwo);
+        this.portTwo = portTwo;
+        checkPort(portThree);
+        this.portThree = portThree;
+        this.maxAngularSpeed = maxAngularSpeed;
+        this.maxX = maxX;
+        this.maxY = maxY;
+        this.frequenz = frequenz;
     }
 
-    public RobotProfile(){
+    public RobotProfile() {
     }
 
-    private void checkIp(String ip){
+    private void checkIp(String ip) {
         ip = ip.trim();
-        if(!ip.matches(REGEX)){
+        if (!ip.matches(REGEX)) {
             throw new IllegalArgumentException("Angegebene IP entspricht nicht den IP-Richtlinien");
         }
     }
 
-    private void checkPort(int port){
-        if(port < 0 || port > 65535){
+    private void checkPort(int port) {
+        if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("Port=" + port + " ist kleiner als 0 oder größer als 65535");
         }
     }

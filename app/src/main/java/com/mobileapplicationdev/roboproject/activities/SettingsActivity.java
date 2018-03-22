@@ -24,7 +24,7 @@ import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import java.util.ArrayList;
 
 /**
- * Created by Florian on 16.01.2018.
+ * Created by Frenchtoast on 16.01.2018.
  * Settings activity for port numbers
  */
 
