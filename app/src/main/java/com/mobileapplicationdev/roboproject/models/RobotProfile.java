@@ -29,6 +29,9 @@ public class RobotProfile {
         this.frequenz = frequenz;
     }
 
+    public RobotProfile(){
+    }
+
     public String getName() {
         return name;
     }
