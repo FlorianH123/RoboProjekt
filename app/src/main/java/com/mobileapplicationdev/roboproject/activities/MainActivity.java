@@ -20,16 +20,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
@@ -37,6 +40,7 @@ import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import com.mobileapplicationdev.roboproject.services.SocketService;
+import com.mobileapplicationdev.roboproject.utils.RobotListAdapter;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
 import java.util.ArrayList;
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private ToggleButton connectionButtonTab3;
     private ToggleButton debugButtonTab2;
     private ToggleButton debugButtonTab3;
+    private ToggleButton graphButtonTab2;
+    private ToggleButton graphButtonTab3;
 
     private EditText ipAddressTextFieldTab1;
     private EditText ipAddressTextFieldTab2;
@@ -68,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private TextView leftJoyStick_Y_Value;
     private TextView rightJoyStick_Value;
 
+    private ListView listView = null; //TODO
+
+    private ArrayList<RobotProfile> profileList; //TODO
+
+    private RobotListAdapter robotListAdapter; //TODO
+
     private LineChart debugVelocityChart;
     private LineChart debugAngleChart;
 
@@ -77,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private Spinner engineSpinnerTab2;
     private Spinner engineSpinnerTab3;
 
+    public static final String TAG_TAB_0 = "Tag_Tab0";
     public static final String TAG_TAB_1 = "Tag_Tab1";
     public static final String TAG_TAB_2 = "Tag_Tab2";
     public static final String TAG_TAB_3 = "Tag_Tab3";
@@ -96,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private String dbIpAddress;
     private DatabaseHelper dbh;
+
+    private LineDataSet.Mode graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
+    private LineDataSet.Mode graphModeTab3 = LineDataSet.Mode.CUBIC_BEZIER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab3();
         initResetButtonTab2();
         initResetButtonTab3();
+        initGraphToggleButtonTab2();
+        initGraphToggleButtonTab3();
     }
 
     /**
@@ -142,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         connectionButtonTab3 = findViewById(R.id.toggleButton_connection_tab3);
         debugButtonTab2 = findViewById(R.id.toggleButton_debug_tab2);
         debugButtonTab3 = findViewById(R.id.toggleButton_debug_tab3);
+        graphButtonTab2 = findViewById(R.id.toggleButton_graph_tab2);
+        graphButtonTab3 = findViewById(R.id.toggleButton_graph_tab3);
 
         ipAddressTextFieldTab1 = findViewById(R.id.editText_ipAddress_tab1);
         ipAddressTextFieldTab2 = findViewById(R.id.editText_ipAddress_tab2);
@@ -154,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         iValueTextFieldTab3 = findViewById(R.id.editText_i_tab3);
         pValueTextFieldTab3 = findViewById(R.id.editText_p_tab3);
         angleTextField = findViewById(R.id.editText_angle_tab3);
+
+        listView = findViewById(R.id.simpleListView);
 
         leftJoyStick = findViewById(R.id.leftJoystick);
         rightJoyStick = findViewById(R.id.rightJoystick);
@@ -195,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Initialise tabHost with three different tabs
      */
     private void initTabHost() {
+        String tabNameTab0 = getString(R.string.tab_name_tab0);
         String tabNameTab1 = getString(R.string.tab_name_tab1);
         String tabNameTab2 = getString(R.string.tab_name_tab2);
         String tabNameTab3 = getString(R.string.tab_name_tab3);
@@ -202,8 +225,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         TabHost th = findViewById(R.id.tabHost);
         th.setup();
 
+        TabHost.TabSpec specs = th.newTabSpec(TAG_TAB_0);
+        specs.setContent(R.id.tab0);
+        specs.setIndicator(tabNameTab0);
+        th.addTab(specs);
+
+
         // TAB 1
-        TabHost.TabSpec specs = th.newTabSpec(TAG_TAB_1);
+        specs = th.newTabSpec(TAG_TAB_1);
         specs.setContent(R.id.tab1);
         specs.setIndicator(tabNameTab1);
         th.addTab(specs);
@@ -231,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Init data graph for debug views
+     *
      * @param realTimeChart the graph for the actual tab
      */
     private void initDynamicGraph(LineChart realTimeChart) {
@@ -349,6 +379,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String ipAddress;
 
         if (mBound) {
+            if (tagTab.equals(TAG_TAB_0)) {
+                loadListView();
+            }
+
             if (tagTab.equals(TAG_TAB_1)) {
 
                 ipAddress = String.valueOf(ipAddressTextFieldTab1.getText());
@@ -398,6 +432,21 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             return super.onOptionsItemSelected(item);
         }
     }
+
+// -------------------------------------------------------------------------------------------------
+
+// TAB 0 -------------------------------------------------------------------------------------------
+    private void loadListView() {
+
+        profileList = new ArrayList<>();
+        ArrayList<RobotProfile> list = dbh.getAllProfiles();
+        profileList.addAll(list);
+
+        robotListAdapter = new RobotListAdapter(this, R.layout.layout_robotlist, profileList);
+
+        listView.setAdapter(robotListAdapter);
+    }
+
 
 // -------------------------------------------------------------------------------------------------
 
@@ -601,6 +650,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         engineSpinnerTab2.setAdapter(adapter);
     }
 
+    /**
+     * Init graph toggle button to change between cubic graph and linear graph
+     */
+    private void initGraphToggleButtonTab2() {
+        graphButtonTab2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    graphModeTab2 = LineDataSet.Mode.LINEAR;
+                } else {
+                    graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
+                }
+            }
+        });
+    }
+
 // -------------------------------------------------------------------------------------------------
 
 // TAB 3 -------------------------------------------------------------------------------------------
@@ -700,12 +765,29 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         engineSpinnerTab3.setAdapter(adapter);
     }
 
+    /**
+     * Init graph toggle button to change between cubic graph and linear graph
+     */
+    private void initGraphToggleButtonTab3() {
+        graphButtonTab3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    graphModeTab3 = LineDataSet.Mode.LINEAR;
+                } else {
+                    graphModeTab3 = LineDataSet.Mode.CUBIC_BEZIER;
+                }
+            }
+        });
+    }
+
 // -------------------------------------------------------------------------------------------------
 
 // Callbacks interface implementation --------------------------------------------------------------
 
     /**
      * Returns the graph for the actual tab
+     *
      * @param tabId the id of the tab (1,2,3)
      * @return the graph
      */
@@ -722,6 +804,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the connection button for tab 1
+     *
      * @return connection button
      */
     @Override
@@ -731,6 +814,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns if the button of the actual tab is checked
+     *
      * @param tabId tab id
      * @return true if the button is checked, otherwise false
      */
@@ -745,7 +829,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Set the p value for the text field in the actual tab
-     * @param p p value
+     *
+     * @param p     p value
      * @param tabId tab id
      */
     @Override
@@ -771,6 +856,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the actual value of the p text field
+     *
      * @param tabId tab id
      * @return p value
      */
@@ -796,7 +882,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Set the p value for the text field in the actual tab
-     * @param i i value
+     *
+     * @param i     i value
      * @param tabId tab id
      */
     @Override
@@ -822,6 +909,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the actual value of the i text field
+     *
      * @param tabId tab id
      * @return i value
      */
@@ -847,6 +935,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the frequency of the robot
+     *
      * @param tabId tab id
      * @return robot frequency
      */
@@ -865,6 +954,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the velocity, located in the velocity text field in tab 2
+     *
      * @return velocity
      */
     @Override
@@ -882,6 +972,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the angle , located in the angle text field in tab 3
+     *
      * @return angle
      */
     @Override
@@ -899,11 +990,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the toggle button of the actual tab
+     *
      * @param tagTab tab name
      * @return toggle button
      */
     @Override
-        public ToggleButton getConnectionToggleButton(String tagTab) {
+    public ToggleButton getConnectionToggleButton(String tagTab) {
         switch (tagTab) {
             case TAG_TAB_1:
                 return connectionButtonTab1;
@@ -918,6 +1010,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the debug toggle button of the actual tab
+     *
      * @param tagTab tab name
      * @return debug toggle button
      */
@@ -934,6 +1027,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the control data for controlling the robot
+     *
      * @return control data
      */
     @Override
@@ -949,6 +1043,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the selected engine from the engine spinner
+     *
      * @param tabId tab id
      * @return selected engine
      */
@@ -967,6 +1062,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Enables the debug button
+     *
      * @param tabId tab id
      */
     public void enableDebugButton(int tabId) {
@@ -987,6 +1083,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 }
             });
         }
+    }
+
+    public LineDataSet.Mode getGraphMode(int tabId) {
+        if (tabId == TAB_ID_2) {
+            return graphModeTab2;
+        }
+
+        return graphModeTab3;
     }
 
 //--------------------------------------------------------------------------------------------------

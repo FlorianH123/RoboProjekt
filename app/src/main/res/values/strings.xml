@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Robot Project</string>
     <!-- TAB Strings -->
+    <string name="tab_name_tab0">Profile</string>
     <string name="tab_name_tab1">Steuerung</string>
     <string name="tab_name_tab2">Antriebsmotoren Debug</string>
     <string name="tab_name_tab3">Steuermotoren Debug</string>
