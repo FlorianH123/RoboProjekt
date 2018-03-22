@@ -96,17 +96,22 @@ public class Utils {
         return set;
     }
 
-    public static LineDataSet createSet() {
+    public static LineDataSet createSet(int modeSelection) {
+        int cubic = 1;
         LineDataSet set = new LineDataSet(null, "Ist-Wert");
+
+        if(modeSelection == cubic){
+            set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        }
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
-        set.setCircleColor(Color.WHITE);
+        set.setCircleColor(Color.BLACK);
+        set.setCircleColorHole(Color.BLUE);
         set.setLineWidth(2f);
         set.setCircleRadius(4f);
         set.setFillAlpha(65);
         set.setDrawFilled(true);
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
         set.setValueTextColor(Color.BLUE);

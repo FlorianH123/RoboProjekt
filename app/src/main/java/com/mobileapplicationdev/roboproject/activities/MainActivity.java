@@ -25,14 +25,11 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
@@ -247,7 +244,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // set an alternative background color
         realTimeChart.setBackgroundColor(0xEEEEEE);
-
         data.setValueTextColor(Color.GREEN);
 
         //adding clear data
@@ -821,7 +817,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Integer.parseInt(angleValue);
     }
 
-    public ToggleButton getToggleButton(String tagTab) {
+    public ToggleButton getConnectionToggleButton(String tagTab) {
         switch (tagTab) {
             case TAG_TAB_1:
                 return connectionButtonTab1;
@@ -857,7 +853,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     @Override
-    public int getSpinnerEngine(int tabId) {
+    public int getSelectedEngine(int tabId) {
         if (tabId == TAB_ID_2) {
             return engineSpinnerTab2.getSelectedItemPosition();
         }

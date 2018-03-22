@@ -1,13 +1,8 @@
 package com.mobileapplicationdev.roboproject.services;
 
-import android.os.Handler;
-import android.os.Looper;
-
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
@@ -58,19 +53,24 @@ public class AddEntryGraphThread implements Runnable {
 
                     if (set == null) {
                         //initialize setOne / Dynamic Graph
-                        set = Utils.createSet();
+                        // TODO: 22.03.2018 add cubic or linear Data Set by Dropdown selection
+                        //current mode selection cubic = 1
+                        set = Utils.createSet(1);
+                        //setTwo = Utils.createSetTwo();
                         setTwo = Utils.createSetTwo();
-
                         //initialize setTwo / static graph
                         data.addDataSet(set);
+                        //data.addDataSet(setTwo);
                         data.addDataSet(setTwo);
                     }
+                    int entryIndex = set.getEntryCount();
+
                     //add first data set Entry for the dynamic data
-                    data.addEntry(new Entry(set.getEntryCount(), getFirstData()), 0);
+                    data.addEntry(new Entry(entryIndex, getFirstData()), 0);
                     removeData();
 
                     //add second data set Entry for the static allocated data
-                    data.addEntry(new Entry(set.getEntryCount(), targetValue), 1);
+                    data.addEntry(new Entry(entryIndex, targetValue), 1);
 
                     data.notifyDataChanged();
 
