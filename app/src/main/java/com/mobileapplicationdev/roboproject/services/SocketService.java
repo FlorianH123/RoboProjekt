@@ -28,7 +28,7 @@ import java.net.Socket;
 import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
 
 /**
- * Created by Florian on 17.01.2018.
+ * Class to communicate with the different Sockets of the robot
  * Socket Robot Control
  */
 
@@ -43,6 +43,9 @@ public class SocketService extends Service {
 
     private Callbacks mainActivity;
 
+    /**
+     * returns the Socket Service to Communicate with the mainActivity
+     */
     public class LocalBinder extends Binder {
         public SocketService getService() {
             return SocketService.this;
@@ -54,6 +57,12 @@ public class SocketService extends Service {
         return mBinder;
     }
 
+    /**
+     * open a steering socket for the normal control of the robot
+     * sends the data to the robot
+     * @param ip
+     * @param port
+     */
     public void openSteeringSocket(final String ip, final int port) {
         new Thread(new Runnable() {
             @Override
@@ -93,6 +102,17 @@ public class SocketService extends Service {
         }, CONTROL_THREAD_NAME).start();
     }
 
+    /**
+     * open a socket for the robots debug mode
+     * request the PID Values and sets the engine and the regulator
+     * send the connection detauls ( port ip ) to the robot
+     * start the server socket to receive data
+     * return an Error Header if the IDS are not valid
+     * @param ip
+     * @param port
+     * @param waiter
+     * @param tabId
+     */
     public void openDebugSocket(final String ip, final int port, final Object waiter,
                                 final int tabId) {
 
@@ -170,6 +190,14 @@ public class SocketService extends Service {
         }, DEBUG_THREAD_NAME).start();
     }
 
+    /**
+     * starts the server socket to receive the debug data from the robot
+     * different data like receivedVelocity or receivedAngle
+     * @param serverSocket
+     * @param tabId
+     * @param tabTag
+     * @param addEntryGraphThread
+     */
     private void startServerSocket(final ServerSocket serverSocket,
                                    final int tabId,
                                    final String tabTag,
@@ -227,6 +255,14 @@ public class SocketService extends Service {
         }, RECEIVE_DATA_THREAD_NAME).start();
     }
 
+    /**
+     * is called if the data which is received is the current Velocity of the robot
+     * adds the Value to to List of the GraphSocket
+     * @param dataInputStream
+     * @param messageSize
+     * @param addEntryGraphThread
+     * @throws IOException
+     */
     private void receiveVelocity(DataInputStream dataInputStream,
                                  int messageSize,
                                  AddEntryGraphThread addEntryGraphThread) throws IOException {
@@ -240,6 +276,14 @@ public class SocketService extends Service {
         }
     }
 
+    /**
+     * is called if the data which is received is the current angle of the robot
+     * adds the value to the list of the graph socket
+     * @param dataInputStream
+     * @param messageSize
+     * @param addEntryGraphThread
+     * @throws IOException
+     */
     private void receiveAngle(DataInputStream dataInputStream,
                               int messageSize,
                               AddEntryGraphThread addEntryGraphThread) throws IOException {
@@ -294,7 +338,7 @@ public class SocketService extends Service {
             taskId = Task.StellmotorPositionsregelung.getTaskId();
         }
 
-        engineId = mainActivity.getSpinnerEngine(tabId);
+        engineId = mainActivity.getSelectedEngine(tabId);
 
         Log.d(className, "Send Set Target");
         Log.d(className, "Message Type: " + messageType);
@@ -679,11 +723,11 @@ public class SocketService extends Service {
 
         boolean getDebugButtonStatus(int tabId);
 
-        ToggleButton getToggleButton(String tagTab);
+        ToggleButton getConnectionToggleButton(String tagTab);
 
         ToggleButton getDebugButton(String tagTab);
 
-        int getSpinnerEngine(int tabId);
+        int getSelectedEngine(int tabId);
 
         void setP(float p, int tabId);
 
@@ -704,6 +748,11 @@ public class SocketService extends Service {
         LineChart getLineChart(int tabId);
     }
 
+    /**
+     * returns the Exception Message
+     * @param exceptionMessage
+     * @return
+     */
     private String getErrorMessage(String exceptionMessage) {
         String ioExceptionLoggerMsg =
                 getString(R.string.error_msg_socket_io_exception);
@@ -711,9 +760,15 @@ public class SocketService extends Service {
         return ioExceptionLoggerMsg + " " + exceptionMessage;
     }
 
+    /**
+     * handles the Exception which should be print
+     * @param tagTab
+     * @param tabId
+     * @param ex
+     */
     private void exceptionHandler(String tagTab, int tabId, String ex) {
         final String errorString = getErrorMessage(ex);
-        final ToggleButton connectionButton = mainActivity.getToggleButton(tagTab);
+        final ToggleButton connectionButton = mainActivity.getConnectionToggleButton(tagTab);
 
         if (tagTab.equals(MainActivity.TAG_TAB_1)) {
             connectionButton.post(new Runnable() {

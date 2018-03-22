@@ -1,21 +1,21 @@
 <resources>
     <string name="app_name">Robot Project</string>
-<!-- TAB Strings -->
+    <!-- TAB Strings -->
     <string name="tab_name_tab1">Steuerung</string>
     <string name="tab_name_tab2">Antriebsmotoren Debug</string>
     <string name="tab_name_tab3">Steuermotoren Debug</string>
-<!-- -->
+    <!-- -->
 
-<!-- general strings -->
+    <!-- general strings -->
     <string name="text_enter_ip">Enter Robot IP</string>
 
     <string name="text_toggleButton_connection_on">Disconnect</string>
     <string name="text_toggleButton_connection_off">Connect</string>
 
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein!</string>
-<!---->
+    <!---->
 
-<!-- Settings Strings -->
+    <!-- Settings Strings -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_port_title">Port Einstellungen</string>
     <string name="settings_speed_title">Geschwindigkeiten</string>
@@ -81,17 +81,17 @@
     <!--  -->
     <string name="robot_save">Speichern</string>
     <string name="robot_cancel">Abbrechen</string>
-<!-- -->
+    <!-- -->
 
-<!-- TAB 1 Strings -->
+    <!-- TAB 1 Strings -->
     <string name="textView_default_value">0.00</string>
     <string name="textView_x">X</string>
     <string name="textView_y">Y</string>
     <string name="textView_linear_velocity">Lineargeschwindigkeit</string>
     <string name="textView_angular_velocity">Winkelgeschwindigkeit</string>
-<!-- -->
+    <!-- -->
 
-<!-- TAB 2 Strings -->
+    <!-- TAB 2 Strings -->
     <string name="graph_toggle_button_start">Start Debugging</string>
     <string name="graph_toggle_button_stop">Stop Debugging</string>
 
@@ -108,13 +108,13 @@
     </string-array>
     <string name="error_msg_invalid_debug_input">Falsche Eingabe der Debug Control Data</string>
     <string name="toggleButton_reset_debug">Reset Chart</string>
-<!-- -->
+    <!-- -->
 
-<!-- TAB 3 Strings -->
+    <!-- TAB 3 Strings -->
     <string name="enter_angle">Winkel °</string>
-<!-- -->
+    <!-- -->
 
-<!-- Socket Strings -->
+    <!-- Socket Strings -->
     <string name="error_msg_socket_io_exception">Error while sending/receiving data!</string>
     <string name="error_msg_sending_target">Error while sending target</string>
     <string name="error_msg_requesting_pid">Error while requesting pid values</string>
@@ -123,6 +123,6 @@
     <string name="error_msg_connecting">Error while connecting</string>
     <string name="error_msg_sending_angle">Error while sending angle</string>
     <string name="error_msg_receiving_data">Error while receiving data</string>
-<!-- -->
+    <!-- -->
 
 </resources>

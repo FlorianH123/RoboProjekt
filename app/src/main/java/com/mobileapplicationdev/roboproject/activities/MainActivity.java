@@ -25,7 +25,6 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -110,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // Set toolbar icon for settings
         Toolbar toolbar = findViewById(R.id.toolbar);
+        //TODO da knallt er
         setSupportActionBar(toolbar);
 
         dbh = new DatabaseHelper(this);
@@ -131,41 +131,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab3();
         initResetButtonTab2();
         initResetButtonTab3();
-
-        RobotProfile testprofile = new RobotProfile();
-        testprofile.setName("Roboter Kevin");
-        testprofile.setIp("172.17.3.8.210");
-        testprofile.setPortOne(8080);
-        testprofile.setPortTwo(7070);
-        testprofile.setPortThree(6060);
-        testprofile.setMaxAngularSpeed((float) 5.3);
-        testprofile.setMaxX((float) 5.3);
-        testprofile.setMaxY((float) 5.3);
-        testprofile.setFrequenz((float) 0.5);
-
-        if(dbh.insertProfile(testprofile)){
-            Toast.makeText(this, "Insert Testprofile 1 geht", Toast.LENGTH_SHORT).show();
-        }
-
-        testprofile.setName("2. Roboter");
-
-        if(dbh.insertProfile(testprofile)){
-            Toast.makeText(this, "Insert Testprofile 2 geht", Toast.LENGTH_SHORT).show();
-        }
-
-        ArrayList<RobotProfile> testprofiles = new ArrayList<RobotProfile>();
-
-        testprofiles = dbh.getAllProfiles();
-        if(!testprofiles.isEmpty()){
-            Toast.makeText(this, "getAllProfiles läuft!", Toast.LENGTH_SHORT).show();
-        }
-
-        Integer testid = testprofiles.get(1).getId();
-
-        if(dbh.deleteProfile(testid)){
-            Toast.makeText(this, "löschen läuft!", Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     /**
@@ -938,7 +903,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * @return toggle button
      */
     @Override
-    public ToggleButton getToggleButton(String tagTab) {
+        public ToggleButton getConnectionToggleButton(String tagTab) {
         switch (tagTab) {
             case TAG_TAB_1:
                 return connectionButtonTab1;
@@ -988,7 +953,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * @return selected engine
      */
     @Override
-    public int getSpinnerEngine(int tabId) {
+    public int getSelectedEngine(int tabId) {
         if (tabId == TAB_ID_2) {
             return engineSpinnerTab2.getSelectedItemPosition();
         }
