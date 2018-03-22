@@ -157,12 +157,10 @@ public class SettingsActivity extends PreferenceActivity {
 
         Toast.makeText(this, "is leer", Toast.LENGTH_SHORT).show();
 
-        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2, 3, 2.0f, 3.0f, 1.0f, 4f);
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
-        profileList.add(robo);
 
-
+        profileList.addAll(dbh.getAllProfiles());
     }
 
     private void addProfile(RobotProfile robotProfile) {
