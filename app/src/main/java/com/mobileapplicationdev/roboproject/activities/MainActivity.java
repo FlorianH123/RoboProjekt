@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         Integer testid = testprofiles.get(1).getId();
 
         if(dbh.deleteProfile(testid)){
-            Toast.makeText(this, "Löschen läuft!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Löschen läuft richtig!", Toast.LENGTH_SHORT).show();
         }
 
     }
