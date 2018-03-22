@@ -46,8 +46,8 @@
 
                         <ImageView
                             android:id="@+id/imageView"
-                            android:layout_width="400px"
-                            android:layout_height="400px"
+                            android:layout_width="600px"
+                            android:layout_height="600px"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.1"
@@ -62,10 +62,10 @@
                             android:layout_height="200px"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.9"
+                            app:layout_constraintHorizontal_bias="0.95"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.9"
+                            app:layout_constraintVertical_bias="0.95"
                             app:srcCompat="@drawable/emrolab" />
 
                         <ImageView
@@ -78,10 +78,10 @@
                             android:layout_marginTop="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.09"
+                            app:layout_constraintHorizontal_bias="0.05"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.9"
+                            app:layout_constraintVertical_bias="0.95"
                             app:srcCompat="@drawable/htwsaar_logo" />
                     </android.support.constraint.ConstraintLayout>
                 </LinearLayout>

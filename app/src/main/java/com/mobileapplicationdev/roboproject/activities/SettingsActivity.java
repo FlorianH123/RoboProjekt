@@ -206,8 +206,9 @@ public class SettingsActivity extends PreferenceActivity {
         final Dialog dialog = new Dialog(profileListDialog.getContext());
         dialog.setContentView(profileEditView);
         dialog.show();
-        //TODO muss überarbeitet werden (darf nicht statisch sein)
-        dialog.getWindow().setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.7), (int) (getResources().getDisplayMetrics().heightPixels * 0.7));
+
+        dialog.getWindow().setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.5),
+                (int) (getResources().getDisplayMetrics().heightPixels * 0.7));
 
         saveProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
