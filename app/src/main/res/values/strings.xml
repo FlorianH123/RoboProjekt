@@ -13,6 +13,8 @@
     <string name="text_toggleButton_connection_off">Connect</string>
 
     <string name="error_msg_invalid_ip">Geben Sie eine gueltige IP ein!</string>
+    <string name="graph_cubic">Kubischer Graph</string>
+    <string name="graph_linear">Linearer Graph</string>
     <!---->
 
     <!-- Settings Strings -->

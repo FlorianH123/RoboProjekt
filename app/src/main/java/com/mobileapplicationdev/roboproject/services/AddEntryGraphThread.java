@@ -3,6 +3,7 @@ package com.mobileapplicationdev.roboproject.services;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
@@ -21,10 +22,12 @@ public class AddEntryGraphThread implements Runnable {
     private LineChart lineChart;
     private float targetValue;
     private boolean isRunning = false;
+    private LineDataSet.Mode mode;
 
-    public AddEntryGraphThread(LineChart lineChart, float targetValue) {
+    public AddEntryGraphThread(LineChart lineChart, float targetValue, LineDataSet.Mode mode) {
         this.lineChart = lineChart;
         this.targetValue = targetValue;
+        this.mode = mode;
     }
 
     public void addEntry(float actualValue) {
@@ -55,7 +58,7 @@ public class AddEntryGraphThread implements Runnable {
                         //initialize setOne / Dynamic Graph
                         // TODO: 22.03.2018 add cubic or linear Data Set by Dropdown selection
                         //current mode selection cubic = 1
-                        set = Utils.createSet(1);
+                        set = Utils.createSet(mode);
                         //setTwo = Utils.createSetTwo();
                         setTwo = Utils.createSetTwo();
                         //initialize setTwo / static graph

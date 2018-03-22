@@ -30,6 +30,7 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.jmedeisis.bugstick.Joystick;
 import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private ToggleButton connectionButtonTab3;
     private ToggleButton debugButtonTab2;
     private ToggleButton debugButtonTab3;
+    private ToggleButton graphButtonTab2;
+    private ToggleButton graphButtonTab3;
 
     private EditText ipAddressTextFieldTab1;
     private EditText ipAddressTextFieldTab2;
@@ -98,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private String dbIpAddress;
     private DatabaseHelper dbh;
 
+    private LineDataSet.Mode graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
+    private LineDataSet.Mode graphModeTab3 = LineDataSet.Mode.CUBIC_BEZIER;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab3();
         initResetButtonTab2();
         initResetButtonTab3();
+        initGraphToggleButtonTab2();
+        initGraphToggleButtonTab3();
     }
 
     /**
@@ -143,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         connectionButtonTab3 = findViewById(R.id.toggleButton_connection_tab3);
         debugButtonTab2 = findViewById(R.id.toggleButton_debug_tab2);
         debugButtonTab3 = findViewById(R.id.toggleButton_debug_tab3);
+        graphButtonTab2 = findViewById(R.id.toggleButton_graph_tab2);
+        graphButtonTab3 = findViewById(R.id.toggleButton_graph_tab3);
 
         ipAddressTextFieldTab1 = findViewById(R.id.editText_ipAddress_tab1);
         ipAddressTextFieldTab2 = findViewById(R.id.editText_ipAddress_tab2);
@@ -608,6 +618,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         engineSpinnerTab2.setAdapter(adapter);
     }
 
+    /**
+     * Init graph toggle button to change between cubic graph and linear graph
+     */
+    private void initGraphToggleButtonTab2() {
+        graphButtonTab2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    graphModeTab2 = LineDataSet.Mode.LINEAR;
+                } else {
+                    graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
+                }
+            }
+        });
+    }
+
 // -------------------------------------------------------------------------------------------------
 
 // TAB 3 -------------------------------------------------------------------------------------------
@@ -705,6 +731,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // Apply the adapter to the spinner
         engineSpinnerTab3.setAdapter(adapter);
+    }
+
+    /**
+     * Init graph toggle button to change between cubic graph and linear graph
+     */
+    private void initGraphToggleButtonTab3() {
+        graphButtonTab3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    graphModeTab3 = LineDataSet.Mode.LINEAR;
+                } else {
+                    graphModeTab3 = LineDataSet.Mode.CUBIC_BEZIER;
+                }
+            }
+        });
     }
 
 // -------------------------------------------------------------------------------------------------
@@ -994,6 +1036,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 }
             });
         }
+    }
+
+    public LineDataSet.Mode getGraphMode(int tabId) {
+        if (tabId == TAB_ID_2) {
+            return graphModeTab2;
+        }
+
+        return graphModeTab3;
     }
 
 //--------------------------------------------------------------------------------------------------

@@ -2,6 +2,7 @@ package com.mobileapplicationdev.roboproject.utils;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.util.Log;
 
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -96,14 +97,10 @@ public class Utils {
         return set;
     }
 
-    public static LineDataSet createSet(int modeSelection) {
-        int cubic = 1;
+    public static LineDataSet createSet(LineDataSet.Mode mode) {
         LineDataSet set = new LineDataSet(null, "Ist-Wert");
 
-        if(modeSelection == cubic){
-            set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        }
-
+        set.setMode(mode);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.getHoloBlue());
         set.setCircleColor(Color.BLACK);

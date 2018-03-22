@@ -11,6 +11,7 @@ import android.widget.ToggleButton;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.activities.MainActivity;
@@ -166,11 +167,14 @@ public class SocketService extends Service {
                     if (tabId == MainActivity.TAB_ID_2) {
                         sendVelocity(dataIS, dataOS);
                         addEntryGraphThread = new AddEntryGraphThread(
-                                realTimeChart, mainActivity.getVelocity());
+                                realTimeChart, mainActivity.getVelocity(),
+                                mainActivity.getGraphMode(tabId));
+
                     } else if (tabId == MainActivity.TAB_ID_3) {
                         sendAngle(dataIS, dataOS);
                         addEntryGraphThread = new AddEntryGraphThread(
-                                realTimeChart, mainActivity.getAngle());
+                                realTimeChart, mainActivity.getAngle(),
+                                mainActivity.getGraphMode(tabId));
                     }
 
                     // start new socket
@@ -746,6 +750,8 @@ public class SocketService extends Service {
         void enableDebugButton(int tabId);
 
         LineChart getLineChart(int tabId);
+
+        LineDataSet.Mode getGraphMode(int tabId);
     }
 
     /**
