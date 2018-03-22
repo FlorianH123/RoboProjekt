@@ -229,7 +229,7 @@ public class SettingsActivity extends PreferenceActivity {
 
                     //Create a RobotProfile Object
                     RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree, maxAngularSpeed, maxX, maxY, frequency);
-                    dbh.insertProfile(profile);
+                    dbh.updateProfile(profile);
 
                 } catch (Exception e) {
                     Toast.makeText(SettingsActivity.this, "Please Check your input Values", Toast.LENGTH_SHORT).show();
