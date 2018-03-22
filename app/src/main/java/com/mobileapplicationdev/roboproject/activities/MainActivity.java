@@ -35,9 +35,11 @@ import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.ControlData;
+import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
@@ -128,8 +130,46 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initSpinnerTab3();
         initResetButtonTab2();
         initResetButtonTab3();
+
+        RobotProfile testprofile = new RobotProfile();
+        testprofile.setName("Roboter Kevin");
+        testprofile.setIp("172.17.3.8.210");
+        testprofile.setPortOne(8080);
+        testprofile.setPortTwo(7070);
+        testprofile.setPortThree(6060);
+        testprofile.setMaxAngularSpeed((float) 5.3);
+        testprofile.setMaxX((float) 5.3);
+        testprofile.setMaxY((float) 5.3);
+        testprofile.setFrequenz((float) 0.5);
+
+        if(dbh.insertProfile(testprofile)){
+            Toast.makeText(this, "Insert Testprofile 1 geht", Toast.LENGTH_SHORT).show();
+        }
+
+        testprofile.setName("2. Roboter");
+
+        if(dbh.insertProfile(testprofile)){
+            Toast.makeText(this, "Insert Testprofile 2 geht", Toast.LENGTH_SHORT).show();
+        }
+
+        ArrayList<RobotProfile> testprofiles = new ArrayList<RobotProfile>();
+
+        testprofiles = dbh.getAllProfiles();
+        if(!testprofiles.isEmpty()){
+            Toast.makeText(this, "getAllProfiles läuft!", Toast.LENGTH_SHORT).show();
+        }
+
+        Integer testid = testprofiles.get(1).getId();
+
+        if(dbh.deleteProfile(testid)){
+            Toast.makeText(this, "löschen läuft!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
+    /**
+     * Get all components from xml
+     */
     private void initAllComponents() {
         connectionButtonTab1 = findViewById(R.id.toggleButton_connection_tab1);
         connectionButtonTab2 = findViewById(R.id.toggleButton_connection_tab2);
@@ -186,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     /**
-     * Initialise tabHost with different tabs
+     * Initialise tabHost with three different tabs
      */
     private void initTabHost() {
         String tabNameTab1 = getString(R.string.tab_name_tab1);
@@ -196,21 +236,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         TabHost th = findViewById(R.id.tabHost);
         th.setup();
 
+        // TAB 1
         TabHost.TabSpec specs = th.newTabSpec(TAG_TAB_1);
         specs.setContent(R.id.tab1);
         specs.setIndicator(tabNameTab1);
         th.addTab(specs);
 
+        // TAB 2
         specs = th.newTabSpec(TAG_TAB_2);
         specs.setContent(R.id.tab2);
         specs.setIndicator(tabNameTab2);
         th.addTab(specs);
 
+        // TAB 2
         specs = th.newTabSpec(TAG_TAB_3);
         specs.setContent(R.id.tab3);
         specs.setIndicator(tabNameTab3);
         th.addTab(specs);
 
+        // On tab change listener
         th.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tagName) {
@@ -219,6 +263,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Init data graph for debug views
+     * @param realTimeChart the graph for the actual tab
+     */
     private void initDynamicGraph(LineChart realTimeChart) {
         LineData data = new LineData();
         Legend legend;
@@ -237,14 +285,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         realTimeChart.setScaleEnabled(true);
         realTimeChart.setDrawGridBackground(false);
 
-        //debugVelocityChart.setNoDataText("No data for the moment");
-
         // if disabled, scaling can be done on x- and y-axis separately
         realTimeChart.setPinchZoom(false);
 
         // set an alternative background color
-        realTimeChart.setBackgroundColor(0xEEEEEE);
-        data.setValueTextColor(Color.GREEN);
+        realTimeChart.setBackgroundColor(Color.TRANSPARENT);
 
         //adding clear data
         realTimeChart.setData(data);
@@ -313,6 +358,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Get a communication interface for the started socket service
+     */
     private final ServiceConnection mConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -389,6 +437,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // TAB 1 -------------------------------------------------------------------------------------------
 
+    /**
+     * Init connection button for tab1
+     */
     private void initConnectionButtonTab1() {
         dbIpAddress = dbh.getIp();
         ipAddressTextFieldTab1.setText(dbIpAddress);
@@ -493,6 +544,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // TAB 2 -------------------------------------------------------------------------------------------
 
+    /**
+     * Init connection button for tab 2
+     */
     private void initConnectionButtonTab2() {
         dbIpAddress = dbh.getIp();
         ipAddressTextFieldTab2.setText(dbIpAddress);
@@ -500,6 +554,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButton(connectionButtonTab2, ipAddressTextFieldTab2, TAG_TAB_2);
     }
 
+    /**
+     * Init debug graph for tab 2
+     */
     private void initGraphTab2() {
         initDynamicGraph(debugVelocityChart);
     }
@@ -516,6 +573,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Init debug toggle button for tab 2
+     */
     private void initDebugToggleButtonTab2() {
         debugButtonTab2.setEnabled(false);
 
@@ -541,7 +601,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         pValueTextFieldTab2.setEnabled(false);
                         velocityTextField.setEnabled(false);
 
-
                         // Notify debug socket thread p and i value are updated
                         synchronized (waiter) {
                             waiter.notify();
@@ -561,6 +620,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Init engine spinner tab 2
+     */
     private void initSpinnerTab2() {
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -577,6 +639,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // TAB 3 -------------------------------------------------------------------------------------------
 
+    /**
+     * Init reset chart button for tab 3
+     */
     private void initResetButtonTab3() {
         resetButtonTab3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -589,6 +654,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Init connection button for tab 3
+     */
     private void initConnectionButtonTab3() {
         dbIpAddress = dbh.getIp();
         ipAddressTextFieldTab3.setText(dbIpAddress);
@@ -596,10 +664,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initConnectionButton(connectionButtonTab3, ipAddressTextFieldTab3, TAG_TAB_3);
     }
 
+    /**
+     * Init data graph for tab 3
+     */
     private void initGraphTab3() {
         initDynamicGraph(debugAngleChart);
     }
 
+    /**
+     * Init debug toggle button for tab 3
+     */
     private void initDebugToggleButtonTab3() {
         debugButtonTab3.setEnabled(false);
 
@@ -626,7 +700,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         pValueTextFieldTab3.setEnabled(false);
                         angleTextField.setEnabled(false);
 
-
                         // Notify debug socket thread p and i value are updated
                         synchronized (waiter) {
                             waiter.notify();
@@ -646,6 +719,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
     }
 
+    /**
+     * Init engine spinner for tab 3
+     */
     private void initSpinnerTab3() {
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -662,6 +738,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // Callbacks interface implementation --------------------------------------------------------------
 
+    /**
+     * Returns the graph for the actual tab
+     * @param tabId the id of the tab (1,2,3)
+     * @return the graph
+     */
     @Override
     public LineChart getLineChart(int tabId) {
         if (tabId == MainActivity.TAB_ID_2) {
@@ -673,20 +754,20 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return null;
     }
 
+    /**
+     * Returns the connection button for tab 1
+     * @return connection button
+     */
     @Override
-    public boolean getConnectionButtonStatus(int tabId) {
-        if (tabId == TAB_ID_1) {
-            return connectionButtonTab1.isChecked();
-        }
-
-        if (tabId == TAB_ID_2) {
-            return connectionButtonTab2.isChecked();
-        }
-
-        return tabId == TAB_ID_3 && connectionButtonTab3.isChecked();
-
+    public boolean getConnectionButtonStatus() {
+        return connectionButtonTab1.isChecked();
     }
 
+    /**
+     * Returns if the button of the actual tab is checked
+     * @param tabId tab id
+     * @return true if the button is checked, otherwise false
+     */
     @Override
     public boolean getDebugButtonStatus(int tabId) {
         if (tabId == TAB_ID_2) {
@@ -696,6 +777,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return tabId == TAB_ID_3 && debugButtonTab3.isChecked();
     }
 
+    /**
+     * Set the p value for the text field in the actual tab
+     * @param p p value
+     * @param tabId tab id
+     */
     @Override
     public void setP(final float p, int tabId) {
         if (tabId == TAB_ID_2) {
@@ -717,6 +803,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    /**
+     * Returns the actual value of the p text field
+     * @param tabId tab id
+     * @return p value
+     */
     @Override
     public float getP(int tabId) {
         String pValue = null;
@@ -737,6 +828,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Float.parseFloat(pValue);
     }
 
+    /**
+     * Set the p value for the text field in the actual tab
+     * @param i i value
+     * @param tabId tab id
+     */
     @Override
     public void setI(final float i, int tabId) {
         if (tabId == TAB_ID_2) {
@@ -758,6 +854,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    /**
+     * Returns the actual value of the i text field
+     * @param tabId tab id
+     * @return i value
+     */
     @Override
     public float getI(int tabId) {
         String iValue = null;
@@ -778,10 +879,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Float.parseFloat(iValue);
     }
 
+    /**
+     * Returns the frequency of the robot
+     * @param tabId tab id
+     * @return robot frequency
+     */
     @Override
-    public float getD(int tabId) {
-        TextView enterRegulatorFrequency;
-        //TODO löschen
+    public float getFrequency(int tabId) {
         if (tabId == TAB_ID_2) {
             return Integer.parseInt(editFrequencyTab2.getText().toString());
         }
@@ -793,6 +897,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return 0;
     }
 
+    /**
+     * Returns the velocity, located in the velocity text field in tab 2
+     * @return velocity
+     */
+    @Override
     public float getVelocity() {
         String speedValue;
         speedValue = velocityTextField.getText().toString().trim();
@@ -805,6 +914,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Float.parseFloat(speedValue);
     }
 
+    /**
+     * Returns the angle , located in the angle text field in tab 3
+     * @return angle
+     */
+    @Override
     public int getAngle() {
         String angleValue;
         angleValue = angleTextField.getText().toString().trim();
@@ -817,7 +931,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return Integer.parseInt(angleValue);
     }
 
-    public ToggleButton getConnectionToggleButton(String tagTab) {
+    /**
+     * Returns the toggle button of the actual tab
+     * @param tagTab tab name
+     * @return toggle button
+     */
+    @Override
+        public ToggleButton getConnectionToggleButton(String tagTab) {
         switch (tagTab) {
             case TAG_TAB_1:
                 return connectionButtonTab1;
@@ -830,6 +950,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    /**
+     * Returns the debug toggle button of the actual tab
+     * @param tagTab tab name
+     * @return debug toggle button
+     */
     public ToggleButton getDebugButton(String tagTab) {
         switch (tagTab) {
             case TAG_TAB_2:
@@ -841,6 +966,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    /**
+     * Returns the control data for controlling the robot
+     * @return control data
+     */
     @Override
     public ControlData getControlData() {
         ControlData controlData = new ControlData();
@@ -852,6 +981,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return controlData;
     }
 
+    /**
+     * Returns the selected engine from the engine spinner
+     * @param tabId tab id
+     * @return selected engine
+     */
     @Override
     public int getSelectedEngine(int tabId) {
         if (tabId == TAB_ID_2) {
@@ -865,6 +999,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return 0;
     }
 
+    /**
+     * Enables the debug button
+     * @param tabId tab id
+     */
     public void enableDebugButton(int tabId) {
         if (tabId == TAB_ID_2) {
             debugButtonTab2.post(new Runnable() {

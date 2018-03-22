@@ -1,6 +1,7 @@
 package com.mobileapplicationdev.roboproject.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -11,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.RobotProfile;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by Florian on 16.01.2018.
@@ -30,9 +34,10 @@ public class SettingsActivity extends PreferenceActivity {
     private static final int MAX_PORT = 65535;
     private DatabaseHelper dbh;
     private ListView profileListView;
-    private AlertDialog profileDialog;
+    private AlertDialog profileListDialog;
     private ArrayList<RobotProfile> profileList;
     private ArrayAdapter<RobotProfile> profilesAdapter;
+//    AlertDialog.Builder dialogProfileEditBuilder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,8 @@ public class SettingsActivity extends PreferenceActivity {
             profileButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference arg0) {
-                    profileDialog.show();
+                    profileListDialog.show();
+//                    dialog.show();
                     return true;
                 }
             });
@@ -122,20 +128,22 @@ public class SettingsActivity extends PreferenceActivity {
         profileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                RobotProfile robotProfile = (RobotProfile) profileListView.getItemAtPosition(position);
+                Log.d("Preference", robotProfile.toString());
+                editProfileDialog(robotProfile);
             }
         });
     }
 
     private void initDialog() {
-        AlertDialog.Builder dialogBuilder;
+        AlertDialog.Builder dialogProfileListBuilder;
 
-        Log.d("Preference", "true");
-        dialogBuilder = new AlertDialog.Builder(SettingsActivity.this);
-        dialogBuilder.setCancelable(true);
-        dialogBuilder.setPositiveButton("Ok", null);
-        dialogBuilder.setView(profileListView);
-        profileDialog = dialogBuilder.create();
+        dialogProfileListBuilder = new AlertDialog.Builder(SettingsActivity.this);
+        dialogProfileListBuilder.setCancelable(true);
+        dialogProfileListBuilder.setPositiveButton("Ok", null);
+        dialogProfileListBuilder.setView(profileListView);
+        profileListDialog = dialogProfileListBuilder.create();
+
     }
 
     /**
@@ -144,7 +152,9 @@ public class SettingsActivity extends PreferenceActivity {
     private void loadProfiles() {
         profileList = new ArrayList<>();
         //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
-        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f);
+        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f, 4f);
+        RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
+        profileList.add(standardProfile);
         profileList.add(robo);
 
     }
@@ -152,5 +162,63 @@ public class SettingsActivity extends PreferenceActivity {
     private void addProfile(RobotProfile robotProfile) {
         profileList.add(robotProfile);
         profilesAdapter.notifyDataSetChanged();
+    }
+
+    private void editProfileDialog(RobotProfile robotProfile) {
+        View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
+        final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
+        EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
+        EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
+        EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
+        EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
+        EditText robotMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
+        EditText robotMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
+        EditText robotMaxAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
+        EditText robotFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
+        Button saveProfileButton = profileEditView.findViewById(R.id.saveButton);
+        Button cancelButton = profileEditView.findViewById(R.id.cancelButton);
+
+        String portOneAsString = Integer.toString(robotProfile.getPortOne());
+        String portTwoAsString = Integer.toString(robotProfile.getPortTwo());
+        String portThreeAsString = Integer.toString(robotProfile.getPortThree());
+        String robotMaxXAsString = Float.toString(robotProfile.getMaxX());
+        String robotMaxYAsString = Float.toString(robotProfile.getMaxY());
+        String robotMaxAngularSpeedAsString = Float.toString(robotProfile.getMaxAngularSpeed());
+        String robotFrequencyAsString = Float.toString(robotProfile.getFrequenz());
+
+        if (robotProfile != null) {
+            Log.d("Preference", "hallo");
+            robotName.setText(robotProfile.getName());
+            robotIp.setText(robotProfile.getIp());
+            robotControlPort.setText(portOneAsString);
+            robotDriveMotorPort.setText(portTwoAsString);
+            robotServerMotorPort.setText(portThreeAsString);
+            robotMaxX.setText(robotMaxXAsString);
+            robotMaxY.setText(robotMaxYAsString);
+            robotMaxAngularSpeed.setText(robotMaxAngularSpeedAsString);
+            robotFrequency.setText(robotFrequencyAsString);
+        }
+
+        final Dialog dialog = new Dialog(profileListDialog.getContext());
+        dialog.setContentView(profileEditView);
+        dialog.show();
+        //TODO muss überarbeitet werden (darf nicht statisch sein)
+        dialog.getWindow().setLayout(1000, 1000);
+
+        saveProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO Daten aus Dialog entnehmen und speichern
+                Log.d("Preference", robotName.getText().toString());
+                dialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 }
