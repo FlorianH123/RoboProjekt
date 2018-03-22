@@ -1,7 +1,7 @@
 package com.mobileapplicationdev.roboproject.models;
 
 /**
- * Created by Florian on 22.01.2018.
+ * Created by Frenchtoast on 22.01.2018.
  * Data Packet which contains all necessary control data
  */
 
@@ -17,7 +17,8 @@ public class ControlData {
     private float x;
     private float y;
 
-    public ControlData(){}
+    public ControlData() {
+    }
 
     public float getAngularVelocity() {
         return angularVelocity;
@@ -30,6 +31,7 @@ public class ControlData {
     public float getVarI() {
         return varI;
     }
+
     public float getX() {
         return x;
     }

@@ -12,8 +12,7 @@ import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import java.util.ArrayList;
 
 /**
- * Created by Janik on 31.01.2018.
- *
+ * Created by Frenchtoast on 31.01.2018.
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -85,33 +84,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String REGEX =
             "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
-            "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
-            "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
-            "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
+                    "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
+                    "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
+                    "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME,null , DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     public void onCreate(SQLiteDatabase db) {
         try {
             db.execSQL(PRO_TABLE_CREATE);
-        } catch(Exception ex) {
-            Log.e(TAG,"Error creating table: " + PRO_TABLE_NAME + "!", ex);
+        } catch (Exception ex) {
+            Log.e(TAG, "Error creating table: " + PRO_TABLE_NAME + "!", ex);
         }
         try {
             db.execSQL(ADDR_TABLE_CREATE);
-        } catch(Exception ex) {
-            Log.e(TAG,"Error creating table: " + ADDR_TABLE_NAME + "!", ex);
+        } catch (Exception ex) {
+            Log.e(TAG, "Error creating table: " + ADDR_TABLE_NAME + "!", ex);
         }
     }
 
     /**
      * Funktionen für Profil-Tabelle
      */
-    public boolean insertProfile(RobotProfile profile){
-        try{
+    public boolean insertProfile(RobotProfile profile) {
+        try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
 
@@ -128,13 +127,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.insert(PRO_TABLE_NAME, null, values);
 
             return true;
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "Couldn't insert Profile: " + ex);
             return false;
         }
     }
 
-    public boolean updateProfile(RobotProfile profile){
+    public boolean updateProfile(RobotProfile profile) {
         try {
             SQLiteDatabase db = getWritableDatabase();
             ContentValues values = new ContentValues();
@@ -151,15 +150,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             db.update(PRO_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(profile.getId())});
             return true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "Couldn't update profile" + ex);
             return false;
 
         }
     }
 
-    public ArrayList<RobotProfile> getAllProfiles(){
-        try{
+    public ArrayList<RobotProfile> getAllProfiles() {
+        try {
             ArrayList<RobotProfile> profiles = new ArrayList<RobotProfile>();
             String selectQuery = "SELECT * FROM " + PRO_TABLE_NAME;
 
@@ -168,7 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor c = db.rawQuery(selectQuery, null);
 
-            if(c.moveToFirst()){
+            if (c.moveToFirst()) {
                 do {
                     RobotProfile profile = new RobotProfile();
 
@@ -185,22 +184,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                     profiles.add(profile);
 
-                }while(c.moveToNext());
+                } while (c.moveToNext());
             }
 
             return profiles;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "Couldn't get all Profiles.\n" + ex);
             return null;
         }
     }
 
-    public boolean deleteProfile(Integer id){
-        try{
+    public boolean deleteProfile(Integer id) {
+        try {
             SQLiteDatabase db = this.getWritableDatabase();
-            db.delete(PRO_TABLE_NAME, "id = ?" , new String[]{Integer.toString(id)});
+            db.delete(PRO_TABLE_NAME, "id = ?", new String[]{Integer.toString(id)});
             return true;
-        }catch(Exception ex){
+        } catch (Exception ex) {
             Log.e(TAG, "Couldn't delete profile with id=" + id);
             return false;
         }
@@ -210,9 +209,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Funkitonen zur IP-Adress-Tabelle
      */
 
-    public boolean updateIp(String ip){
+    public boolean updateIp(String ip) {
         try {
-            if(ip.matches(REGEX)) {
+            if (ip.matches(REGEX)) {
                 SQLiteDatabase db = this.getWritableDatabase();
                 ContentValues values = new ContentValues();
 
@@ -223,19 +222,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 db.insert(ADDR_TABLE_NAME, null, values);
                 return true;
-            }else {
+            } else {
                 //Keine Gültige IP
                 return false;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             //DatenbankError
             return false;
         }
     }
 
-    public String getIp(){
+    public String getIp() {
         String ip = "0.0.0.0";
-        try{
+        try {
             SQLiteDatabase db = this.getReadableDatabase();
 
             String selectQuery = "SELECT * " +
@@ -244,13 +243,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             Cursor c = db.rawQuery(selectQuery, null);
 
-            if(c != null) {
+            if (c != null) {
                 c.moveToFirst();
                 ip = c.getString(c.getColumnIndex(IP_ADDR_NAME));
             }
 
             return ip;
-        }catch(Exception ex){
+        } catch (Exception ex) {
             return ip;
         }
     }

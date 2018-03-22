@@ -25,6 +25,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -36,11 +37,9 @@ import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.ControlData;
-import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
@@ -248,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Init data graph for debug views
+     *
      * @param realTimeChart the graph for the actual tab
      */
     private void initDynamicGraph(LineChart realTimeChart) {
@@ -755,6 +755,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the graph for the actual tab
+     *
      * @param tabId the id of the tab (1,2,3)
      * @return the graph
      */
@@ -771,6 +772,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the connection button for tab 1
+     *
      * @return connection button
      */
     @Override
@@ -780,6 +782,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns if the button of the actual tab is checked
+     *
      * @param tabId tab id
      * @return true if the button is checked, otherwise false
      */
@@ -794,7 +797,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Set the p value for the text field in the actual tab
-     * @param p p value
+     *
+     * @param p     p value
      * @param tabId tab id
      */
     @Override
@@ -820,6 +824,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the actual value of the p text field
+     *
      * @param tabId tab id
      * @return p value
      */
@@ -845,7 +850,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Set the p value for the text field in the actual tab
-     * @param i i value
+     *
+     * @param i     i value
      * @param tabId tab id
      */
     @Override
@@ -871,6 +877,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the actual value of the i text field
+     *
      * @param tabId tab id
      * @return i value
      */
@@ -896,6 +903,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the frequency of the robot
+     *
      * @param tabId tab id
      * @return robot frequency
      */
@@ -914,6 +922,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the velocity, located in the velocity text field in tab 2
+     *
      * @return velocity
      */
     @Override
@@ -931,6 +940,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the angle , located in the angle text field in tab 3
+     *
      * @return angle
      */
     @Override
@@ -948,11 +958,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the toggle button of the actual tab
+     *
      * @param tagTab tab name
      * @return toggle button
      */
     @Override
-        public ToggleButton getConnectionToggleButton(String tagTab) {
+    public ToggleButton getConnectionToggleButton(String tagTab) {
         switch (tagTab) {
             case TAG_TAB_1:
                 return connectionButtonTab1;
@@ -967,6 +978,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the debug toggle button of the actual tab
+     *
      * @param tagTab tab name
      * @return debug toggle button
      */
@@ -983,6 +995,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the control data for controlling the robot
+     *
      * @return control data
      */
     @Override
@@ -998,6 +1011,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Returns the selected engine from the engine spinner
+     *
      * @param tabId tab id
      * @return selected engine
      */
@@ -1016,6 +1030,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Enables the debug button
+     *
      * @param tabId tab id
      */
     public void enableDebugButton(int tabId) {

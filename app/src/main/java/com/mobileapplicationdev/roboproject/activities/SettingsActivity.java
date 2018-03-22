@@ -24,14 +24,14 @@ import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import java.util.ArrayList;
 
 /**
- * Created by Florian on 16.01.2018.
+ * Created by Frenchtoast on 16.01.2018.
  * Settings activity for port numbers
  */
 
 public class SettingsActivity extends PreferenceActivity {
     private static final int MIN_PORT = 0;
     private static final int MAX_PORT = 65535;
-    private DatabaseHelper dbh;
+    private DatabaseHelper dbh = null;
     private ListView profileListView;
     private AlertDialog profileListDialog;
     private ArrayList<RobotProfile> profileList;
@@ -150,15 +150,10 @@ public class SettingsActivity extends PreferenceActivity {
      */
     private void loadProfiles() {
         profileList = new ArrayList<>();
-        //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
-
-
-        Toast.makeText(this, "is leer", Toast.LENGTH_SHORT).show();
 
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
 
-        //TODO lol
         ArrayList<RobotProfile> list = dbh.getAllProfiles();
         profileList.addAll(list);
     }
@@ -231,10 +226,10 @@ public class SettingsActivity extends PreferenceActivity {
                     dbh.updateProfile(profile);
 
                 } catch (Exception e) {
-                    Toast.makeText(SettingsActivity.this, "Please Check your input Values", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
                 }
 
-                //TODO Daten aus Dialog entnehmen und speichern
+                // TODO Speichern funktioniert noch nicht so ganz... whyever
                 Log.d("Preference", robotName.getText().toString());
                 dialog.dismiss();
 
