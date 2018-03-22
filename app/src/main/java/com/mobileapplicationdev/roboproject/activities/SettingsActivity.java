@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mobileapplicationdev.roboproject.R;
+
 import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.RobotProfile;
 
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 public class SettingsActivity extends PreferenceActivity {
     private static final int MIN_PORT = 0;
     private static final int MAX_PORT = 65535;
-    private DatabaseHelper dbh;
+    private DatabaseHelper dbh = null;
     private ListView profileListView;
     private AlertDialog profileListDialog;
     private ArrayList<RobotProfile> profileList;
@@ -153,8 +154,6 @@ public class SettingsActivity extends PreferenceActivity {
         //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
 
 
-        Toast.makeText(this, "is leer", Toast.LENGTH_SHORT).show();
-
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
 
@@ -231,7 +230,7 @@ public class SettingsActivity extends PreferenceActivity {
                     dbh.updateProfile(profile);
 
                 } catch (Exception e) {
-                    Toast.makeText(SettingsActivity.this, "Please Check your input Values", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SettingsActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
                 }
 
                 //TODO Daten aus Dialog entnehmen und speichern
