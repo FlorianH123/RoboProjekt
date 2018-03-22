@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobileapplicationdev.roboproject.R;
@@ -72,8 +73,8 @@ public class SettingsActivity extends PreferenceActivity {
                 int portNumber;
 
                 if (key.equals(getString(R.string.settings_port_1_key)) ||
-                    key.equals(getString(R.string.settings_port_2_key)) ||
-                    key.equals(getString(R.string.settings_port_3_key))) {
+                        key.equals(getString(R.string.settings_port_2_key)) ||
+                        key.equals(getString(R.string.settings_port_3_key))) {
 
                     if (key.equals(getString(R.string.settings_port_1_key))) {
                         defaultValue = getString(R.string.port_1_default_value);
@@ -89,10 +90,10 @@ public class SettingsActivity extends PreferenceActivity {
                     validatePortNumber(portNumber, key, defaultValue, sharedPreferences);
                 }
 
-                if(key.equals(getString(R.string.settings_ip_key))){
+                if (key.equals(getString(R.string.settings_ip_key))) {
                     defaultValue = dbh.getIp();
                     String newIp = sharedPreferences.getString(key, defaultValue);
-                    if(!dbh.updateIp(newIp)){
+                    if (!dbh.updateIp(newIp)) {
                         Toast.makeText(SettingsActivity.this, "Ungültige IP konnte nicht gespeichert werden!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -152,10 +153,13 @@ public class SettingsActivity extends PreferenceActivity {
     private void loadProfiles() {
         profileList = new ArrayList<>();
         //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
-        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f, 4f);
+
+        Toast.makeText(this, "is leer", Toast.LENGTH_SHORT).show();
+        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2, 3, 2.0f, 3.0f, 1.0f, 4f);
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
         profileList.add(robo);
+
 
     }
 
@@ -203,14 +207,47 @@ public class SettingsActivity extends PreferenceActivity {
         dialog.setContentView(profileEditView);
         dialog.show();
         //TODO muss überarbeitet werden (darf nicht statisch sein)
-        dialog.getWindow().setLayout(1000, 1000);
+        dialog.getWindow().setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.7), (int) (getResources().getDisplayMetrics().heightPixels * 0.7));
 
         saveProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //initialise TextFields
+                final EditText inputRobotName = v.findViewById(R.id.editRobotName);
+                final EditText inputRobotIp = v.findViewById(R.id.editRobotIP);
+                final EditText inputRobotPortOne = v.findViewById(R.id.editRobotControlPort);
+                final EditText inputRobotPortTwo = v.findViewById(R.id.editRobotDriveMotorPort);
+                final EditText inputRobotPortThree = v.findViewById(R.id.editRobotServoMotorPort);
+                final EditText inputRobotAngularSpeed = v.findViewById(R.id.editRobotAngularVelocity);
+                final EditText inputMaxX = v.findViewById(R.id.editRobotMaxX);
+                final EditText inputMaxY = v.findViewById(R.id.editRobotMaxY);
+                final EditText inputFrequency = v.findViewById(R.id.editRobotFrequency);
+
+                try {
+                    //Read values from TextFields
+                    String name = inputRobotName.getText().toString();
+                    String ip = inputRobotIp.getText().toString();
+                    int portOne = (Integer.parseInt(inputRobotPortOne.getText().toString()));
+                    int portTwo = (Integer.parseInt(inputRobotPortTwo.getText().toString()));
+                    int portThree = (Integer.parseInt(inputRobotPortThree.getText().toString()));
+                    float maxAngularSpeed = (Float.parseFloat(inputRobotAngularSpeed.getText().toString()));
+                    float maxX = (Float.parseFloat(inputMaxX.getText().toString()));
+                    float maxY = (Float.parseFloat(inputMaxY.getText().toString()));
+                    float frequency = (Float.parseFloat(inputFrequency.getText().toString()));
+
+                    //Create a RobotProfile Object
+                    RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree, maxAngularSpeed, maxX, maxY, frequency);
+                    dbh.insertProfile(profile);
+
+                }
+                catch (Exception e){
+                    Toast.makeText(SettingsActivity.this, "Please Check your input Values", Toast.LENGTH_SHORT).show();
+                }
+
                 //TODO Daten aus Dialog entnehmen und speichern
                 Log.d("Preference", robotName.getText().toString());
                 dialog.dismiss();
+
             }
         });
 
