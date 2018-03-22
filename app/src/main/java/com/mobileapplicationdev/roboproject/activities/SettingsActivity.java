@@ -152,12 +152,14 @@ public class SettingsActivity extends PreferenceActivity {
         profileList = new ArrayList<>();
         //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
 
+
         Toast.makeText(this, "is leer", Toast.LENGTH_SHORT).show();
-        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2, 3, 2.0f, 3.0f, 1.0f, 4f);
+
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
-        profileList.add(robo);
 
+        //TODO lol
+        profileList.addAll(dbh.getAllProfiles());
     }
 
     private void addProfile(RobotProfile robotProfile) {
@@ -168,14 +170,14 @@ public class SettingsActivity extends PreferenceActivity {
     private void editProfileDialog(RobotProfile robotProfile) {
         final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
         final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
-        EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
-        EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
-        EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
-        EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
-        EditText robotMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
-        EditText robotMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
-        EditText robotMaxAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
-        EditText robotFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
+        final EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
+        final EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
+        final EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
+        final EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
+        final EditText robotMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
+        final EditText robotMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
+        final EditText robotMaxAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
+        final EditText robotFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
         Button saveProfileButton = profileEditView.findViewById(R.id.saveButton);
         Button cancelButton = profileEditView.findViewById(R.id.cancelButton);
 
@@ -209,35 +211,24 @@ public class SettingsActivity extends PreferenceActivity {
         saveProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //initialise TextFields
-                final EditText inputRobotName = profileEditView.findViewById(R.id.editRobotName);
-                final EditText inputRobotIp = profileEditView.findViewById(R.id.editRobotIP);
-                final EditText inputRobotPortOne = profileEditView.findViewById(R.id.editRobotControlPort);
-                final EditText inputRobotPortTwo = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
-                final EditText inputRobotPortThree = profileEditView.findViewById(R.id.editRobotServoMotorPort);
-                final EditText inputRobotAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
-                final EditText inputMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
-                final EditText inputMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
-                final EditText inputFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
 
                 try {
                     //Read values from TextFields
-                    String name = inputRobotName.getText().toString();
-                    String ip = inputRobotIp.getText().toString();
-                    int portOne = (Integer.parseInt(inputRobotPortOne.getText().toString()));
-                    int portTwo = (Integer.parseInt(inputRobotPortTwo.getText().toString()));
-                    int portThree = (Integer.parseInt(inputRobotPortThree.getText().toString()));
-                    float maxAngularSpeed = (Float.parseFloat(inputRobotAngularSpeed.getText().toString()));
-                    float maxX = (Float.parseFloat(inputMaxX.getText().toString()));
-                    float maxY = (Float.parseFloat(inputMaxY.getText().toString()));
-                    float frequency = (Float.parseFloat(inputFrequency.getText().toString()));
+                    String name = robotName.getText().toString();
+                    String ip = robotIp.getText().toString();
+                    int portOne = (Integer.parseInt(robotControlPort.getText().toString()));
+                    int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString()));
+                    int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString()));
+                    float maxAngularSpeed = (Float.parseFloat(robotMaxAngularSpeed.getText().toString()));
+                    float maxX = (Float.parseFloat(robotMaxX.getText().toString()));
+                    float maxY = (Float.parseFloat(robotMaxY.getText().toString()));
+                    float frequency = (Float.parseFloat(robotFrequency.getText().toString()));
 
                     //Create a RobotProfile Object
                     RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree, maxAngularSpeed, maxX, maxY, frequency);
-                    dbh.insertProfile(profile);
+                    dbh.updateProfile(profile);
 
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     Toast.makeText(SettingsActivity.this, "Please Check your input Values", Toast.LENGTH_SHORT).show();
                 }
 
