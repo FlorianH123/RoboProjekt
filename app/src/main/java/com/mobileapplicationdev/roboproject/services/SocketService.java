@@ -61,8 +61,9 @@ public class SocketService extends Service {
     /**
      * open a steering socket for the normal control of the robot
      * sends the data to the robot
-     * @param ip
-     * @param port
+     *
+     * @param ip   ip of the robot
+     * @param port port of the control socket
      */
     public void openSteeringSocket(final String ip, final int port) {
         new Thread(new Runnable() {
@@ -106,13 +107,14 @@ public class SocketService extends Service {
     /**
      * open a socket for the robots debug mode
      * request the PID Values and sets the engine and the regulator
-     * send the connection detauls ( port ip ) to the robot
+     * send the connection details ( port ip ) to the robot
      * start the server socket to receive data
      * return an Error Header if the IDS are not valid
-     * @param ip
-     * @param port
-     * @param waiter
-     * @param tabId
+     *
+     * @param ip     ip of the robot
+     * @param port   port of the debug socket
+     * @param waiter notify object
+     * @param tabId  tab id
      */
     public void openDebugSocket(final String ip, final int port, final Object waiter,
                                 final int tabId) {
@@ -159,7 +161,7 @@ public class SocketService extends Service {
                     realTimeChart.getXAxis().setValueFormatter(new IAxisValueFormatter() {
                         @Override
                         public String getFormattedValue(float value, AxisBase axis) {
-                            return String.valueOf(value*mainActivity.getFrequency(tabId)+" ms");
+                            return String.valueOf(value * mainActivity.getFrequency(tabId) + " ms");
                         }
                     });
 
@@ -197,10 +199,11 @@ public class SocketService extends Service {
     /**
      * starts the server socket to receive the debug data from the robot
      * different data like receivedVelocity or receivedAngle
-     * @param serverSocket
-     * @param tabId
-     * @param tabTag
-     * @param addEntryGraphThread
+     *
+     * @param serverSocket        socket to receive debug data
+     * @param tabId               tab id
+     * @param tabTag              tab name
+     * @param addEntryGraphThread thread to add values to the graph
      */
     private void startServerSocket(final ServerSocket serverSocket,
                                    final int tabId,
@@ -217,7 +220,7 @@ public class SocketService extends Service {
 
                 try (Socket clientSocket = serverSocket.accept();
                      DataInputStream dataInputStream =
-                             new DataInputStream(clientSocket.getInputStream())){
+                             new DataInputStream(clientSocket.getInputStream())) {
 
                     while (mainActivity.getDebugButtonStatus(tabId)) {
                         messageType = swap(dataInputStream.readInt());
@@ -262,10 +265,11 @@ public class SocketService extends Service {
     /**
      * is called if the data which is received is the current Velocity of the robot
      * adds the Value to to List of the GraphSocket
-     * @param dataInputStream
-     * @param messageSize
-     * @param addEntryGraphThread
-     * @throws IOException
+     *
+     * @param dataInputStream     receive data from the robot
+     * @param messageSize         message size
+     * @param addEntryGraphThread thread to add values to the graph
+     * @throws IOException io exception
      */
     private void receiveVelocity(DataInputStream dataInputStream,
                                  int messageSize,
@@ -283,10 +287,11 @@ public class SocketService extends Service {
     /**
      * is called if the data which is received is the current angle of the robot
      * adds the value to the list of the graph socket
-     * @param dataInputStream
-     * @param messageSize
-     * @param addEntryGraphThread
-     * @throws IOException
+     *
+     * @param dataInputStream     receive data from the robot
+     * @param messageSize         message size
+     * @param addEntryGraphThread thread to add values to the graph
+     * @throws IOException io exception
      */
     private void receiveAngle(DataInputStream dataInputStream,
                               int messageSize,
@@ -756,8 +761,9 @@ public class SocketService extends Service {
 
     /**
      * returns the Exception Message
-     * @param exceptionMessage
-     * @return
+     *
+     * @param exceptionMessage exception message
+     * @return error msg + exception message
      */
     private String getErrorMessage(String exceptionMessage) {
         String ioExceptionLoggerMsg =
@@ -768,9 +774,10 @@ public class SocketService extends Service {
 
     /**
      * handles the Exception which should be print
-     * @param tagTab
-     * @param tabId
-     * @param ex
+     *
+     * @param tagTab tab name
+     * @param tabId  tab id
+     * @param ex     exception message
      */
     private void exceptionHandler(String tagTab, int tabId, String ex) {
         final String errorString = getErrorMessage(ex);
