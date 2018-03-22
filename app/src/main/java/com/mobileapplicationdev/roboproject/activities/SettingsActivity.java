@@ -22,7 +22,6 @@ import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.RobotProfile;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by Florian on 16.01.2018.
@@ -72,8 +71,8 @@ public class SettingsActivity extends PreferenceActivity {
                 int portNumber;
 
                 if (key.equals(getString(R.string.settings_port_1_key)) ||
-                    key.equals(getString(R.string.settings_port_2_key)) ||
-                    key.equals(getString(R.string.settings_port_3_key))) {
+                        key.equals(getString(R.string.settings_port_2_key)) ||
+                        key.equals(getString(R.string.settings_port_3_key))) {
 
                     if (key.equals(getString(R.string.settings_port_1_key))) {
                         defaultValue = getString(R.string.port_1_default_value);
@@ -89,10 +88,10 @@ public class SettingsActivity extends PreferenceActivity {
                     validatePortNumber(portNumber, key, defaultValue, sharedPreferences);
                 }
 
-                if(key.equals(getString(R.string.settings_ip_key))){
+                if (key.equals(getString(R.string.settings_ip_key))) {
                     defaultValue = dbh.getIp();
                     String newIp = sharedPreferences.getString(key, defaultValue);
-                    if(!dbh.updateIp(newIp)){
+                    if (!dbh.updateIp(newIp)) {
                         Toast.makeText(SettingsActivity.this, "Ungültige IP konnte nicht gespeichert werden!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -152,11 +151,15 @@ public class SettingsActivity extends PreferenceActivity {
     private void loadProfiles() {
         profileList = new ArrayList<>();
         //TODO alle Profile aus der Datenbank laden und in die profileList einfügen
-        RobotProfile robo = new RobotProfile("Robo", "127.0.0.1", 1, 2,3, 2.0f, 3.0f, 1.0f, 4f);
+
+
+        Toast.makeText(this, "is leer", Toast.LENGTH_SHORT).show();
+
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
-        profileList.add(robo);
 
+        //TODO lol
+        profileList.addAll(dbh.getAllProfiles());
     }
 
     private void addProfile(RobotProfile robotProfile) {
@@ -165,16 +168,16 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     private void editProfileDialog(RobotProfile robotProfile) {
-        View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
+        final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
         final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
-        EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
-        EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
-        EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
-        EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
-        EditText robotMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
-        EditText robotMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
-        EditText robotMaxAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
-        EditText robotFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
+        final EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
+        final EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
+        final EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
+        final EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
+        final EditText robotMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
+        final EditText robotMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
+        final EditText robotMaxAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
+        final EditText robotFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
         Button saveProfileButton = profileEditView.findViewById(R.id.saveButton);
         Button cancelButton = profileEditView.findViewById(R.id.cancelButton);
 
@@ -203,14 +206,36 @@ public class SettingsActivity extends PreferenceActivity {
         dialog.setContentView(profileEditView);
         dialog.show();
         //TODO muss überarbeitet werden (darf nicht statisch sein)
-        dialog.getWindow().setLayout(1000, 1000);
+        dialog.getWindow().setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.7), (int) (getResources().getDisplayMetrics().heightPixels * 0.7));
 
         saveProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                try {
+                    //Read values from TextFields
+                    String name = robotName.getText().toString();
+                    String ip = robotIp.getText().toString();
+                    int portOne = (Integer.parseInt(robotControlPort.getText().toString()));
+                    int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString()));
+                    int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString()));
+                    float maxAngularSpeed = (Float.parseFloat(robotMaxAngularSpeed.getText().toString()));
+                    float maxX = (Float.parseFloat(robotMaxX.getText().toString()));
+                    float maxY = (Float.parseFloat(robotMaxY.getText().toString()));
+                    float frequency = (Float.parseFloat(robotFrequency.getText().toString()));
+
+                    //Create a RobotProfile Object
+                    RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree, maxAngularSpeed, maxX, maxY, frequency);
+                    dbh.updateProfile(profile);
+
+                } catch (Exception e) {
+                    Toast.makeText(SettingsActivity.this, "Please Check your input Values", Toast.LENGTH_SHORT).show();
+                }
+
                 //TODO Daten aus Dialog entnehmen und speichern
                 Log.d("Preference", robotName.getText().toString());
                 dialog.dismiss();
+
             }
         });
 
