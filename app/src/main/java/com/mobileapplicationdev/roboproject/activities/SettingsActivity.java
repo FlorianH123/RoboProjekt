@@ -160,7 +160,7 @@ public class SettingsActivity extends PreferenceActivity {
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
 
-        //TODO
+        //TODO lol
         profileList.addAll(dbh.getAllProfiles());
     }
 
