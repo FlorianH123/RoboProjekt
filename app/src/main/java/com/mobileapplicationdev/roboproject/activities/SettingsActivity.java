@@ -169,7 +169,7 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     private void editProfileDialog(RobotProfile robotProfile) {
-        View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
+        final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
         final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
         EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
         EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
@@ -213,15 +213,15 @@ public class SettingsActivity extends PreferenceActivity {
             @Override
             public void onClick(View v) {
                 //initialise TextFields
-                final EditText inputRobotName = v.findViewById(R.id.editRobotName);
-                final EditText inputRobotIp = v.findViewById(R.id.editRobotIP);
-                final EditText inputRobotPortOne = v.findViewById(R.id.editRobotControlPort);
-                final EditText inputRobotPortTwo = v.findViewById(R.id.editRobotDriveMotorPort);
-                final EditText inputRobotPortThree = v.findViewById(R.id.editRobotServoMotorPort);
-                final EditText inputRobotAngularSpeed = v.findViewById(R.id.editRobotAngularVelocity);
-                final EditText inputMaxX = v.findViewById(R.id.editRobotMaxX);
-                final EditText inputMaxY = v.findViewById(R.id.editRobotMaxY);
-                final EditText inputFrequency = v.findViewById(R.id.editRobotFrequency);
+                final EditText inputRobotName = profileEditView.findViewById(R.id.editRobotName);
+                final EditText inputRobotIp = profileEditView.findViewById(R.id.editRobotIP);
+                final EditText inputRobotPortOne = profileEditView.findViewById(R.id.editRobotControlPort);
+                final EditText inputRobotPortTwo = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
+                final EditText inputRobotPortThree = profileEditView.findViewById(R.id.editRobotServoMotorPort);
+                final EditText inputRobotAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
+                final EditText inputMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
+                final EditText inputMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
+                final EditText inputFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
 
                 try {
                     //Read values from TextFields
