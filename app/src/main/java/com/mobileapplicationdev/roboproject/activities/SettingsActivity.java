@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobileapplicationdev.roboproject.R;
@@ -23,7 +22,6 @@ import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.RobotProfile;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by Florian on 16.01.2018.
@@ -159,7 +157,6 @@ public class SettingsActivity extends PreferenceActivity {
         RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
         profileList.add(standardProfile);
         profileList.add(robo);
-
 
     }
 
