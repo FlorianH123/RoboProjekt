@@ -290,8 +290,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         left_Y_Axis = realTimeChart.getAxisLeft();
         left_Y_Axis.setTextColor(Color.BLUE);
-        left_Y_Axis.setAxisMaximum(2f);
-        left_Y_Axis.setAxisMinimum(0f);
+        left_Y_Axis.setAxisMaximum(550f);
+        left_Y_Axis.setAxisMinimum(-10f);
         left_Y_Axis.setDrawGridLines(true);
 
         right_Y_Axis = realTimeChart.getAxisRight();
@@ -583,6 +583,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         iValueTextFieldTab2.setEnabled(false);
                         pValueTextFieldTab2.setEnabled(false);
                         velocityTextField.setEnabled(false);
+                        graphButtonTab2.setEnabled(false);
 
                         // Notify debug socket thread p and i value are updated
                         synchronized (waiter) {
@@ -598,6 +599,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     iValueTextFieldTab2.setEnabled(true);
                     pValueTextFieldTab2.setEnabled(true);
                     velocityTextField.setEnabled(true);
+                    graphButtonTab2.setEnabled(true);
                 }
             }
         });
@@ -698,6 +700,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         iValueTextFieldTab3.setEnabled(false);
                         pValueTextFieldTab3.setEnabled(false);
                         angleTextField.setEnabled(false);
+                        graphButtonTab3.setEnabled(false);
 
                         // Notify debug socket thread p and i value are updated
                         synchronized (waiter) {
@@ -713,6 +716,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     iValueTextFieldTab3.setEnabled(true);
                     pValueTextFieldTab3.setEnabled(true);
                     angleTextField.setEnabled(true);
+                    graphButtonTab3.setEnabled(true);
                 }
             }
         });

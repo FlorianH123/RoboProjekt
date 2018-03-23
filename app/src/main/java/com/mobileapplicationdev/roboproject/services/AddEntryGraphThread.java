@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Frenchtoast on 20.03.2018.
  * Thread that will insert values into the line graph
  */
 
@@ -43,6 +42,8 @@ public class AddEntryGraphThread implements Runnable {
     }
 
     private void addEntryIntoGraph() {
+        final float value = getFirstData();
+        removeData();
 
         lineChart.post(new Runnable() {
             @Override
@@ -69,8 +70,7 @@ public class AddEntryGraphThread implements Runnable {
                     int entryIndex = set.getEntryCount();
 
                     //add first data set Entry for the dynamic data
-                    data.addEntry(new Entry(entryIndex, getFirstData()), 0);
-                    removeData();
+                    data.addEntry(new Entry(entryIndex, value), 0);
 
                     //add second data set Entry for the static allocated data
                     data.addEntry(new Entry(entryIndex, targetValue), 1);
@@ -101,7 +101,7 @@ public class AddEntryGraphThread implements Runnable {
             if (!entryData.isEmpty()) {
                 addEntryIntoGraph();
                 try {
-                    Thread.sleep(15);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

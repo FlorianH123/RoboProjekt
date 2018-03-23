@@ -19,12 +19,15 @@ import com.mobileapplicationdev.roboproject.models.ControlData;
 import com.mobileapplicationdev.roboproject.models.MessageType;
 import com.mobileapplicationdev.roboproject.models.Task;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Instant;
 
 import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
 
@@ -220,9 +223,10 @@ public class SocketService extends Service {
 
                 try (Socket clientSocket = serverSocket.accept();
                      DataInputStream dataInputStream =
-                             new DataInputStream(clientSocket.getInputStream())) {
+                             new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()))) {
 
                     while (mainActivity.getDebugButtonStatus(tabId)) {
+                        long start = System.nanoTime();
                         messageType = swap(dataInputStream.readInt());
                         messageSize = swap(dataInputStream.readInt());
 
@@ -241,6 +245,7 @@ public class SocketService extends Service {
                         } else {
                             throw new IOException(getString(R.string.error_msg_receiving_data));
                         }
+                        Log.d(className, String.valueOf(System.nanoTime() - start));
                     }
 
                     serverSocket.close();
@@ -276,12 +281,15 @@ public class SocketService extends Service {
                                  AddEntryGraphThread addEntryGraphThread) throws IOException {
 
         float velocityValue;
+        float[] dataArray = new float[messageSize];
 
         for (int i = 0; i < messageSize; i++) {
-            velocityValue = swap(dataInputStream.readFloat());
-            addEntryGraphThread.addEntry(velocityValue);
-            Log.d(className, "Velocity " + velocityValue);
+            dataArray[i] = swap(dataInputStream.readFloat());
+            //addEntryGraphThread.addEntry(velocityValue);
+            Log.d(className, "Velocity " + dataArray[i]);
         }
+
+
     }
 
     /**
