@@ -1,7 +1,6 @@
 package com.mobileapplicationdev.roboproject.utils;
 
 import android.content.Context;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +15,9 @@ import java.util.ArrayList;
 public class RobotListAdapter extends ArrayAdapter {
     private Context context;
     private ArrayList<RobotProfile> profiles;
-    private int textUnit;
-    private float textSize;
 
     public RobotListAdapter(Context context, int textViewResourceId, ArrayList objects) {
         super(context, textViewResourceId, objects);
-
-        textUnit = TypedValue.COMPLEX_UNIT_SP;
-        textSize = 12;
 
         this.context = context;
         profiles = objects;
