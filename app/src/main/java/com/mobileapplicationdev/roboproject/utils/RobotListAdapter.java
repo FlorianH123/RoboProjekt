@@ -1,3 +1,5 @@
+package com.mobileapplicationdev.roboproject.utils;
+
 import android.content.Context;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -34,7 +36,7 @@ public class RobotListAdapter extends ArrayAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        ViewHolder holder;
         if (convertView == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = vi.inflate(R.layout.layout_robotlist, null);
