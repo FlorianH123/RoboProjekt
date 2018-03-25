@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,6 +111,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private LineDataSet.Mode graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
     private LineDataSet.Mode graphModeTab3 = LineDataSet.Mode.CUBIC_BEZIER;
 
+    private List<RobotProfile> profileList;
+    private ProfileAdapter profileAdapter;
+    private RobotProfile selectedProfileOnLongClick;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,29 +197,68 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     private void initProfileList() {
         ListView profileListView = findViewById(R.id.profileListView);
-        final List<RobotProfile> profileList = loadProfiles();
+        this.profileList = loadProfiles();
 
-        ProfileAdapter profileAdapter = new ProfileAdapter(this, profileList);
+        profileAdapter = new ProfileAdapter(this, profileList);
         profileListView.setAdapter(profileAdapter);
 
         profileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("View", "auswählen");
                 RobotProfile selectedRobotProfile = profileList.get(position);
-                selectProfile(selectedRobotProfile);
+
+                // wenn die id = 0 ist bedeuted dies das der Benutzer
+                // "neues Profil" ausgewählt hat. Für dieses Profil wird der Bearbeitungs Dialog
+                // gestartet statt das Profil auszuwählen.
+                if (selectedRobotProfile.getId() == 0) {
+                    editProfileDialog(selectedRobotProfile);
+                } else {
+                    selectProfile(selectedRobotProfile);
+                }
+
             }
         });
 
         profileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("View", "bearbeiten");
-                RobotProfile selectedRoboProfile = profileList.get(position);
-                editProfileDialog(selectedRoboProfile);
+                selectedProfileOnLongClick = profileList.get(position);
                 return false;
             }
         });
+        registerForContextMenu(profileListView);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        if (view.getId() == R.id.profileListView && selectedProfileOnLongClick.getId() > 0) {
+            menu.setHeaderTitle("Title");
+            menu.add("Löschen");
+            menu.add("Bearbeiten");
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        int selectedItemPosition = info.position;
+        RobotProfile selectedProfile = profileList.get(selectedItemPosition);
+
+        String userAction = item.getTitle().toString();
+
+        switch(userAction) {
+            case "Löschen":
+                Log.d("View", "Löschen");
+                profileList.remove(selectedProfile);
+                dbh.deleteProfile(selectedProfile.getId());
+                profileAdapter.notifyDataSetChanged();
+                break;
+
+            case "Bearbeiten":
+                editProfileDialog(selectedProfile);
+                break;
+        }
+        return true;
     }
 
     private void selectProfile(final RobotProfile robotProfile) {
@@ -267,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onClick(View v) {
                 try {
+                    int profileIndex;
                     //Read values from TextFields
                     String name = robotName.getText().toString();
                     String ip = robotIp.getText().toString();
@@ -283,8 +328,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
                     if (robotProfile.getId() > 0) {
                         dbh.updateProfile(profile);
+
+                        profileIndex = profileList.indexOf(robotProfile);
+                        profileList.remove(robotProfile);
+                        profileList.add(profileIndex, profile);
+
                     } else {
                         dbh.insertProfile(profile);
+                        //TODO id des neues profils setzen sonst kann er im nachhinein nicht bearbeitet werden
+                        profileList.add(profileList.size() - 1, profile);
+                        profileAdapter.notifyDataSetChanged();
                     }
 
                 } catch (Exception e) {
@@ -315,12 +368,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0", 0, 0, 0, 0, 0, 0,0);
 
         standardProfile.setId(1);
-
         profileList.add(standardProfile);
-        profileList.add(newProfile);
 
         ArrayList<RobotProfile> list = dbh.getAllProfiles();
         profileList.addAll(list);
+        profileList.add(newProfile);
 
         return profileList;
     }
