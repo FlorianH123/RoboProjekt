@@ -1,5 +1,6 @@
 package com.mobileapplicationdev.roboproject.activities;
 
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -16,10 +17,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -37,9 +40,13 @@ import com.jmedeisis.bugstick.JoystickListener;
 import com.mobileapplicationdev.roboproject.R;
 import com.mobileapplicationdev.roboproject.db.DatabaseHelper;
 import com.mobileapplicationdev.roboproject.models.ControlData;
+import com.mobileapplicationdev.roboproject.models.ProfileAdapter;
+import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import com.mobileapplicationdev.roboproject.services.SocketService;
 import com.mobileapplicationdev.roboproject.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
@@ -139,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initResetButtonTab3();
         initGraphToggleButtonTab2();
         initGraphToggleButtonTab3();
+        initProfileList();
     }
 
     /**
@@ -180,6 +188,141 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         engineSpinnerTab2 = findViewById(R.id.spinner);
         engineSpinnerTab3 = findViewById(R.id.spinner_engines_tab3);
+    }
+
+    private void initProfileList() {
+        ListView profileListView = findViewById(R.id.profileListView);
+        final List<RobotProfile> profileList = loadProfiles();
+
+        ProfileAdapter profileAdapter = new ProfileAdapter(this, profileList);
+        profileListView.setAdapter(profileAdapter);
+
+        profileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("View", "auswählen");
+                RobotProfile selectedRobotProfile = profileList.get(position);
+                selectProfile(selectedRobotProfile);
+            }
+        });
+
+        profileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("View", "bearbeiten");
+                RobotProfile selectedRoboProfile = profileList.get(position);
+                editProfileDialog(selectedRoboProfile);
+                return false;
+            }
+        });
+    }
+
+    private void selectProfile(final RobotProfile robotProfile) {
+
+    }
+
+    private void editProfileDialog(final RobotProfile robotProfile) {
+        final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
+        final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
+        final EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
+        final EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
+        final EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
+        final EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
+        final EditText robotMaxX = profileEditView.findViewById(R.id.editRobotMaxX);
+        final EditText robotMaxY = profileEditView.findViewById(R.id.editRobotMaxY);
+        final EditText robotMaxAngularSpeed = profileEditView.findViewById(R.id.editRobotAngularVelocity);
+        final EditText robotFrequency = profileEditView.findViewById(R.id.editRobotFrequency);
+        Button saveProfileButton = profileEditView.findViewById(R.id.saveButton);
+        Button cancelButton = profileEditView.findViewById(R.id.cancelButton);
+
+        String portOneAsString = Integer.toString(robotProfile.getPortOne());
+        String portTwoAsString = Integer.toString(robotProfile.getPortTwo());
+        String portThreeAsString = Integer.toString(robotProfile.getPortThree());
+        String robotMaxXAsString = Float.toString(robotProfile.getMaxX());
+        String robotMaxYAsString = Float.toString(robotProfile.getMaxY());
+        String robotMaxAngularSpeedAsString = Float.toString(robotProfile.getMaxAngularSpeed());
+        String robotFrequencyAsString = Float.toString(robotProfile.getFrequenz());
+
+        if (robotProfile.getId() > 0) {
+            Log.d("Preference", "hallo");
+            robotName.setText(robotProfile.getName());
+            robotIp.setText(robotProfile.getIp());
+            robotControlPort.setText(portOneAsString);
+            robotDriveMotorPort.setText(portTwoAsString);
+            robotServerMotorPort.setText(portThreeAsString);
+            robotMaxX.setText(robotMaxXAsString);
+            robotMaxY.setText(robotMaxYAsString);
+            robotMaxAngularSpeed.setText(robotMaxAngularSpeedAsString);
+            robotFrequency.setText(robotFrequencyAsString);
+        }
+
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setContentView(profileEditView);
+        dialog.show();
+
+        dialog.getWindow().setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.5),
+                (int) (getResources().getDisplayMetrics().heightPixels * 0.7));
+
+        saveProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    //Read values from TextFields
+                    String name = robotName.getText().toString();
+                    String ip = robotIp.getText().toString();
+                    int portOne = (Integer.parseInt(robotControlPort.getText().toString()));
+                    int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString()));
+                    int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString()));
+                    float maxAngularSpeed = (Float.parseFloat(robotMaxAngularSpeed.getText().toString()));
+                    float maxX = (Float.parseFloat(robotMaxX.getText().toString()));
+                    float maxY = (Float.parseFloat(robotMaxY.getText().toString()));
+                    float frequency = (Float.parseFloat(robotFrequency.getText().toString()));
+
+                    //Create a RobotProfile Object
+                    RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree, maxAngularSpeed, maxX, maxY, frequency);
+
+                    if (robotProfile.getId() > 0) {
+                        dbh.updateProfile(profile);
+                    } else {
+                        dbh.insertProfile(profile);
+                    }
+
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
+                }
+
+                // TODO Speichern funktioniert noch nicht so ganz... whyever
+                Log.d("Preference", robotName.getText().toString());
+                dialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * load all profiles from the database and insert them into an array
+     */
+    private List<RobotProfile> loadProfiles() {
+        List<RobotProfile> profileList = new ArrayList<>();
+
+        RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
+        RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0", 0, 0, 0, 0, 0, 0,0);
+
+        standardProfile.setId(1);
+
+        profileList.add(standardProfile);
+        profileList.add(newProfile);
+
+        ArrayList<RobotProfile> list = dbh.getAllProfiles();
+        profileList.addAll(list);
+
+        return profileList;
     }
 
     /**
@@ -230,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         specs.setIndicator(tabNameTab2);
         th.addTab(specs);
 
-        // TAB 2
+        // TAB 3
         specs = th.newTabSpec(TAG_TAB_3);
         specs.setContent(R.id.tab3);
         specs.setIndicator(tabNameTab3);
