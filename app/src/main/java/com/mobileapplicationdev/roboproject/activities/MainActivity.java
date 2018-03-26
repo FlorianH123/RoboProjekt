@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -97,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final int TAB_ID_3 = 3;
 
     private static final String SHARED_PREFERENCE_FILE = "robotProfileValues";
-    private RobotProfile standardProfile;
 
     private final Object waiter = new Object();
 
@@ -108,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
-    private String dbIpAddress;
     private DatabaseHelper dbh;
 
     private LineDataSet.Mode graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
@@ -133,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         setSupportActionBar(toolbar);
 
         dbh = new DatabaseHelper(this);
-        dbIpAddress = dbh.getIp();
 
         // Initialise components inside  the main activity
         initAllComponents();
@@ -157,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         Toast.makeText(this, "TESTI: " + testi, Toast.LENGTH_SHORT).show();
         initProfileList();
 
-        setPreferences(standardProfile);
+        setPreferences(profileList.get(0));
     }
 
     /**
@@ -217,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 // wenn die id = 0 ist bedeutet dies das der Benutzer
                 // "neues Profil" ausgewählt hat. Für dieses Profil wird der Bearbeitungs Dialog
                 // gestartet statt das Profil auszuwählen.
-                if (selectedRobotProfile.getId() == 0) {
+                if (selectedRobotProfile.getId() == -1) {
                     editProfileDialog(selectedRobotProfile);
                 } else {
                     selectProfile(selectedRobotProfile);
@@ -230,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedProfileOnLongClick = profileList.get(position);
-                //Toast.makeText(MainActivity.this, selectedProfileOnLongClick.toString() + "", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -240,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == R.id.profileListView && selectedProfileOnLongClick.getId() > 0) {
-            //menu.setHeaderTitle("Title");
+            menu.setHeaderTitle(selectedProfileOnLongClick.getName());
 
             if (selectedProfileOnLongClick.getId() != 1) {
                 menu.add(R.string.delete_profile);
@@ -258,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         String userAction = item.getTitle().toString();
 
-        switch(userAction) {
+        switch (userAction) {
             case "Löschen":
                 Log.d("View", "Löschen");
                 profileList.remove(selectedProfile);
@@ -306,6 +301,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String robotMaxAngularSpeedAsString = Float.toString(robotProfile.getMaxAngularSpeed());
         String robotFrequencyAsString = Float.toString(robotProfile.getFrequenz());
 
+        robotName.setEnabled(true);
+
+        if (robotProfile.getId() == 1) {
+            robotName.setEnabled(false);
+        }
+
         if (robotProfile.getId() > 0) {
             Log.d("Preference", "hallo");
             robotName.setText(robotProfile.getName());
@@ -332,21 +333,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 try {
                     int profileIndex;
                     //Read values from TextFields
-                    String name = robotName.getText().toString();
-                    String ip = robotIp.getText().toString();
-                    int portOne = (Integer.parseInt(robotControlPort.getText().toString()));
-                    int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString()));
-                    int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString()));
-                    float maxAngularSpeed = (Float.parseFloat(robotMaxAngularSpeed.getText().toString()));
-                    float maxX = (Float.parseFloat(robotMaxX.getText().toString()));
-                    float maxY = (Float.parseFloat(robotMaxY.getText().toString()));
-                    float frequency = (Float.parseFloat(robotFrequency.getText().toString()));
+                    String name = robotName.getText().toString().trim();
+                    String ip = robotIp.getText().toString().trim();
+                    int portOne = (Integer.parseInt(robotControlPort.getText().toString().trim()));
+                    int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString().trim()));
+                    int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString().trim()));
+                    float maxAngularSpeed = (Float.parseFloat(robotMaxAngularSpeed.getText().toString().trim()));
+                    float maxX = (Float.parseFloat(robotMaxX.getText().toString().trim()));
+                    float maxY = (Float.parseFloat(robotMaxY.getText().toString().trim()));
+                    float frequency = (Float.parseFloat(robotFrequency.getText().toString().trim()));
 
                     //Create a RobotProfile Object
                     RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree,
                             maxAngularSpeed, maxX, maxY, frequency);
 
                     if (robotProfile.getId() > 0) {
+                        profile.setId(robotProfile.getId());
                         dbh.updateProfile(profile);
 
                         profileIndex = profileList.indexOf(robotProfile);
@@ -354,19 +356,19 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         profileList.add(profileIndex, profile);
 
                     } else {
-                        dbh.insertProfile(profile);
-                        //TODO id des neues profils setzen sonst kann er im nachhinein nicht bearbeitet werden
+                        long id = dbh.insertProfile(profile);
+
+                        profile.setId((int) id);
                         profileList.add(profileList.size() - 1, profile);
                         profileAdapter.notifyDataSetChanged();
                     }
 
+                    dialog.dismiss();
                 } catch (Exception e) {
                     Toast.makeText(MainActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
                 }
 
-                // TODO Speichern funktioniert noch nicht so ganz... whyever
                 Log.d("Preference", robotName.getText().toString());
-                dialog.dismiss();
             }
         });
 
@@ -384,14 +386,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private List<RobotProfile> loadProfiles() {
         List<RobotProfile> profileList = new ArrayList<>();
 
-        standardProfile = new RobotProfile("Default", "192.168.0.29", 15002, 15002, 25002, 0.5f, 0.5f, 0.6f, 4f);
-        RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0", 0, 0, 0, 0, 0, 0,0);
+        RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0",
+                0, 0, 0, 0, 0, 0, 0);
+        newProfile.setId(-1);
 
-        standardProfile.setId(1);
-        profileList.add(standardProfile);
-
-        ArrayList<RobotProfile> list = dbh.getAllProfiles();
-        profileList.addAll(list);
+        profileList.addAll(dbh.getAllProfiles());
         profileList.add(newProfile);
 
         return profileList;
@@ -660,9 +659,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Init connection button for tab1
      */
     private void initConnectionButtonTab1() {
-        dbIpAddress = dbh.getIp();
-        ipAddressTextFieldTab1.setText(dbIpAddress);
-
         initConnectionButton(connectionButtonTab1, ipAddressTextFieldTab1, TAG_TAB_1);
     }
 
@@ -767,9 +763,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Init connection button for tab 2
      */
     private void initConnectionButtonTab2() {
-        dbIpAddress = dbh.getIp();
-        ipAddressTextFieldTab2.setText(dbIpAddress);
-
         initConnectionButton(connectionButtonTab2, ipAddressTextFieldTab2, TAG_TAB_2);
     }
 
@@ -814,7 +807,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                                 errMsgInvalidInput, Toast.LENGTH_SHORT).show();
                     } else {
                         float value = Float.parseFloat(velocity);
-                        value = value*1.5f;
+                        value = value * 1.5f;
                         YAxis left_Y_Axis;
                         left_Y_Axis = debugVelocityChart.getAxisLeft();
                         left_Y_Axis.setAxisMaximum(value);
@@ -901,9 +894,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Init connection button for tab 3
      */
     private void initConnectionButtonTab3() {
-        dbIpAddress = dbh.getIp();
-        ipAddressTextFieldTab3.setText(dbIpAddress);
-
         initConnectionButton(connectionButtonTab3, ipAddressTextFieldTab3, TAG_TAB_3);
     }
 
@@ -937,7 +927,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                                 errMsgInvalidInput, Toast.LENGTH_SHORT).show();
                     } else {
                         float value = Float.parseFloat(velocity);
-                        value = value*1.5f;
+                        value = value * 1.5f;
                         YAxis left_Y_Axis;
                         left_Y_Axis = debugAngleChart.getAxisLeft();
                         left_Y_Axis.setAxisMaximum(value);
@@ -1162,11 +1152,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     @Override
     public float getFrequency(int tabId) {
         if (tabId == TAB_ID_2) {
-            return Integer.parseInt(editFrequencyTab2.getText().toString());
+            return Float.parseFloat(editFrequencyTab2.getText().toString());
         }
 
         if (tabId == TAB_ID_3) {
-            return Integer.parseInt(editFrequencyTab3.getText().toString());
+            return Float.parseFloat(editFrequencyTab3.getText().toString());
         }
 
         return 0;
