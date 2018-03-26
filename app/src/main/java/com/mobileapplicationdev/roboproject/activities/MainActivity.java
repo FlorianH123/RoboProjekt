@@ -212,7 +212,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RobotProfile selectedRobotProfile = profileList.get(position);
-                Toast.makeText(MainActivity.this, selectedRobotProfile.toString() + "", Toast.LENGTH_SHORT).show();
 
                 // wenn die id = 0 ist bedeutet dies das der Benutzer
                 // "neues Profil" ausgewählt hat. Für dieses Profil wird der Bearbeitungs Dialog
@@ -371,9 +370,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     }
 
                     dialog.dismiss();
-                } catch (Exception e) {
-                    Toast.makeText(MainActivity.this, "Please Check your input values",
-                            Toast.LENGTH_SHORT).show();
+                } catch (IllegalArgumentException ex) {
+                    Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+                } catch (Exception ex){
+                    Toast.makeText(MainActivity.this, "Please check your input values!",
+                            Toast.LENGTH_LONG).show();
                 }
 
                 Log.d("Preference", robotName.getText().toString());
