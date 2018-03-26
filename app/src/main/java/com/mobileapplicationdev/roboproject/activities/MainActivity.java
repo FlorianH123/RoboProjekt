@@ -91,6 +91,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final String TAG_TAB_2 = "Tag_Tab2";
     public static final String TAG_TAB_3 = "Tag_Tab3";
 
+    public static final String DELETE_PROFILE = "Löschen";
+    public static final String VIEW_PROFILE = "View";
+    public static final String EDIT_PROFILE = "Bearbeiten";
+
     public static final int TAB_ID_1 = 1;
     public static final int TAB_ID_2 = 2;
     public static final int TAB_ID_3 = 3;
@@ -257,14 +261,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String userAction = item.getTitle().toString();
 
         switch (userAction) {
-            case "Löschen":
-                Log.d("View", "Löschen");
+            case DELETE_PROFILE:
+                Log.d(VIEW_PROFILE, DELETE_PROFILE);
                 profileList.remove(selectedProfile);
                 dbh.deleteProfile(selectedProfile.getId());
                 profileAdapter.notifyDataSetChanged();
                 break;
 
-            case "Bearbeiten":
+            case EDIT_PROFILE:
                 editProfileDialog(selectedProfile);
                 break;
         }
