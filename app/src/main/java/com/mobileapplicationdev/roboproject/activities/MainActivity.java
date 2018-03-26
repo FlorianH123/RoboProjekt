@@ -360,8 +360,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         profileAdapter.notifyDataSetChanged();
                     }
 
-                } catch (Exception e) {
-                    Toast.makeText(MainActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
+                } catch (Exception ex) {
+                    //Toast.makeText(MainActivity.this, "Profil konnte nicht angelegt werden!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Fehler beim Erstellen: " + ex.getMessage() , Toast.LENGTH_LONG).show();
                 }
 
                 // TODO Speichern funktioniert noch nicht so ganz... whyever
