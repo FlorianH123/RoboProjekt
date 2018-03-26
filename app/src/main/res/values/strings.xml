@@ -17,9 +17,17 @@
     <string name="graph_linear">Linearer Graph</string>
     <!---->
 
+    <!-- robot Profil -->
+    <string name="name_not_empty">Name darf nicht leer sein!</string>
+    <string name="ip_not_valid">Angegebene IP entspricht nicht den IP-Richtlinien!</string>
+    <string name="port_not_valid">ist kleiner als 0 oder größer als 65535!</string>
+    <string name="wrong_speed">Geschwindigkeit darf nicht 0 oder negativ sein!</string>
+    <string name="wrong_frequency">Frequenz darf nicht 0 oder negativ sein!</string>
+
     <!-- General Profil Strings -->
     <string name="delete_profile">Löschen</string>
     <string name="edit_profile">Bearbeiten</string>
+    <string name="new_profile">Neues Profil anlegen</string>
 
     <!-- Settings Strings -->
     <string name="settings_title">Einstellungen</string>
