@@ -2,11 +2,9 @@ package com.mobileapplicationdev.roboproject.models;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -22,7 +20,7 @@ public class ProfileAdapter extends BaseAdapter {
     public ProfileAdapter(Activity activity, List<RobotProfile> profileList) {
         this.activity = activity;
         this.profileList = profileList;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override

@@ -91,6 +91,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final String TAG_TAB_2 = "Tag_Tab2";
     public static final String TAG_TAB_3 = "Tag_Tab3";
 
+    public static final String DELETE_PROFILE = "Löschen";
+    public static final String VIEW_PROFILE = "View";
+    public static final String EDIT_PROFILE = "Bearbeiten";
+
     public static final int TAB_ID_1 = 1;
     public static final int TAB_ID_2 = 2;
     public static final int TAB_ID_3 = 3;
@@ -115,7 +119,13 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private ProfileAdapter profileAdapter;
     private RobotProfile selectedProfileOnLongClick;
     private int previousSelectedItem = 0;
+    private ListView profileListView;
 
+    /**
+     * Initialize all parts of the App which are needed on the MainActivity
+     * and binds via IntentService the socketService to the mainActivity
+     * @param savedInstanceState to safe the state of the instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,8 +207,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         engineSpinnerTab3 = findViewById(R.id.spinner_engines_tab3);
     }
 
+    /**
+     * initialize the Profile List and sets the OnItemClick Listener
+     */
     private void initProfileList() {
-        final ListView profileListView = findViewById(R.id.profileListView);
+        profileListView = findViewById(R.id.profileListView);
         this.profileList = loadProfiles();
 
         profileAdapter = new ProfileAdapter(this, profileList);
@@ -216,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     editProfileDialog(selectedRobotProfile);
                 } else {
                     selectProfile(selectedRobotProfile);
+
                     profileListView.getChildAt(previousSelectedItem).setBackgroundColor(Color.TRANSPARENT);
                     profileListView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorJoyStickBase));
                     previousSelectedItem = position;
@@ -231,9 +245,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 return false;
             }
         });
+
         registerForContextMenu(profileListView);
     }
 
+    /**
+     * Initialize the Context menu to edit or delete the profiles in the list
+     * @param menu profile Menu to edit
+     * @param view the view to identify the profileListView
+     * @param menuInfo menuInfo
+     */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == R.id.profileListView && selectedProfileOnLongClick.getId() > 0) {
@@ -247,6 +268,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    /**
+     * Execute the user input to delete or edit the profiles
+     * @param item delete or edit
+     * @return true
+     */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -256,20 +282,29 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String userAction = item.getTitle().toString();
 
         switch (userAction) {
-            case "Löschen":
-                Log.d("View", "Löschen");
+            case DELETE_PROFILE:
+
+                if (previousSelectedItem == selectedItemPosition) {
+                    profileListView.setSelection(0);
+                }
+
+                Log.d(VIEW_PROFILE, DELETE_PROFILE);
                 profileList.remove(selectedProfile);
                 dbh.deleteProfile(selectedProfile.getId());
                 profileAdapter.notifyDataSetChanged();
                 break;
 
-            case "Bearbeiten":
+            case EDIT_PROFILE:
                 editProfileDialog(selectedProfile);
                 break;
         }
         return true;
     }
 
+    /**
+     * sets the Profile data on the MainActivity
+     * @param robotProfile need to read out the needed data
+     */
     private void selectProfile(final RobotProfile robotProfile) {
         setPreferences(robotProfile);
 
@@ -281,6 +316,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));
     }
 
+    /**
+     * dialog to edit a existing Profiles
+     * @param robotProfile the profile which should be edited
+     */
     private void editProfileDialog(final RobotProfile robotProfile) {
         final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
         final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
@@ -401,6 +440,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return profileList;
     }
 
+    /**
+     * sets the Preferences
+     * @param robotProfile get data from the profile
+     */
     private void setPreferences(RobotProfile robotProfile) {
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREFERENCE_FILE,
                 Context.MODE_PRIVATE);
@@ -421,7 +464,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         editor.apply();
     }
 
+    /**
+     * set Default Profile Vaues
+     * @param robotProfile default profile
+     */
     private void setDefaultProfileValues(RobotProfile robotProfile) {
+
         ipAddressTextFieldTab1.setText(robotProfile.getIp());
         ipAddressTextFieldTab2.setText(robotProfile.getIp());
         ipAddressTextFieldTab3.setText(robotProfile.getIp());
@@ -636,32 +684,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 socketService.openDebugSocket(ipAddress,
                         Integer.parseInt(getPreferenceValue(2)), waiter, TAB_ID_3);
             }
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-
-// Options Menu ------------------------------------------------------------------------------------
-
-    /**
-     * Creates the options menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        return true;
-    }
-
-    /**
-     * Options Listener
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -1309,6 +1331,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         }
     }
 
+    /**
+     * return current Graph Mode
+     * @param tabId tabID
+     * @return line data set mode
+     */
     public LineDataSet.Mode getGraphMode(int tabId) {
         if (tabId == TAB_ID_2) {
             return graphModeTab2;

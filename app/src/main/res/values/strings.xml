@@ -17,7 +17,12 @@
     <string name="graph_linear">Linearer Graph</string>
     <!---->
 
+    <!-- Utils string -->
+    <string name="setpoint">Soll-Wert</string>
+    <string name="actual_value">Ist-Wert</string>
+
     <!-- robot Profil -->
+
     <string name="name_not_empty">Name darf nicht leer sein!</string>
     <string name="ip_not_valid">Angegebene IP entspricht nicht den IP-Richtlinien!</string>
     <string name="port_not_valid">ist kleiner als 0 oder größer als 65535!</string>

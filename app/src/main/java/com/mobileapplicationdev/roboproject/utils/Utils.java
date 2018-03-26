@@ -1,12 +1,14 @@
 package com.mobileapplicationdev.roboproject.utils;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.mobileapplicationdev.roboproject.R;
 
 @SuppressWarnings("unused")
 public class Utils {
@@ -78,7 +80,7 @@ public class Utils {
     }
 
     public static LineDataSet createSetTwo() {
-        LineDataSet set = new LineDataSet(null, "Soll-Wert");
+        LineDataSet set = new LineDataSet(null, Resources.getSystem().getString(R.string.setpoint));
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.rgb("#B40404"));
@@ -98,7 +100,7 @@ public class Utils {
     }
 
     public static LineDataSet createSet(LineDataSet.Mode mode) {
-        LineDataSet set = new LineDataSet(null, "Ist-Wert");
+        LineDataSet set = new LineDataSet(null, Resources.getSystem().getString(R.string.actual_value));
 
         set.setMode(mode);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
