@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private ProfileAdapter profileAdapter;
     private RobotProfile selectedProfileOnLongClick;
     private int previousSelectedItem = 0;
+    private ListView profileListView;
 
     /**
      * Initialize all parts of the App which are needed on the MainActivity
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * initialize the Profile List and sets the OnItemClick Listener
      */
     private void initProfileList() {
-        final ListView profileListView = findViewById(R.id.profileListView);
+        profileListView = findViewById(R.id.profileListView);
         this.profileList = loadProfiles();
 
         profileAdapter = new ProfileAdapter(this, profileList);
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     editProfileDialog(selectedRobotProfile);
                 } else {
                     selectProfile(selectedRobotProfile);
+
                     profileListView.getChildAt(previousSelectedItem).setBackgroundColor(Color.TRANSPARENT);
                     profileListView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorJoyStickBase));
                     previousSelectedItem = position;
@@ -243,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 return false;
             }
         });
+
         registerForContextMenu(profileListView);
     }
 
@@ -280,6 +283,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         switch (userAction) {
             case DELETE_PROFILE:
+
+                if (previousSelectedItem == selectedItemPosition) {
+                    profileListView.setSelection(0);
+                }
+
                 Log.d(VIEW_PROFILE, DELETE_PROFILE);
                 profileList.remove(selectedProfile);
                 dbh.deleteProfile(selectedProfile.getId());
@@ -461,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * @param robotProfile default profile
      */
     private void setDefaultProfileValues(RobotProfile robotProfile) {
+
         ipAddressTextFieldTab1.setText(robotProfile.getIp());
         ipAddressTextFieldTab2.setText(robotProfile.getIp());
         ipAddressTextFieldTab3.setText(robotProfile.getIp());
@@ -675,32 +684,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 socketService.openDebugSocket(ipAddress,
                         Integer.parseInt(getPreferenceValue(2)), waiter, TAB_ID_3);
             }
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-
-// Options Menu ------------------------------------------------------------------------------------
-
-    /**
-     * Creates the options menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        return true;
-    }
-
-    /**
-     * Options Listener
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
     }
 
