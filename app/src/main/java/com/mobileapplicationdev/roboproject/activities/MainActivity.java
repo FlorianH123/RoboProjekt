@@ -935,7 +935,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                         float value = Float.parseFloat(velocity);
                         value = value*1.5f;
                         YAxis left_Y_Axis;
-                        left_Y_Axis = debugVelocityChart.getAxisLeft();
+                        left_Y_Axis = debugAngleChart.getAxisLeft();
                         left_Y_Axis.setAxisMaximum(value);
 
                         connectionButtonTab3.setEnabled(false);
