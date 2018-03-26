@@ -13,7 +13,6 @@ import com.mobileapplicationdev.roboproject.activities.MainActivity;
  */
 
 public class RobotProfile {
-    private static final String TAG = "RobotProfile";
     private String name;
     private String ip;
     private int portOne;
@@ -23,7 +22,7 @@ public class RobotProfile {
     private float maxX;
     private float maxY;
     private int id;
-    private float frequenz;
+    private float frequency;
 
     private static final String REGEX =
             "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
@@ -31,7 +30,8 @@ public class RobotProfile {
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
 
-    public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree, float maxAngularSpeed, float maxX, float maxY, float frequenz) {
+    public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree,
+                        float maxAngularSpeed, float maxX, float maxY, float frequency) {
         checkName(name);
         this.name = name;
 
@@ -56,8 +56,8 @@ public class RobotProfile {
         checkMaxSpeed(maxY);
         this.maxY = maxY;
 
-        checkFreq(frequenz);
-        this.frequenz = frequenz;
+        checkFreq(frequency);
+        this.frequency = frequency;
     }
 
     public RobotProfile() {
@@ -161,13 +161,13 @@ public class RobotProfile {
         this.id = id;
     }
 
-    public float getFrequenz() {
-        return frequenz;
+    public float getFrequency() {
+        return frequency;
     }
 
-    public void setFrequenz(float frequenz) {
-        checkFreq(frequenz);
-        this.frequenz = frequenz;
+    public void setFrequency(float frequency) {
+        checkFreq(frequency);
+        this.frequency = frequency;
     }
 
     public float getMaxX() {
@@ -190,7 +190,6 @@ public class RobotProfile {
 
     @Override
     public String toString() {
-        String s = name + " id=" + id;
-        return s;
+        return name + " id=" + id;
     }
 }
