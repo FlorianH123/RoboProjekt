@@ -290,12 +290,22 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         switch (userAction) {
             case DELETE_PROFILE:
-
                 if (previousSelectedItem == selectedItemPosition) {
-                    profileListView.setSelection(0);
+                    profileListView.getChildAt(selectedItemPosition)
+                            .setBackgroundColor(Color.TRANSPARENT);
+                    profileListView.getChildAt(0).setBackgroundColor(
+                            getResources().getColor(R.color.colorJoyStickBase));
+                    setPreferences(profileList.get(0));
+                    setDefaultProfileValues(profileList.get(0));
+                    previousSelectedItem = 0;
+                } else if (previousSelectedItem > selectedItemPosition) {
+                    profileListView.getChildAt(previousSelectedItem)
+                            .setBackgroundColor(Color.TRANSPARENT);
+                    profileListView.getChildAt(previousSelectedItem - 1).setBackgroundColor(
+                            getResources().getColor(R.color.colorJoyStickBase));
+                    previousSelectedItem = previousSelectedItem - 1;
                 }
 
-                Log.d(VIEW_PROFILE, DELETE_PROFILE);
                 profileList.remove(selectedProfile);
                 dbh.deleteProfile(selectedProfile.getId());
                 profileAdapter.notifyDataSetChanged();
