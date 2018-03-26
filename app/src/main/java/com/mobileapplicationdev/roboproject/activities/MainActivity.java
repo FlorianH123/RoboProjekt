@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private float y;
     private float rot_z = 0.0f;
 
-    private String dbIpAddress;
     private DatabaseHelper dbh;
 
     private LineDataSet.Mode graphModeTab2 = LineDataSet.Mode.CUBIC_BEZIER;
@@ -132,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         setSupportActionBar(toolbar);
 
         dbh = new DatabaseHelper(this);
-        dbIpAddress = dbh.getIp();
 
         // Initialise components inside  the main activity
         initAllComponents();
@@ -229,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedProfileOnLongClick = profileList.get(position);
-                //Toast.makeText(MainActivity.this, selectedProfileOnLongClick.toString() + "", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -257,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         String userAction = item.getTitle().toString();
 
-        switch(userAction) {
+        switch (userAction) {
             case "Löschen":
                 Log.d("View", "Löschen");
                 profileList.remove(selectedProfile);
@@ -372,9 +368,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     Toast.makeText(MainActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
                 }
 
-                // TODO Speichern funktioniert noch nicht so ganz... whyever
                 Log.d("Preference", robotName.getText().toString());
-
             }
         });
 
@@ -393,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         List<RobotProfile> profileList = new ArrayList<>();
 
         RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0",
-                0, 0, 0, 0, 0, 0,0);
+                0, 0, 0, 0, 0, 0, 0);
         newProfile.setId(-1);
 
         profileList.addAll(dbh.getAllProfiles());
@@ -665,9 +659,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Init connection button for tab1
      */
     private void initConnectionButtonTab1() {
-        dbIpAddress = dbh.getIp();
-        ipAddressTextFieldTab1.setText(dbIpAddress);
-
         initConnectionButton(connectionButtonTab1, ipAddressTextFieldTab1, TAG_TAB_1);
     }
 
@@ -772,9 +763,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Init connection button for tab 2
      */
     private void initConnectionButtonTab2() {
-        dbIpAddress = dbh.getIp();
-        ipAddressTextFieldTab2.setText(dbIpAddress);
-
         initConnectionButton(connectionButtonTab2, ipAddressTextFieldTab2, TAG_TAB_2);
     }
 
@@ -819,7 +807,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                                 errMsgInvalidInput, Toast.LENGTH_SHORT).show();
                     } else {
                         float value = Float.parseFloat(velocity);
-                        value = value*1.5f;
+                        value = value * 1.5f;
                         YAxis left_Y_Axis;
                         left_Y_Axis = debugVelocityChart.getAxisLeft();
                         left_Y_Axis.setAxisMaximum(value);
@@ -906,9 +894,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * Init connection button for tab 3
      */
     private void initConnectionButtonTab3() {
-        dbIpAddress = dbh.getIp();
-        ipAddressTextFieldTab3.setText(dbIpAddress);
-
         initConnectionButton(connectionButtonTab3, ipAddressTextFieldTab3, TAG_TAB_3);
     }
 
@@ -942,7 +927,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                                 errMsgInvalidInput, Toast.LENGTH_SHORT).show();
                     } else {
                         float value = Float.parseFloat(velocity);
-                        value = value*1.5f;
+                        value = value * 1.5f;
                         YAxis left_Y_Axis;
                         left_Y_Axis = debugAngleChart.getAxisLeft();
                         left_Y_Axis.setAxisMaximum(value);
