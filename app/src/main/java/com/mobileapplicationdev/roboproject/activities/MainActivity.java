@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private List<RobotProfile> profileList;
     private ProfileAdapter profileAdapter;
     private RobotProfile selectedProfileOnLongClick;
+    private int previousSelectedItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,11 +150,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initResetButtonTab3();
         initGraphToggleButtonTab2();
         initGraphToggleButtonTab3();
-        boolean testi = dbh.insertDefaultProfileIfDbIsEmpty();
-        Toast.makeText(this, "TESTI: " + testi, Toast.LENGTH_SHORT).show();
-        initProfileList();
 
+        initProfileList();
         setPreferences(profileList.get(0));
+        setDefaultProfileValues(profileList.get(0));
     }
 
     /**
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initProfileList() {
-        ListView profileListView = findViewById(R.id.profileListView);
+        final ListView profileListView = findViewById(R.id.profileListView);
         this.profileList = loadProfiles();
 
         profileAdapter = new ProfileAdapter(this, profileList);
@@ -217,6 +217,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     editProfileDialog(selectedRobotProfile);
                 } else {
                     selectProfile(selectedRobotProfile);
+                    profileListView.getChildAt(previousSelectedItem).setBackgroundColor(Color.TRANSPARENT);
+                    profileListView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorJoyStickBase));
+                    previousSelectedItem = position;
                 }
 
             }
@@ -275,8 +278,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         ipAddressTextFieldTab2.setText(robotProfile.getIp());
         ipAddressTextFieldTab3.setText(robotProfile.getIp());
 
-        editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequenz()));
-        editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequenz()));
+        editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
+        editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));
     }
 
     private void editProfileDialog(final RobotProfile robotProfile) {
@@ -299,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         String robotMaxXAsString = Float.toString(robotProfile.getMaxX());
         String robotMaxYAsString = Float.toString(robotProfile.getMaxY());
         String robotMaxAngularSpeedAsString = Float.toString(robotProfile.getMaxAngularSpeed());
-        String robotFrequencyAsString = Float.toString(robotProfile.getFrequenz());
+        String robotFrequencyAsString = Float.toString(robotProfile.getFrequency());
 
         robotName.setEnabled(true);
 
@@ -365,7 +368,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
                     dialog.dismiss();
                 } catch (Exception e) {
-                    Toast.makeText(MainActivity.this, "Please Check your input values", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Please Check your input values",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 Log.d("Preference", robotName.getText().toString());
@@ -414,6 +418,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         editor.putString(portKeys[5], String.valueOf(robotProfile.getMaxY()));
 
         editor.apply();
+    }
+
+    private void setDefaultProfileValues(RobotProfile robotProfile) {
+        ipAddressTextFieldTab1.setText(robotProfile.getIp());
+        ipAddressTextFieldTab2.setText(robotProfile.getIp());
+        ipAddressTextFieldTab3.setText(robotProfile.getIp());
+
+        editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
+        editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));
     }
 
     /**

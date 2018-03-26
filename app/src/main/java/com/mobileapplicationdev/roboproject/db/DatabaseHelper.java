@@ -122,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(MAX_ANG_PRO_NAME, profile.getMaxAngularSpeed());
             values.put(MAX_X_PRO_NAME, profile.getMaxX());
             values.put(MAX_Y_PRO_NAME, profile.getMaxY());
-            values.put(FREQ_PRO_NAME, profile.getFrequenz());
+            values.put(FREQ_PRO_NAME, profile.getFrequency());
 
             long id = db.insert(PRO_TABLE_NAME, null, values);
 
@@ -146,7 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(MAX_ANG_PRO_NAME, profile.getMaxAngularSpeed());
             values.put(MAX_X_PRO_NAME, profile.getMaxX());
             values.put(MAX_Y_PRO_NAME, profile.getMaxY());
-            values.put(FREQ_PRO_NAME, profile.getFrequenz());
+            values.put(FREQ_PRO_NAME, profile.getFrequency());
 
             db.update(PRO_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(profile.getId())});
             return true;
@@ -180,7 +180,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     profile.setMaxAngularSpeed(c.getFloat(c.getColumnIndex(MAX_ANG_PRO_NAME)));
                     profile.setMaxX(c.getFloat(c.getColumnIndex(MAX_X_PRO_NAME)));
                     profile.setMaxY(c.getFloat(c.getColumnIndex(MAX_Y_PRO_NAME)));
-                    profile.setFrequenz(c.getFloat(c.getColumnIndex(FREQ_PRO_NAME)));
+                    profile.setFrequency(c.getFloat(c.getColumnIndex(FREQ_PRO_NAME)));
 
                     profiles.add(profile);
 

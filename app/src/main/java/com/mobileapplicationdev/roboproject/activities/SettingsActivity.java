@@ -183,7 +183,7 @@ public class SettingsActivity extends PreferenceActivity {
         String robotMaxXAsString = Float.toString(robotProfile.getMaxX());
         String robotMaxYAsString = Float.toString(robotProfile.getMaxY());
         String robotMaxAngularSpeedAsString = Float.toString(robotProfile.getMaxAngularSpeed());
-        String robotFrequencyAsString = Float.toString(robotProfile.getFrequenz());
+        String robotFrequencyAsString = Float.toString(robotProfile.getFrequency());
 
         if (robotProfile != null) {
             Log.d("Preference", "hallo");
