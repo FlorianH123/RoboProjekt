@@ -208,7 +208,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RobotProfile selectedRobotProfile = profileList.get(position);
-                Toast.makeText(MainActivity.this, selectedRobotProfile.toString() + "", Toast.LENGTH_SHORT).show();
 
                 // wenn die id = 0 ist bedeutet dies das der Benutzer
                 // "neues Profil" ausgewählt hat. Für dieses Profil wird der Bearbeitungs Dialog
