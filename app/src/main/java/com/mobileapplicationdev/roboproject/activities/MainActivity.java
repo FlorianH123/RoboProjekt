@@ -689,32 +689,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
 // -------------------------------------------------------------------------------------------------
 
-// Options Menu ------------------------------------------------------------------------------------
-
-    /**
-     * Creates the options menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        return true;
-    }
-
-    /**
-     * Options Listener
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settingsMenu) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-
 // TAB 1 -------------------------------------------------------------------------------------------
 
     /**
