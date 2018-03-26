@@ -20,21 +20,10 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
-
     private static final String DATABASE_NAME = "RoboController.db";
     private static final int DATABASE_VERSION = 6;
 
-    //TODO start
-    private static final String ADDR_TABLE_NAME = "ipadress";
-
-    private static final String ID_ADDR_NAME = "id";
-    private static final String ID_ADDR_TYPE = "INTEGER";
-
-    private static final String IP_ADDR_NAME = "ip";
-    private static final String IP_ADDR_TYPE = "TEXT";
-    //TODO end
-
-    //Constants for the profiles table:
+    //Constants for the profiles table
     //tablename:
     private static final String PRO_TABLE_NAME = "profiles";
     //id:
@@ -82,20 +71,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     MAX_Y_PRO_NAME + " " + MAX_Y_PRO_TYPE + ", " +
                     FREQ_PRO_NAME + " " + FREQ_PRO_TYPE + ")";
 
-    //TODO start
-    private static final String ADDR_TABLE_CREATE =
-            "CREATE TABLE " + ADDR_TABLE_NAME + "(" +
-                    ID_ADDR_NAME + " " + ID_ADDR_TYPE + ", " +
-                    IP_ADDR_NAME + " " + IP_ADDR_TYPE + ") ";
-
-    private static final String REGEX =
-            "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
-                    "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
-                    "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
-                    "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
-    //TODO end
-
-
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -106,13 +81,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (Exception ex) {
             Log.e(TAG, "Error creating table: " + PRO_TABLE_NAME + "!", ex);
         }
-        //TODO start
-        try {
-            db.execSQL(ADDR_TABLE_CREATE);
-        } catch (Exception ex) {
-            Log.e(TAG, "Error creating table: " + ADDR_TABLE_NAME + "!", ex);
-        }
-        //TODO end
     }
 
     /**
@@ -178,7 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Return all profiles in the Database
+     * Returns all profiles in the Database
      *
      * @return Arraylist filled with all profiles from the database, null if there is an exception
      */
@@ -276,76 +244,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    //TODO start
-    /**
-     * Funkitonen zur IP-Adress-Tabelle
-     */
-
-    public boolean updateIp(String ip) {
-        try {
-            if (ip.matches(REGEX)) {
-                SQLiteDatabase db = this.getWritableDatabase();
-                ContentValues values = new ContentValues();
-
-                db.delete(ADDR_TABLE_NAME, "id = ?", new String[]{Integer.toString(0)});
-
-                values.put(ID_ADDR_NAME, 0);
-                values.put(IP_ADDR_NAME, ip);
-
-                db.insert(ADDR_TABLE_NAME, null, values);
-                return true;
-            } else {
-                //Keine Gültige IP
-                return false;
-            }
-        } catch (Exception ex) {
-            //DatenbankError
-            return false;
-        }
-    }
-
-    public String getIp() {
-        String ip = "0.0.0.0";
-        try {
-            SQLiteDatabase db = this.getReadableDatabase();
-
-            String selectQuery = "SELECT * " +
-                    " FROM " + ADDR_TABLE_NAME +
-                    " WHERE " + ID_ADDR_NAME + " = 0";
-
-            Cursor c = db.rawQuery(selectQuery, null);
-
-            if (c != null) {
-                c.moveToFirst();
-                ip = c.getString(c.getColumnIndex(IP_ADDR_NAME));
-            }
-
-            return ip;
-        } catch (Exception ex) {
-            return ip;
-        }
-    }
-    //TODO end
-
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // on upgrade drop older tables
+        //on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + PRO_TABLE_NAME);
-        //TODO delete
-        db.execSQL("DROP TABLE IF EXISTS " + ADDR_TABLE_NAME);
-        // create new tables
+        //create new tables
         onCreate(db);
     }
 
     //since API-level 11
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVer, int newVer) {
-        // on upgrade drop older tables
+        //on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + PRO_TABLE_NAME);
-        //TODO delete
-        db.execSQL("DROP TABLE IF EXISTS " + ADDR_TABLE_NAME);
-        // create new tables
+        //create new tables
         onCreate(db);
     }
 
