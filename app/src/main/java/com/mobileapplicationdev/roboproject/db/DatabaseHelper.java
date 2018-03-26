@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * This class contains all connections to the Database
  * insert, update and delete all Settings of the RoboProfiles
  *
- * Created by Hinsburger on 31.01.2018.
+ * Created by Hinsburger on 31.02.2018.
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {

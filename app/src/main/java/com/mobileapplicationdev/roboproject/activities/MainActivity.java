@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initResetButtonTab3();
         initGraphToggleButtonTab2();
         initGraphToggleButtonTab3();
-
+        dbh.insertDefaultProfileIfDbIsEmpty();
         initProfileList();
         setPreferences(profileList.get(0));
         setDefaultProfileValues(profileList.get(0));
