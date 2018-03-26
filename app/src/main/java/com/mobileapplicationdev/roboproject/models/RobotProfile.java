@@ -30,7 +30,7 @@ public class RobotProfile {
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
 
     /**
-     * full robo Profile
+     * full robot profile
      * @param name name
      * @param ip ip
      * @param portOne portOne
