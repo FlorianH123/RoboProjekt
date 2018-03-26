@@ -367,9 +367,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     }
 
                     dialog.dismiss();
-                } catch (Exception e) {
-                    Toast.makeText(MainActivity.this, "Please Check your input values",
-                            Toast.LENGTH_SHORT).show();
+                } catch (IllegalArgumentException ex) {
+                    Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+                } catch (Exception ex){
+                    Toast.makeText(MainActivity.this, "Please check your input values!",
+                            Toast.LENGTH_LONG).show();
                 }
 
                 Log.d("Preference", robotName.getText().toString());
