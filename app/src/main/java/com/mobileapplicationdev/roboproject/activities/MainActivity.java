@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final int TAB_ID_2 = 2;
     public static final int TAB_ID_3 = 3;
 
+    private static final String SHARED_PREFERENCE_FILE = "robotProfileValues";
+    private RobotProfile standardProfile;
+
     private final Object waiter = new Object();
 
     private SocketService socketService;
@@ -127,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         // Set toolbar icon for settings
         Toolbar toolbar = findViewById(R.id.toolbar);
-        //TODO da knallt er
         setSupportActionBar(toolbar);
 
         dbh = new DatabaseHelper(this);
@@ -152,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initGraphToggleButtonTab2();
         initGraphToggleButtonTab3();
         initProfileList();
+
+        setPreferences(standardProfile);
     }
 
     /**
@@ -232,8 +236,12 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
         if (view.getId() == R.id.profileListView && selectedProfileOnLongClick.getId() > 0) {
-            menu.setHeaderTitle("Title");
-            menu.add("Löschen");
+            //menu.setHeaderTitle("Title");
+
+            if (selectedProfileOnLongClick.getId() != 1) {
+                menu.add("Löschen");
+            }
+
             menu.add("Bearbeiten");
         }
     }
@@ -262,7 +270,14 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void selectProfile(final RobotProfile robotProfile) {
+        setPreferences(robotProfile);
 
+        ipAddressTextFieldTab1.setText(robotProfile.getIp());
+        ipAddressTextFieldTab2.setText(robotProfile.getIp());
+        ipAddressTextFieldTab3.setText(robotProfile.getIp());
+
+        editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequenz()));
+        editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequenz()));
     }
 
     private void editProfileDialog(final RobotProfile robotProfile) {
@@ -324,7 +339,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     float frequency = (Float.parseFloat(robotFrequency.getText().toString()));
 
                     //Create a RobotProfile Object
-                    RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree, maxAngularSpeed, maxX, maxY, frequency);
+                    RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree,
+                            maxAngularSpeed, maxX, maxY, frequency);
 
                     if (robotProfile.getId() > 0) {
                         dbh.updateProfile(profile);
@@ -364,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private List<RobotProfile> loadProfiles() {
         List<RobotProfile> profileList = new ArrayList<>();
 
-        RobotProfile standardProfile = new RobotProfile("Default", "0.0.0.0", 1000, 1000, 1000, 0.5f, 0.5f, 0.6f, 4f);
+        standardProfile = new RobotProfile("Default", "192.168.0.29", 15002, 15002, 25002, 0.5f, 0.5f, 0.6f, 4f);
         RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0", 0, 0, 0, 0, 0, 0,0);
 
         standardProfile.setId(1);
@@ -377,6 +393,26 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         return profileList;
     }
 
+    private void setPreferences(RobotProfile robotProfile) {
+        SharedPreferences sharedPref = getSharedPreferences(SHARED_PREFERENCE_FILE,
+                Context.MODE_PRIVATE);
+
+        Resources res = getResources();
+        String[] portKeys = res.getStringArray(R.array.settings_port_key);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putString(portKeys[0], String.valueOf(robotProfile.getPortOne()));
+        editor.putString(portKeys[1], String.valueOf(robotProfile.getPortTwo()));
+        editor.putString(portKeys[2], String.valueOf(robotProfile.getPortThree()));
+
+        editor.putString(portKeys[3], String.valueOf(robotProfile.getMaxAngularSpeed()));
+
+        editor.putString(portKeys[4], String.valueOf(robotProfile.getMaxX()));
+        editor.putString(portKeys[5], String.valueOf(robotProfile.getMaxY()));
+
+        editor.apply();
+    }
+
     /**
      * Returns the value of a shared preference
      *
@@ -384,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      * @return the value of the preference
      */
     private String getPreferenceValue(int preferenceId) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sp = getSharedPreferences(SHARED_PREFERENCE_FILE, Context.MODE_PRIVATE);
 
         Resources res = getResources();
         String[] portKeys = res.getStringArray(R.array.settings_port_key);
@@ -408,24 +444,25 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         TabHost th = findViewById(R.id.tabHost);
         th.setup();
 
+        // TAB 0 Profiles
         TabHost.TabSpec specs = th.newTabSpec(TAG_TAB_0);
         specs.setContent(R.id.tab0);
         specs.setIndicator(tabNameTab0);
         th.addTab(specs);
 
-        // TAB 1
+        // TAB 1 Control
         specs = th.newTabSpec(TAG_TAB_1);
         specs.setContent(R.id.tab1);
         specs.setIndicator(tabNameTab1);
         th.addTab(specs);
 
-        // TAB 2
+        // TAB 2 Velocity Debug
         specs = th.newTabSpec(TAG_TAB_2);
         specs.setContent(R.id.tab2);
         specs.setIndicator(tabNameTab2);
         th.addTab(specs);
 
-        // TAB 3
+        // TAB 3 Angle Debug
         specs = th.newTabSpec(TAG_TAB_3);
         specs.setContent(R.id.tab3);
         specs.setIndicator(tabNameTab3);
