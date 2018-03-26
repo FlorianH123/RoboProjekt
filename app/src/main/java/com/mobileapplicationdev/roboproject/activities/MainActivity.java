@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     /**
      * Initialize all parts of the App which are needed on the MainActivity
      * and binds via IntentService the socketService to the mainActivity
-     * @param savedInstanceState
+     * @param savedInstanceState to safe the state of the instance
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,9 +248,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Initialize the Context menu to edit or delete the profiles in the list
-     * @param menu
-     * @param view
-     * @param menuInfo
+     * @param menu profile Menu to edit
+     * @param view the view to identify the profileListView
+     * @param menuInfo menuInfo
      */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
@@ -267,8 +267,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * Execute the user input to delete or edit the profiles
-     * @param item
-     * @return
+     * @param item delete or edit
+     * @return true
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * sets the Profile data on the MainActivity
-     * @param robotProfile
+     * @param robotProfile need to read out the needed data
      */
     private void selectProfile(final RobotProfile robotProfile) {
         setPreferences(robotProfile);
@@ -309,8 +309,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     /**
-     * dialog to create new Profiles
-     * @param robotProfile
+     * dialog to edit a existing Profiles
+     * @param robotProfile the profile which should be edited
      */
     private void editProfileDialog(final RobotProfile robotProfile) {
         final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
@@ -434,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * sets the Preferences
-     * @param robotProfile
+     * @param robotProfile get data from the profile
      */
     private void setPreferences(RobotProfile robotProfile) {
         SharedPreferences sharedPref = getSharedPreferences(SHARED_PREFERENCE_FILE,
@@ -458,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * set Default Profile Vaues
-     * @param robotProfile
+     * @param robotProfile default profile
      */
     private void setDefaultProfileValues(RobotProfile robotProfile) {
         ipAddressTextFieldTab1.setText(robotProfile.getIp());
@@ -1350,8 +1350,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
     /**
      * return current Graph Mode
-     * @param tabId
-     * @return
+     * @param tabId tabID
+     * @return line data set mode
      */
     public LineDataSet.Mode getGraphMode(int tabId) {
         if (tabId == TAB_ID_2) {
