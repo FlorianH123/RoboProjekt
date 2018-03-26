@@ -256,13 +256,16 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
         profileListView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                                       int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
                 profileListView.removeOnLayoutChangeListener(this);
 
                 View view = profileListView.getChildAt(0);
                 view.setBackgroundColor(getResources().getColor(R.color.profileListBackground));
             }
         });
+
         registerForContextMenu(profileListView);
     }
 

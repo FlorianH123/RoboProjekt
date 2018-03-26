@@ -16,8 +16,8 @@
     <dimen name="emrolab_logo_width">400dp</dimen>
     <dimen name="emrolab_logo_height">100dp</dimen>
 
-    <dimen name="robot_logo_width">400dp</dimen>
-    <dimen name="robot_logo_height">400dp</dimen>
+    <dimen name="robot_logo_width">300dp</dimen>
+    <dimen name="robot_logo_height">300dp</dimen>
 
     <dimen name="profile_list_view_width">600dp</dimen>
     <dimen name="profile_list_view_height">400dp</dimen>
