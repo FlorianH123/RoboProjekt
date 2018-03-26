@@ -253,11 +253,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 return false;
             }
         });
-
+        Log.d("test", String.valueOf(profileListView.getChildCount()));
         registerForContextMenu(profileListView);
-        View view = profileListView.getChildAt(0);
 
-        view.setBackgroundColor(getResources().getColor(R.color.profileListBackground));
+//        View view = profileListView.getChildgetChildAt(0);
+//        view.setBackgroundColor(getResources().getColor(R.color.profileListBackground));
     }
 
     /**
