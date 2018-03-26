@@ -241,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             menu.setHeaderTitle(selectedProfileOnLongClick.getName());
 
             if (selectedProfileOnLongClick.getId() != 1) {
-                menu.add(R.string.delete_profile);
+                menu.add(getString(R.string.delete_profile));
             }
 
-            menu.add(R.string.edit_profile);
+            menu.add(getString(R.string.edit_profile));
         }
     }
 
@@ -392,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private List<RobotProfile> loadProfiles() {
         List<RobotProfile> profileList = new ArrayList<>();
 
-        RobotProfile newProfile = new RobotProfile("Neus Profile anlegen", "0.0.0.0",
+        RobotProfile newProfile = new RobotProfile(getString(R.string.new_profile), "0.0.0.0",
                 0, 0, 0, 0, 0, 0, 0);
         newProfile.setId(-1);
 

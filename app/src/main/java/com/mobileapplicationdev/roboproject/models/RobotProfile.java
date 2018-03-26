@@ -1,5 +1,12 @@
 package com.mobileapplicationdev.roboproject.models;
 
+import android.app.Application;
+import android.content.Context;
+import android.content.res.Resources;
+
+import com.mobileapplicationdev.roboproject.R;
+import com.mobileapplicationdev.roboproject.activities.MainActivity;
+
 /**
  * Created by Frenchtoast on 20.03.2018.
  * This class contains all information about a robot profile
@@ -59,32 +66,32 @@ public class RobotProfile {
     private void checkName(String name){
         name = name.trim();
         if (name.isEmpty()){
-            throw new IllegalArgumentException("Name darf nicht leer sein!");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.name_not_empty));
         }
     }
 
     private void checkIp(String ip) {
         ip = ip.trim();
         if (!ip.matches(REGEX)) {
-            throw new IllegalArgumentException("Angegebene IP entspricht nicht den IP-Richtlinien!");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.ip_not_valid));
         }
     }
 
     private void checkPort(int port) {
         if (port < 0 || port > 65535) {
-            throw new IllegalArgumentException("Port=" + port + " ist kleiner als 0 oder größer als 65535!");
+            throw new IllegalArgumentException("Port=" + port + Resources.getSystem().getString(R.string.port_not_valid));
         }
     }
 
     private void checkMaxSpeed(float speed){
         if (speed < 0.0){
-            throw new IllegalArgumentException("Geschwindigkeit darf nicht 0 oder negativ sein!");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.wrong_speed));
         }
     }
 
     private void checkFreq(float freq){
         if(freq < 0.0){
-            throw new IllegalArgumentException("Frequenz darf nicht 0 oder negativ sein!");
+            throw new IllegalArgumentException(Resources.getSystem().getString(R.string.wrong_frequency));
         }
     }
 
