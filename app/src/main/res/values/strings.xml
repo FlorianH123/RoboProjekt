@@ -17,6 +17,10 @@
     <string name="graph_linear">Linearer Graph</string>
     <!---->
 
+    <!-- General Profil Strings -->
+    <string name="delete_profile">Löschen</string>
+    <string name="edit_profile">Bearbeiten</string>
+
     <!-- Settings Strings -->
     <string name="settings_title">Einstellungen</string>
     <string name="settings_port_title">Port Einstellungen</string>
