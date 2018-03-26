@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final String TAG_TAB_3 = "Tag_Tab3";
 
     private static final String DELETE_PROFILE = "Löschen";
-    private static final String VIEW_PROFILE = "View";
     private static final String EDIT_PROFILE = "Bearbeiten";
 
     public static final int TAB_ID_1 = 1;
@@ -237,8 +236,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 } else {
                     selectProfile(selectedRobotProfile);
 
-                    profileListView.getChildAt(previousSelectedItem).setBackgroundColor(Color.TRANSPARENT);
-                    profileListView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorJoyStickBase));
+                    profileListView.getChildAt(previousSelectedItem)
+                            .setBackgroundColor(Color.TRANSPARENT);
+                    profileListView.getChildAt(position).setBackgroundColor(
+                            getResources().getColor(R.color.profileListBackground));
                     previousSelectedItem = position;
                 }
 
@@ -254,6 +255,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         });
 
         registerForContextMenu(profileListView);
+        View view = profileListView.getChildAt(0);
+
+        view.setBackgroundColor(getResources().getColor(R.color.profileListBackground));
     }
 
     /**
@@ -294,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     profileListView.getChildAt(selectedItemPosition)
                             .setBackgroundColor(Color.TRANSPARENT);
                     profileListView.getChildAt(0).setBackgroundColor(
-                            getResources().getColor(R.color.colorJoyStickBase));
+                            getResources().getColor(R.color.profileListBackground));
                     setPreferences(profileList.get(0));
                     setDefaultProfileValues(profileList.get(0));
                     previousSelectedItem = 0;
@@ -302,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     profileListView.getChildAt(previousSelectedItem)
                             .setBackgroundColor(Color.TRANSPARENT);
                     profileListView.getChildAt(previousSelectedItem - 1).setBackgroundColor(
-                            getResources().getColor(R.color.colorJoyStickBase));
+                            getResources().getColor(R.color.profileListBackground));
                     previousSelectedItem = previousSelectedItem - 1;
                 }
 
