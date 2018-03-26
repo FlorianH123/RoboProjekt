@@ -24,12 +24,27 @@ public class RobotProfile {
     private int id;
     private float frequency;
 
+    /**
+     * regex IP validator
+     */
     private static final String REGEX =
             "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
 
+    /**
+     * full robo Profile
+     * @param name name
+     * @param ip ip
+     * @param portOne portOne
+     * @param portTwo portTwo
+     * @param portThree portThree
+     * @param maxAngularSpeed maxAngular Speed
+     * @param maxX maxX
+     * @param maxY maxY
+     * @param frequency frequency
+     */
     public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree,
                         float maxAngularSpeed, float maxX, float maxY, float frequency) {
         checkName(name);
@@ -60,8 +75,13 @@ public class RobotProfile {
         this.frequency = frequency;
     }
 
+    /**
+     * standard constructor
+     */
     public RobotProfile() {
     }
+
+    /* Validator*/
 
     private void checkName(String name){
         name = name.trim();

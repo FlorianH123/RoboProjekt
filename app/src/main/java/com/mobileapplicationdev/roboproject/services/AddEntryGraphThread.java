@@ -22,24 +22,45 @@ public class AddEntryGraphThread implements Runnable {
     private boolean isRunning = false;
     private LineDataSet.Mode mode;
 
+    /**
+     * set the main values needed
+     * @param lineChart used linechart
+     * @param targetValue target speed
+     * @param mode selected mode
+     */
     public AddEntryGraphThread(LineChart lineChart, float targetValue, LineDataSet.Mode mode) {
         this.lineChart = lineChart;
         this.targetValue = targetValue;
         this.mode = mode;
     }
 
+    /**
+     * adds a value to the Graph
+     * @param actualValue the value received
+     */
     public void addEntry(float actualValue) {
         entryData.add(actualValue);
     }
 
+    /**
+     * remove the first Entry in the Collection<List>
+     */
     private void removeData() {
         entryData.remove(0);
     }
 
+    /**
+     * returns the first value in the Collection<List>
+     * @return first entry
+     */
     private float getFirstData() {
         return entryData.get(0);
     }
 
+    /**
+     * Adds the data Sets and create the Charts entry
+     * also update the graph and sets max view range
+     */
     private void addEntryIntoGraph() {
         final float value = getFirstData();
         removeData();
@@ -92,6 +113,10 @@ public class AddEntryGraphThread implements Runnable {
         });
     }
 
+    /**
+     * addEntry over extra Thread
+     * add entry while the list ( data ) is not empty
+     */
     @Override
     public void run() {
         while (isRunning) {
@@ -106,6 +131,9 @@ public class AddEntryGraphThread implements Runnable {
         }
     }
 
+    /**
+     * start the addEntry Thread
+     */
     public void startThread() {
         Thread runnerThread;
 
@@ -114,6 +142,9 @@ public class AddEntryGraphThread implements Runnable {
         runnerThread.start();
     }
 
+    /**
+     * stop running thread
+     */
     public void stop() {
         isRunning = false;
     }
