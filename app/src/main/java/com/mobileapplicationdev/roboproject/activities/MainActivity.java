@@ -153,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         initResetButtonTab3();
         initGraphToggleButtonTab2();
         initGraphToggleButtonTab3();
+        boolean testi = dbh.insertDefaultProfileIfDbIsEmpty();
+        Toast.makeText(this, "TESTI: " + testi, Toast.LENGTH_SHORT).show();
         initProfileList();
 
         setPreferences(standardProfile);
@@ -210,8 +212,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 RobotProfile selectedRobotProfile = profileList.get(position);
+                Toast.makeText(MainActivity.this, selectedRobotProfile.toString() + "", Toast.LENGTH_SHORT).show();
 
-                // wenn die id = 0 ist bedeuted dies das der Benutzer
+                // wenn die id = 0 ist bedeutet dies das der Benutzer
                 // "neues Profil" ausgewählt hat. Für dieses Profil wird der Bearbeitungs Dialog
                 // gestartet statt das Profil auszuwählen.
                 if (selectedRobotProfile.getId() == 0) {
@@ -227,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedProfileOnLongClick = profileList.get(position);
+                //Toast.makeText(MainActivity.this, selectedProfileOnLongClick.toString() + "", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });

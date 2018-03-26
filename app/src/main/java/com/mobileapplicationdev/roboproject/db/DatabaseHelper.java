@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
 
     private static final String DATABASE_NAME = "RoboController.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     //Tabelle für eine einzige IP Adresse
     private static final String ADDR_TABLE_NAME = "ipadress";
@@ -201,6 +201,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
         } catch (Exception ex) {
             Log.e(TAG, "Couldn't delete profile with id=" + id);
+            return false;
+        }
+    }
+
+    public boolean insertDefaultProfileIfDbIsEmpty(){
+        try{
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            String selectQuery = "SELECT *" +
+                    " FROM " + PRO_TABLE_NAME;
+
+            Cursor c = db.rawQuery(selectQuery, null);
+
+            if(c.getCount() == 0) {
+                ContentValues values = new ContentValues();
+                values.put(NAME_PRO_NAME, "Default");
+                values.put(IP_PRO_NAME, "192.168.0.29");
+                values.put(PORT_1_PRO_NAME, 15002);
+                values.put(PORT_2_PRO_NAME, 15002);
+                values.put(PORT_3_PRO_NAME, 15002);
+                values.put(MAX_ANG_PRO_NAME, 0.5f);
+                values.put(MAX_X_PRO_NAME, 0.5f);
+                values.put(MAX_Y_PRO_NAME, 0.6f);
+                values.put(FREQ_PRO_NAME, 4.0f);
+
+                db.insert(PRO_TABLE_NAME, null, values);
+                return true;
+            }else{
+                return false;
+            }
+
+        }catch (Exception ex) {
+            Log.e(TAG, "Couldn't insert DEFAULT profile!");
             return false;
         }
     }

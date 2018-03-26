@@ -25,42 +25,79 @@ public class RobotProfile {
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
 
     public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree, float maxAngularSpeed, float maxX, float maxY, float frequenz) {
+        checkName(name);
         this.name = name;
+
         checkIp(ip);
         this.ip = ip;
+
         checkPort(portOne);
         this.portOne = portOne;
+
         checkPort(portTwo);
         this.portTwo = portTwo;
+
         checkPort(portThree);
         this.portThree = portThree;
+
+        checkMaxSpeed(maxAngularSpeed);
         this.maxAngularSpeed = maxAngularSpeed;
+
+        checkMaxSpeed(maxX);
         this.maxX = maxX;
+
+        checkMaxSpeed(maxY);
         this.maxY = maxY;
+
+        checkFreq(frequenz);
         this.frequenz = frequenz;
     }
 
     public RobotProfile() {
     }
 
+    private void checkName(String name){
+        name = name.trim();
+        if (name.isEmpty()){
+            throw new IllegalArgumentException("Name darf nicht leer sein!");
+        }
+    }
+
     private void checkIp(String ip) {
         ip = ip.trim();
         if (!ip.matches(REGEX)) {
-            throw new IllegalArgumentException("Angegebene IP entspricht nicht den IP-Richtlinien");
+            throw new IllegalArgumentException("Angegebene IP entspricht nicht den IP-Richtlinien!");
         }
     }
 
     private void checkPort(int port) {
         if (port < 0 || port > 65535) {
-            throw new IllegalArgumentException("Port=" + port + " ist kleiner als 0 oder größer als 65535");
+            throw new IllegalArgumentException("Port=" + port + " ist kleiner als 0 oder größer als 65535!");
         }
     }
+
+    private void checkMaxSpeed(float speed){
+        if (speed < 0.0){
+            throw new IllegalArgumentException("Geschwindigkeit darf nicht 0 oder negativ sein!");
+        }
+    }
+
+    private void checkFreq(float freq){
+        if(freq < 0.0){
+            throw new IllegalArgumentException("Frequenz darf nicht 0 oder negativ sein!");
+        }
+    }
+
+    /**
+     * Getter/Setter/ToString
+     */
 
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
+        checkName(name);
         this.name = name;
     }
 
@@ -105,6 +142,7 @@ public class RobotProfile {
     }
 
     public void setMaxAngularSpeed(float maxAngularSpeed) {
+        checkMaxSpeed(maxAngularSpeed);
         this.maxAngularSpeed = maxAngularSpeed;
     }
 
@@ -121,6 +159,7 @@ public class RobotProfile {
     }
 
     public void setFrequenz(float frequenz) {
+        checkFreq(frequenz);
         this.frequenz = frequenz;
     }
 
@@ -129,6 +168,7 @@ public class RobotProfile {
     }
 
     public void setMaxX(float maxX) {
+        checkMaxSpeed(maxX);
         this.maxX = maxX;
     }
 
@@ -137,11 +177,13 @@ public class RobotProfile {
     }
 
     public void setMaxY(float maxY) {
+        checkMaxSpeed(maxY);
         this.maxY = maxY;
     }
 
     @Override
     public String toString() {
-        return this.name;
+        String s = name + " id=" + id;
+        return s;
     }
 }
