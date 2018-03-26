@@ -223,20 +223,21 @@ public class SocketService extends Service {
                 int messageType;
                 int messageSize;
 
-                try (Socket clientSocket = serverSocket.accept()) {
+                try (Socket clientSocket = serverSocket.accept();
+                     DataInputStream dataInputStream =
+                             new DataInputStream(clientSocket.getInputStream())) {
+
                     clientSocket.setSoTimeout(5000);
-                    byte buf[] = new byte[4096];
-                    InputStream is = clientSocket.getInputStream();
+//                    byte buf[] = new byte[4096];
+//                    InputStream is = clientSocket.getInputStream();
 
                     while (mainActivity.getDebugButtonStatus(tabId)) {
-                        is.read(buf,0, 2*4);
-                        long start = System.nanoTime();
-
-                        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
-                        messageType = swap(dis.readInt());
-                        messageSize = swap(dis.readInt());
-                        int i = is.read(buf,2*4, messageSize);
-                        Log.d(className, String.valueOf(i));
+                        //is.read(buf, 0, 2 * 4);
+                        //DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
+                        messageType = swap(dataInputStream.readInt());
+                        messageSize = swap(dataInputStream.readInt());
+                        //int i = is.read(buf, 2 * 4, messageSize);
+                        //Log.d(className, String.valueOf(i));
 
                         //Log.d(className, "ReceiveData: ");
                         //Log.d(className, "MessageType: " + messageType);
@@ -246,14 +247,14 @@ public class SocketService extends Service {
 
                         if (messageType != MessageType.ERROR.getMessageType()) {
                             if (tabId == MainActivity.TAB_ID_2) {
-                                receiveVelocity(dis, messageSize, addEntryGraphThread);
+                                receiveVelocity(dataInputStream, messageSize, addEntryGraphThread);
                             } else if (tabId == MainActivity.TAB_ID_3) {
-                                receiveAngle(dis, messageSize, addEntryGraphThread);
+                                receiveAngle(dataInputStream, messageSize, addEntryGraphThread);
                             }
                         } else {
                             throw new IOException(getString(R.string.error_msg_receiving_data));
                         }
-                        Log.d(className, String.valueOf(System.nanoTime() - start));
+                        //Log.d(className, String.valueOf(System.nanoTime() - start));
                     }
 
                     serverSocket.close();
