@@ -99,6 +99,15 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final int TAB_ID_2 = 2;
     public static final int TAB_ID_3 = 3;
 
+    public static final int SHARED_PREF_PORT_1 = 0;
+    public static final int SHARED_PREF_PORT_2 = 1;
+    public static final int SHARED_PREF_PORT_3 = 2;
+    public static final int SHARED_PREF_ANGULAR_VELOCITY = 3;
+    public static final int SHARED_PREF_MAX_X = 4;
+    public static final int SHARED_PREF_MAX_Y = 5;
+
+
+
     private static final String SHARED_PREFERENCE_FILE = "robotProfileValues";
 
     private final Object waiter = new Object();
@@ -449,17 +458,18 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 Context.MODE_PRIVATE);
 
         Resources res = getResources();
-        String[] portKeys = res.getStringArray(R.array.settings_port_key);
+        String[] prefKeys = res.getStringArray(R.array.settings_port_key);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        editor.putString(portKeys[0], String.valueOf(robotProfile.getPortOne()));
-        editor.putString(portKeys[1], String.valueOf(robotProfile.getPortTwo()));
-        editor.putString(portKeys[2], String.valueOf(robotProfile.getPortThree()));
+        editor.putString(prefKeys[SHARED_PREF_PORT_1], String.valueOf(robotProfile.getPortOne()));
+        editor.putString(prefKeys[SHARED_PREF_PORT_2], String.valueOf(robotProfile.getPortTwo()));
+        editor.putString(prefKeys[SHARED_PREF_PORT_3], String.valueOf(robotProfile.getPortThree()));
 
-        editor.putString(portKeys[3], String.valueOf(robotProfile.getMaxAngularSpeed()));
+        editor.putString(prefKeys[SHARED_PREF_ANGULAR_VELOCITY],
+                String.valueOf(robotProfile.getMaxAngularSpeed()));
 
-        editor.putString(portKeys[4], String.valueOf(robotProfile.getMaxX()));
-        editor.putString(portKeys[5], String.valueOf(robotProfile.getMaxY()));
+        editor.putString(prefKeys[SHARED_PREF_MAX_X], String.valueOf(robotProfile.getMaxX()));
+        editor.putString(prefKeys[SHARED_PREF_MAX_Y], String.valueOf(robotProfile.getMaxY()));
 
         editor.apply();
     }
@@ -668,21 +678,21 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 ipAddress = String.valueOf(ipAddressTextFieldTab1.getText());
 
                 socketService.openSteeringSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(0)));
+                        Integer.parseInt(getPreferenceValue(SHARED_PREF_PORT_1)));
             }
 
             if (tagTab.equals(TAG_TAB_2)) {
                 ipAddress = String.valueOf(ipAddressTextFieldTab2.getText());
 
                 socketService.openDebugSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(1)), waiter, TAB_ID_2);
+                        Integer.parseInt(getPreferenceValue(SHARED_PREF_PORT_2)), waiter, TAB_ID_2);
             }
 
             if (tagTab.equals(TAG_TAB_3)) {
                 ipAddress = String.valueOf(ipAddressTextFieldTab3.getText());
 
                 socketService.openDebugSocket(ipAddress,
-                        Integer.parseInt(getPreferenceValue(2)), waiter, TAB_ID_3);
+                        Integer.parseInt(getPreferenceValue(SHARED_PREF_PORT_3)), waiter, TAB_ID_3);
             }
         }
     }
@@ -710,8 +720,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             @Override
             public void onDrag(float angle, float offset) {
 
-                float maximumY = Float.valueOf(getPreferenceValue(4));
-                float maximumX = Float.valueOf(getPreferenceValue(5));
+                float maximumY = Float.valueOf(getPreferenceValue(SHARED_PREF_MAX_Y));
+                float maximumX = Float.valueOf(getPreferenceValue(SHARED_PREF_MAX_X));
 
                 if (Utils.isInFirstQuarter(angle)) {                                  // 1. quarter
                     angle = -(angle - 90);
@@ -768,7 +778,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
 
             @Override
             public void onDrag(float degrees, float offset) {
-                float angularVelocity = Float.parseFloat(getPreferenceValue(3));
+                float angularVelocity = Float.parseFloat(getPreferenceValue(SHARED_PREF_ANGULAR_VELOCITY));
 
                 if (degrees == -180) {
                     rot_z = offset * angularVelocity;
