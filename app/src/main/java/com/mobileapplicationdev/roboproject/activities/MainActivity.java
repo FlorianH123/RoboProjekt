@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private ProfileAdapter profileAdapter;
     private RobotProfile selectedProfileOnLongClick;
     private int previousSelectedItem = 0;
+    private ListView profileListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void initProfileList() {
-        final ListView profileListView = findViewById(R.id.profileListView);
+        profileListView = findViewById(R.id.profileListView);
         this.profileList = loadProfiles();
 
         profileAdapter = new ProfileAdapter(this, profileList);
@@ -217,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     editProfileDialog(selectedRobotProfile);
                 } else {
                     selectProfile(selectedRobotProfile);
+
                     profileListView.getChildAt(previousSelectedItem).setBackgroundColor(Color.TRANSPARENT);
                     profileListView.getChildAt(position).setBackgroundColor(getResources().getColor(R.color.colorJoyStickBase));
                     previousSelectedItem = position;
@@ -232,6 +234,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                 return false;
             }
         });
+
         registerForContextMenu(profileListView);
     }
 
@@ -259,6 +262,11 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         switch (userAction) {
             case "Löschen":
                 Log.d("View", "Löschen");
+
+                if (previousSelectedItem == selectedItemPosition) {
+                    profileListView.setSelection(0);
+                }
+
                 profileList.remove(selectedProfile);
                 dbh.deleteProfile(selectedProfile.getId());
                 profileAdapter.notifyDataSetChanged();
@@ -421,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     private void setDefaultProfileValues(RobotProfile robotProfile) {
+
         ipAddressTextFieldTab1.setText(robotProfile.getIp());
         ipAddressTextFieldTab2.setText(robotProfile.getIp());
         ipAddressTextFieldTab3.setText(robotProfile.getIp());
