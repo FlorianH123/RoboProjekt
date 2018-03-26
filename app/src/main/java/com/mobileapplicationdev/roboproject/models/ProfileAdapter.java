@@ -12,13 +12,12 @@ import com.mobileapplicationdev.roboproject.R;
 
 import java.util.List;
 
+@SuppressWarnings("CanBeFinal")
 public class ProfileAdapter extends BaseAdapter {
     private List<RobotProfile> profileList;
     private static LayoutInflater inflater;
-    private Activity activity;
 
     public ProfileAdapter(Activity activity, List<RobotProfile> profileList) {
-        this.activity = activity;
         this.profileList = profileList;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }

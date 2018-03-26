@@ -14,9 +14,9 @@ import java.util.List;
 /**
  * Thread that will insert values into the line graph
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "CanBeFinal"})
 public class AddEntryGraphThread implements Runnable {
-    private volatile List<Float> entryData = Collections.synchronizedList(new ArrayList<Float>());
+    private final List<Float> entryData = Collections.synchronizedList(new ArrayList<Float>());
     private LineChart lineChart;
     private float targetValue;
     private boolean isRunning = false;
@@ -24,7 +24,7 @@ public class AddEntryGraphThread implements Runnable {
 
     /**
      * set the main values needed
-     * @param lineChart used linechart
+     * @param lineChart used line chart
      * @param targetValue target speed
      * @param mode selected mode
      */

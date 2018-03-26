@@ -1,9 +1,7 @@
 package com.mobileapplicationdev.roboproject.utils;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.util.Log;
 
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineDataSet;

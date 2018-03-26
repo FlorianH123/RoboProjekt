@@ -45,11 +45,11 @@
                         android:layout_height="match_parent">
 
                         <ImageView
-                            android:id="@+id/robotLogo"
                             android:layout_width="@dimen/robot_logo_width"
                             android:layout_height="@dimen/robot_logo_height"
                             android:layout_marginEnd="8dp"
                             android:adjustViewBounds="false"
+                            android:contentDescription="@string/robotLogo"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.1"
@@ -59,9 +59,9 @@
                             app:srcCompat="@drawable/cad_plattform" />
 
                         <ImageView
-                            android:id="@+id/emrolabLogo"
                             android:layout_width="@dimen/emrolab_logo_width"
                             android:layout_height="@dimen/emrolab_logo_height"
+                            android:contentDescription="@string/emroLabLogo"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.95"
@@ -71,9 +71,9 @@
                             app:srcCompat="@drawable/emrolab" />
 
                         <ImageView
-                            android:id="@+id/htwLogo"
                             android:layout_width="@dimen/htw_logo_width"
                             android:layout_height="@dimen/htw_logo_height"
+                            android:contentDescription="@string/htwLogo"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0.05"
@@ -191,7 +191,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/editText_ipAddress_tab3" />
 
                         <TextView
-                            android:id="@+id/textView_p_tab3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:labelFor="@+id/editText_p_tab3"
@@ -213,7 +212,6 @@
                             app:layout_constraintVertical_bias="0.100000024" />
 
                         <TextView
-                            android:id="@+id/textView_angle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:labelFor="@+id/editText_angle_tab3"
@@ -233,7 +231,6 @@
                             app:layout_constraintTop_toTopOf="@+id/editText_p_tab3" />
 
                         <TextView
-                            android:id="@+id/textView_frequency_tab3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:labelFor="@+id/editText_frequency_tab3"
@@ -253,7 +250,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/editText_angle_tab3" />
 
                         <TextView
-                            android:id="@+id/textView_i_tab3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:labelFor="@+id/editText_i_tab3"
@@ -358,7 +354,6 @@
                             app:layout_constraintTop_toTopOf="@+id/editTextEnterP" />
 
                         <TextView
-                            android:id="@+id/textView_enterP"
                             android:layout_width="60dp"
                             android:layout_height="18dp"
                             android:labelFor="@+id/editTextEnterI"
@@ -378,7 +373,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/editTextEnterP" />
 
                         <TextView
-                            android:id="@+id/textView_enter_i"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:labelFor="@+id/editTextEnterP"
@@ -420,7 +414,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/editText_enterDebug_speed" />
 
                         <TextView
-                            android:id="@+id/textView_debug_speed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:labelFor="@+id/editText_enterDebug_speed"
@@ -551,7 +544,6 @@
                             app:layout_constraintTop_toTopOf="@+id/textView_leftJoyStick_X_Value" />
 
                         <TextView
-                            android:id="@+id/textView_x"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
@@ -562,7 +554,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/textView_leftJoyStick_X_Value" />
 
                         <TextView
-                            android:id="@+id/textView_y"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="16dp"
@@ -573,7 +564,6 @@
                             app:layout_constraintTop_toBottomOf="@+id/textView_leftJoyStick_Y_Value" />
 
                         <TextView
-                            android:id="@+id/textView_linear_velocity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="16dp"
@@ -584,7 +574,6 @@
                             app:layout_constraintStart_toStartOf="@+id/leftJoystick" />
 
                         <TextView
-                            android:id="@+id/textView_angular_velocity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="16dp"

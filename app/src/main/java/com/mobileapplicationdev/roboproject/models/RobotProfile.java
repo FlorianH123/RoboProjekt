@@ -1,14 +1,10 @@
 package com.mobileapplicationdev.roboproject.models;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.res.Resources;
 
 import com.mobileapplicationdev.roboproject.R;
-import com.mobileapplicationdev.roboproject.activities.MainActivity;
 
 /**
- * Created by Frenchtoast on 20.03.2018.
  * This class contains all information about a robot profile
  */
 

@@ -1,7 +1,6 @@
 package com.mobileapplicationdev.roboproject.models;
 
 /**
- * Created by Frenchtoast on 22.01.2018.
  * Data Packet which contains all necessary control data
  */
 

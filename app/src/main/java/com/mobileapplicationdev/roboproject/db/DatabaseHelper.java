@@ -13,9 +13,7 @@ import java.util.ArrayList;
 
 /**
  * This class contains all connections to the Database
- * insert, update and delete all Settings of the RoboProfiles
- *
- * Created by Hinsburger on 31.02.2018.
+ * insert, update and delete all Settings of the Robot profiles
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -24,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 6;
 
     //Constants for the profiles table
-    //tablename:
+    //table name:
     private static final String PRO_TABLE_NAME = "profiles";
     //id:
     private static final String ID_PRO_NAME = "id";
@@ -53,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //maxY:
     private static final String MAX_Y_PRO_NAME = "maxY";
     private static final String MAX_Y_PRO_TYPE = "FLOAT";
-    //frequenz:
+    //frequency:
     private static final String FREQ_PRO_NAME = "frequenz";
     private static final String FREQ_PRO_TYPE = "FLOAT";
 
@@ -105,8 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(FREQ_PRO_NAME, profile.getFrequency());
 
             //Insert values and get the generated id from the database
-            long id = db.insert(PRO_TABLE_NAME, null, values);
-            return id;
+            return db.insert(PRO_TABLE_NAME, null, values);
 
         } catch (Exception ex) {
             Log.e(TAG, "Couldn't insert Profile: " + ex);
@@ -135,25 +132,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(MAX_Y_PRO_NAME, profile.getMaxY());
             values.put(FREQ_PRO_NAME, profile.getFrequency());
 
-            //Update values of profil by id
+            //Update values of profile by id
             db.update(PRO_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(profile.getId())});
             return true;
         } catch (Exception ex) {
             Log.e(TAG, "Couldn't update profile" + ex);
             return false;
-
         }
     }
 
     /**
      * Returns all profiles in the Database
      *
-     * @return Arraylist filled with all profiles from the database, null if there is an exception
+     * @return Array list filled with all profiles from the database, null if there is an exception
      */
     public ArrayList<RobotProfile> getAllProfiles() {
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            ArrayList<RobotProfile> profiles = new ArrayList<RobotProfile>();
+            ArrayList<RobotProfile> profiles = new ArrayList<>();
             String selectQuery = "SELECT * FROM " + PRO_TABLE_NAME;
 
             //Get all raw database data by selectionQuery

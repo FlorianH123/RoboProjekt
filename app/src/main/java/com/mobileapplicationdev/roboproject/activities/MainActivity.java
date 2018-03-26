@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@SuppressWarnings("WeakerAccess")
 public class MainActivity extends AppCompatActivity implements SocketService.Callbacks {
     private ToggleButton connectionButtonTab1;
     private ToggleButton connectionButtonTab2;
@@ -91,22 +91,20 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     public static final String TAG_TAB_2 = "Tag_Tab2";
     public static final String TAG_TAB_3 = "Tag_Tab3";
 
-    public static final String DELETE_PROFILE = "Löschen";
-    public static final String VIEW_PROFILE = "View";
-    public static final String EDIT_PROFILE = "Bearbeiten";
+    private static final String DELETE_PROFILE = "Löschen";
+    private static final String VIEW_PROFILE = "View";
+    private static final String EDIT_PROFILE = "Bearbeiten";
 
     public static final int TAB_ID_1 = 1;
     public static final int TAB_ID_2 = 2;
     public static final int TAB_ID_3 = 3;
 
-    public static final int SHARED_PREF_PORT_1 = 0;
-    public static final int SHARED_PREF_PORT_2 = 1;
-    public static final int SHARED_PREF_PORT_3 = 2;
-    public static final int SHARED_PREF_ANGULAR_VELOCITY = 3;
-    public static final int SHARED_PREF_MAX_X = 4;
-    public static final int SHARED_PREF_MAX_Y = 5;
-
-
+    private static final int SHARED_PREF_PORT_1 = 0;
+    private static final int SHARED_PREF_PORT_2 = 1;
+    private static final int SHARED_PREF_PORT_3 = 2;
+    private static final int SHARED_PREF_ANGULAR_VELOCITY = 3;
+    private static final int SHARED_PREF_MAX_X = 4;
+    private static final int SHARED_PREF_MAX_Y = 5;
 
     private static final String SHARED_PREFERENCE_FILE = "robotProfileValues";
 
@@ -374,6 +372,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         dialog.setContentView(profileEditView);
         dialog.show();
 
+        //noinspection ConstantConditions
         dialog.getWindow().setLayout((int) (getResources().getDisplayMetrics().widthPixels * 0.5),
                 (int) (getResources().getDisplayMetrics().heightPixels * 0.7));
 
@@ -475,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     }
 
     /**
-     * set Default Profile Vaues
+     * set Default Profile Values
      * @param robotProfile default profile
      */
     private void setDefaultProfileValues(RobotProfile robotProfile) {
