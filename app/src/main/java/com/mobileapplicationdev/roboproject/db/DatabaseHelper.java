@@ -12,7 +12,10 @@ import com.mobileapplicationdev.roboproject.models.RobotProfile;
 import java.util.ArrayList;
 
 /**
- * Created by Frenchtoast on 31.01.2018.
+ * This class contains all connections to the Database
+ * insert, update and delete all Settings of the RoboProfiles
+ *
+ * Created by Hinsburger on 31.01.2018.
  */
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -21,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "RoboController.db";
     private static final int DATABASE_VERSION = 6;
 
-    //Tabelle für eine einzige IP Adresse
+    //TODO start
     private static final String ADDR_TABLE_NAME = "ipadress";
 
     private static final String ID_ADDR_NAME = "id";
@@ -29,41 +32,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String IP_ADDR_NAME = "ip";
     private static final String IP_ADDR_TYPE = "TEXT";
+    //TODO end
 
-    //Tabelle für Profile
+    //Constants for the profiles table:
+    //tablename:
     private static final String PRO_TABLE_NAME = "profiles";
-
+    //id:
     private static final String ID_PRO_NAME = "id";
     private static final String ID_PRO_TYPE = "INTEGER PRIMARY KEY AUTOINCREMENT";
-
+    //name:
     private static final String NAME_PRO_NAME = "name";
     private static final String NAME_PRO_TYPE = "TEXT";
-
+    //ip:
     private static final String IP_PRO_NAME = "ip";
     private static final String IP_PRO_TYPE = "TEXT";
-
+    //portOne:
     private static final String PORT_1_PRO_NAME = "portOne";
     private static final String PORT_1_PRO_TYPE = "INTEGER";
-
+    //portTwo:
     private static final String PORT_2_PRO_NAME = "portTwo";
     private static final String PORT_2_PRO_TYPE = "INTEGER";
-
+    //portThree:
     private static final String PORT_3_PRO_NAME = "portThree";
     private static final String PORT_3_PRO_TYPE = "INTEGER";
-
+    //maxAngularSpeed:
     private static final String MAX_ANG_PRO_NAME = "maxAngularSpeed";
     private static final String MAX_ANG_PRO_TYPE = "FLOAT";
-
+    //maxX:
     private static final String MAX_X_PRO_NAME = "maxX";
     private static final String MAX_X_PRO_TYPE = "FLOAT";
-
+    //maxY:
     private static final String MAX_Y_PRO_NAME = "maxY";
     private static final String MAX_Y_PRO_TYPE = "FLOAT";
-
+    //frequenz:
     private static final String FREQ_PRO_NAME = "frequenz";
     private static final String FREQ_PRO_TYPE = "FLOAT";
 
-
+    //SQL-Command to create profiles table:
     private static final String PRO_TABLE_CREATE =
             "CREATE TABLE " + PRO_TABLE_NAME + "(" +
                     ID_PRO_NAME + " " + ID_PRO_TYPE + ", " +
@@ -77,6 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     MAX_Y_PRO_NAME + " " + MAX_Y_PRO_TYPE + ", " +
                     FREQ_PRO_NAME + " " + FREQ_PRO_TYPE + ")";
 
+    //TODO start
     private static final String ADDR_TABLE_CREATE =
             "CREATE TABLE " + ADDR_TABLE_NAME + "(" +
                     ID_ADDR_NAME + " " + ID_ADDR_TYPE + ", " +
@@ -87,6 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])." +
                     "(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])";
+    //TODO end
 
 
     public DatabaseHelper(Context context) {
@@ -99,15 +106,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } catch (Exception ex) {
             Log.e(TAG, "Error creating table: " + PRO_TABLE_NAME + "!", ex);
         }
+        //TODO start
         try {
             db.execSQL(ADDR_TABLE_CREATE);
         } catch (Exception ex) {
             Log.e(TAG, "Error creating table: " + ADDR_TABLE_NAME + "!", ex);
         }
+        //TODO end
     }
 
     /**
-     * Funktionen für Profil-Tabelle
+     * Inserts a new profile into the database
+     *
+     * @param profile (without database-id) to insert into the database
+     * @return Database-id of the new inserted profile or (-666) if there is an exception
      */
     public long insertProfile(RobotProfile profile) {
         try {
@@ -124,15 +136,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(MAX_Y_PRO_NAME, profile.getMaxY());
             values.put(FREQ_PRO_NAME, profile.getFrequency());
 
+            //Insert values and get the generated id from the database
             long id = db.insert(PRO_TABLE_NAME, null, values);
-
             return id;
+
         } catch (Exception ex) {
             Log.e(TAG, "Couldn't insert Profile: " + ex);
             return -666;
         }
     }
 
+    /**
+     * Updates a profile in the database
+     *
+     * @param profile to update in the database (Database-id required)
+     * @return true = Profile is updated, false = Couldn't update profile
+     */
     public boolean updateProfile(RobotProfile profile) {
         try {
             SQLiteDatabase db = getWritableDatabase();
@@ -148,6 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(MAX_Y_PRO_NAME, profile.getMaxY());
             values.put(FREQ_PRO_NAME, profile.getFrequency());
 
+            //Update values of profil by id
             db.update(PRO_TABLE_NAME, values, "id = ?", new String[]{String.valueOf(profile.getId())});
             return true;
         } catch (Exception ex) {
@@ -157,16 +177,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Return all profiles in the Database
+     *
+     * @return Arraylist filled with all profiles from the database, null if there is an exception
+     */
     public ArrayList<RobotProfile> getAllProfiles() {
         try {
+            SQLiteDatabase db = this.getReadableDatabase();
             ArrayList<RobotProfile> profiles = new ArrayList<RobotProfile>();
             String selectQuery = "SELECT * FROM " + PRO_TABLE_NAME;
 
-            Log.d(TAG, selectQuery);
-
-            SQLiteDatabase db = this.getReadableDatabase();
+            //Get all raw database data by selectionQuery
             Cursor c = db.rawQuery(selectQuery, null);
-
             if (c.moveToFirst()) {
                 do {
                     RobotProfile profile = new RobotProfile();
@@ -182,6 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     profile.setMaxY(c.getFloat(c.getColumnIndex(MAX_Y_PRO_NAME)));
                     profile.setFrequency(c.getFloat(c.getColumnIndex(FREQ_PRO_NAME)));
 
+                    //Add current profile to the profiles list
                     profiles.add(profile);
 
                 } while (c.moveToNext());
@@ -194,9 +218,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Deletes an profile in the database by id
+     *
+     * @param id of the profile that should be deleted
+     * @return true = profile was deleted, false = Couldn't delete profile
+     */
     public boolean deleteProfile(Integer id) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
+            //Delete profile by id
             db.delete(PRO_TABLE_NAME, "id = ?", new String[]{Integer.toString(id)});
             return true;
         } catch (Exception ex) {
@@ -205,15 +236,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Checks if the profile database is empty.
+     * If profiles table is empty it inserts the "Default"-profile
+     * Only important if the App has been started for the first time or the database was cleared
+     *
+     * @return true = "Default"-profile is inserted, false = database is not empty
+     */
     public boolean insertDefaultProfileIfDbIsEmpty(){
         try{
             SQLiteDatabase db = this.getWritableDatabase();
-
-            String selectQuery = "SELECT *" +
-                    " FROM " + PRO_TABLE_NAME;
+            String selectQuery = "SELECT * FROM " + PRO_TABLE_NAME;
 
             Cursor c = db.rawQuery(selectQuery, null);
 
+            //if table is empty
             if(c.getCount() == 0) {
                 ContentValues values = new ContentValues();
                 values.put(NAME_PRO_NAME, "Default");
@@ -226,6 +263,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 values.put(MAX_Y_PRO_NAME, 0.6f);
                 values.put(FREQ_PRO_NAME, 4.0f);
 
+                //Insert "Default"-profile
                 db.insert(PRO_TABLE_NAME, null, values);
                 return true;
             }else{
@@ -238,6 +276,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //TODO start
     /**
      * Funkitonen zur IP-Adress-Tabelle
      */
@@ -286,26 +325,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return ip;
         }
     }
+    //TODO end
 
-
-    /**
-     * Default Zeug
-     */
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + PRO_TABLE_NAME);
+        //TODO delete
         db.execSQL("DROP TABLE IF EXISTS " + ADDR_TABLE_NAME);
         // create new tables
         onCreate(db);
     }
 
-    // ab API-Level 11
+    //since API-level 11
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVer, int newVer) {
         // on upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS " + PRO_TABLE_NAME);
+        //TODO delete
         db.execSQL("DROP TABLE IF EXISTS " + ADDR_TABLE_NAME);
         // create new tables
         onCreate(db);
