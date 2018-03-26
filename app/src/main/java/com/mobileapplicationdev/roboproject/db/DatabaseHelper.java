@@ -19,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
 
     private static final String DATABASE_NAME = "RoboController.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     //Tabelle für eine einzige IP Adresse
     private static final String ADDR_TABLE_NAME = "ipadress";
@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Funktionen für Profil-Tabelle
      */
-    public boolean insertProfile(RobotProfile profile) {
+    public long insertProfile(RobotProfile profile) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
@@ -124,12 +124,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(MAX_Y_PRO_NAME, profile.getMaxY());
             values.put(FREQ_PRO_NAME, profile.getFrequenz());
 
-            db.insert(PRO_TABLE_NAME, null, values);
+            long id = db.insert(PRO_TABLE_NAME, null, values);
 
-            return true;
+            return id;
         } catch (Exception ex) {
             Log.e(TAG, "Couldn't insert Profile: " + ex);
-            return false;
+            return -666;
         }
     }
 
