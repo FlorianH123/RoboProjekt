@@ -14,7 +14,6 @@ import java.util.List;
 /**
  * Thread that will insert values into the line graph
  */
-
 @SuppressWarnings("WeakerAccess")
 public class AddEntryGraphThread implements Runnable {
     private volatile List<Float> entryData = Collections.synchronizedList(new ArrayList<Float>());
@@ -57,8 +56,6 @@ public class AddEntryGraphThread implements Runnable {
 
                     if (set == null) {
                         //initialize setOne / Dynamic Graph
-                        // TODO: 22.03.2018 add cubic or linear Data Set by Dropdown selection
-                        //current mode selection cubic = 1
                         set = Utils.createSet(mode);
                         //setTwo = Utils.createSetTwo();
                         setTwo = Utils.createSetTwo();

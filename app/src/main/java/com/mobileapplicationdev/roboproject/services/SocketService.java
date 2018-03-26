@@ -25,8 +25,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.time.Instant;
 
 import static com.mobileapplicationdev.roboproject.utils.Utils.swap;
@@ -221,26 +223,32 @@ public class SocketService extends Service {
                 int messageType;
                 int messageSize;
 
-                try (Socket clientSocket = serverSocket.accept();
-                     DataInputStream dataInputStream =
-                             new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()))) {
+                try (Socket clientSocket = serverSocket.accept()) {
+                    clientSocket.setSoTimeout(5000);
+                    byte buf[] = new byte[4096];
+                    InputStream is = clientSocket.getInputStream();
 
                     while (mainActivity.getDebugButtonStatus(tabId)) {
+                        is.read(buf,0, 2*4);
                         long start = System.nanoTime();
-                        messageType = swap(dataInputStream.readInt());
-                        messageSize = swap(dataInputStream.readInt());
 
-                        Log.d(className, "ReceiveData: ");
-                        Log.d(className, "MessageType: " + messageType);
-                        Log.d(className, "MessageSize: " + messageSize);
+                        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
+                        messageType = swap(dis.readInt());
+                        messageSize = swap(dis.readInt());
+                        int i = is.read(buf,2*4, messageSize);
+                        Log.d(className, String.valueOf(i));
+
+                        //Log.d(className, "ReceiveData: ");
+                        //Log.d(className, "MessageType: " + messageType);
+                        //Log.d(className, "MessageSize: " + messageSize);
 
                         messageSize = messageSize / 4 - 2;
 
                         if (messageType != MessageType.ERROR.getMessageType()) {
                             if (tabId == MainActivity.TAB_ID_2) {
-                                receiveVelocity(dataInputStream, messageSize, addEntryGraphThread);
+                                receiveVelocity(dis, messageSize, addEntryGraphThread);
                             } else if (tabId == MainActivity.TAB_ID_3) {
-                                receiveAngle(dataInputStream, messageSize, addEntryGraphThread);
+                                receiveAngle(dis, messageSize, addEntryGraphThread);
                             }
                         } else {
                             throw new IOException(getString(R.string.error_msg_receiving_data));
@@ -281,12 +289,11 @@ public class SocketService extends Service {
                                  AddEntryGraphThread addEntryGraphThread) throws IOException {
 
         float velocityValue;
-        float[] dataArray = new float[messageSize];
 
         for (int i = 0; i < messageSize; i++) {
-            dataArray[i] = swap(dataInputStream.readFloat());
-            //addEntryGraphThread.addEntry(velocityValue);
-            Log.d(className, "Velocity " + dataArray[i]);
+            velocityValue = swap(dataInputStream.readFloat());
+            addEntryGraphThread.addEntry(velocityValue);
+            //Log.d(className, "Velocity " + dataArray[i]);
         }
 
 
