@@ -241,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             menu.setHeaderTitle(selectedProfileOnLongClick.getName());
 
             if (selectedProfileOnLongClick.getId() != 1) {
-                menu.add("Löschen");
+                menu.add(R.string.delete_profile);
             }
 
-            menu.add("Bearbeiten");
+            menu.add(R.string.edit_profile);
         }
     }
 
