@@ -183,6 +183,7 @@ public class RobotProfile {
 
     @Override
     public String toString() {
-        return this.name;
+        String s = name + " id=" + id;
+        return s;
     }
 }
