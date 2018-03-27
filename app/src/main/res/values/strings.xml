@@ -70,7 +70,7 @@
 
     <!-- hints -->
     <string name="robot_name_hint">Name</string>
-    <string name="robot_ip_hint">Robot IP</string>
+    <string name="robot_ip_hint">Roboter IP</string>
     <string name="robot_control_port_hint">Roboter Steuer-Port</string>
     <string name="robot_drive_motor_port_hint">Antriebsmotoren Port</string>
     <string name="robot_servomotor_port_hint">Stellmotoren Port</string>
@@ -78,6 +78,7 @@
     <string name="robot_linear_x_velocity_hint">Max. X Lineargeschw.</string>
     <string name="robot_linear_y_velocity_hint">Max. Y Lineargeschw.</string>
     <string name="robot_frequency_hint">Regler Frequenz kHz</string>
+    <string name="robot_debugIp_hint">Debug IP</string>
 
     <!--  -->
     <string name="robot_save">Speichern</string>

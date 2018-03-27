@@ -10,7 +10,8 @@ import com.mobileapplicationdev.roboproject.R;
 
 public class RobotProfile {
     private String name;
-    private String ip;
+    private String controlIp;
+    private String debugIp;
     private int portOne;
     private int portTwo;
     private int portThree;
@@ -32,7 +33,8 @@ public class RobotProfile {
     /**
      * full robot profile
      * @param name name
-     * @param ip ip
+     * @param controlIp controlIp
+     * @param debugIp debugIp
      * @param portOne portOne
      * @param portTwo portTwo
      * @param portThree portThree
@@ -41,13 +43,16 @@ public class RobotProfile {
      * @param maxY maxY
      * @param frequency frequency
      */
-    public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree,
+    public RobotProfile(String name, String controlIp, String debugIp, int portOne, int portTwo, int portThree,
                         float maxAngularSpeed, float maxX, float maxY, float frequency) {
         checkName(name);
         this.name = name;
 
-        checkIp(ip);
-        this.ip = ip;
+        checkIp(controlIp);
+        this.controlIp = controlIp;
+
+        checkIp(debugIp);
+        this.debugIp = debugIp;
 
         checkPort(portOne);
         this.portOne = portOne;
@@ -124,13 +129,22 @@ public class RobotProfile {
         this.name = name;
     }
 
-    public String getIp() {
-        return ip;
+    public String getControlIp() {
+        return controlIp;
     }
 
-    public void setIp(String ip) {
-        checkIp(ip);
-        this.ip = ip;
+    public void setControlIp(String controlIp) {
+        checkIp(controlIp);
+        this.controlIp = controlIp;
+    }
+
+    public String getDebugIp() {
+        return debugIp;
+    }
+
+    public void setDebugIp(String debugIp) {
+        checkIp(debugIp);
+        this.debugIp = debugIp;
     }
 
     public int getPortOne() {

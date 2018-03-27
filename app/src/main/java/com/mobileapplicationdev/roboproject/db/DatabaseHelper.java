@@ -93,7 +93,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put(NAME_PRO_NAME, profile.getName());
-            values.put(IP_PRO_NAME, profile.getIp());
+            values.put(IP_PRO_NAME, profile.getControlIp());
             values.put(PORT_1_PRO_NAME, profile.getPortOne());
             values.put(PORT_2_PRO_NAME, profile.getPortTwo());
             values.put(PORT_3_PRO_NAME, profile.getPortThree());
@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put(NAME_PRO_NAME, profile.getName());
-            values.put(IP_PRO_NAME, profile.getIp());
+            values.put(IP_PRO_NAME, profile.getControlIp());
             values.put(PORT_1_PRO_NAME, profile.getPortOne());
             values.put(PORT_2_PRO_NAME, profile.getPortTwo());
             values.put(PORT_3_PRO_NAME, profile.getPortThree());
@@ -160,7 +160,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                     profile.setId(c.getInt(c.getColumnIndex(ID_PRO_NAME)));
                     profile.setName(c.getString(c.getColumnIndex(NAME_PRO_NAME)));
-                    profile.setIp(c.getString(c.getColumnIndex(IP_PRO_NAME)));
+                    profile.setControlIp(c.getString(c.getColumnIndex(IP_PRO_NAME)));
                     profile.setPortOne(c.getInt(c.getColumnIndex(PORT_1_PRO_NAME)));
                     profile.setPortTwo(c.getInt(c.getColumnIndex(PORT_2_PRO_NAME)));
                     profile.setPortThree(c.getInt(c.getColumnIndex(PORT_3_PRO_NAME)));
