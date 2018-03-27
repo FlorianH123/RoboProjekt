@@ -506,8 +506,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void setDefaultProfileValues(RobotProfile robotProfile) {
 
         ipAddressTextFieldTab1.setText(robotProfile.getControlIp());
-        ipAddressTextFieldTab2.setText(robotProfile.getControlIp());
-        ipAddressTextFieldTab3.setText(robotProfile.getControlIp());
+        ipAddressTextFieldTab2.setText(robotProfile.getDebugIp());
+        ipAddressTextFieldTab3.setText(robotProfile.getDebugIp());
 
         editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
         editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));
