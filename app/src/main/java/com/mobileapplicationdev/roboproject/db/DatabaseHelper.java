@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "RoboController.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 13;
 
     //Constants for the profiles table
     //table name:
@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String MAX_Y_PRO_NAME = "maxY";
     private static final String MAX_Y_PRO_TYPE = "FLOAT";
     //frequency:
-    private static final String FREQ_PRO_NAME = "frequenz";
+    private static final String FREQ_PRO_NAME = "frequency";
     private static final String FREQ_PRO_TYPE = "FLOAT";
 
     //SQL-Command to create profiles table:
