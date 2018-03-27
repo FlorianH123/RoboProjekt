@@ -103,10 +103,10 @@
     <string name="graph_toggle_button_start">Start Debugging</string>
     <string name="graph_toggle_button_stop">Stop Debugging</string>
 
-    <string name="enter_speed">Enter Speed cm/s</string>
+    <string name="enter_speed">Geschwindigkeit</string>
 
-    <string name="enter_P_Factor">Enter P</string>
-    <string name="enter_I_Factor">Enter I</string>
+    <string name="enter_P_Factor">P</string>
+    <string name="enter_I_Factor">I</string>
     <string name="Enter_frequency">Regler Frequenz kHz</string>
 
     <string-array name="engines">
