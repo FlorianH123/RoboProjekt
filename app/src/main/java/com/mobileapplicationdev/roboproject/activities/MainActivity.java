@@ -338,9 +338,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void selectProfile(final RobotProfile robotProfile) {
         setPreferences(robotProfile);
 
-        ipAddressTextFieldTab1.setText(robotProfile.getIpOne());
-        ipAddressTextFieldTab2.setText(robotProfile.getIpOne());
-        ipAddressTextFieldTab3.setText(robotProfile.getIpOne());
+        ipAddressTextFieldTab1.setText(robotProfile.getControlIp());
+        ipAddressTextFieldTab2.setText(robotProfile.getControlIp());
+        ipAddressTextFieldTab3.setText(robotProfile.getControlIp());
 
         editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
         editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));
@@ -353,7 +353,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void editProfileDialog(final RobotProfile robotProfile) {
         final View profileEditView = getLayoutInflater().inflate(R.layout.profile_edit, null);
         final EditText robotName = profileEditView.findViewById(R.id.editRobotName);
-        final EditText robotIp = profileEditView.findViewById(R.id.editRobotIP);
+        final EditText robotControlIp = profileEditView.findViewById(R.id.editRobotIP);
+        final EditText robotDebugIp = profileEditView.findViewById(R.id.editRobotDebugIp);
         final EditText robotControlPort = profileEditView.findViewById(R.id.editRobotControlPort);
         final EditText robotDriveMotorPort = profileEditView.findViewById(R.id.editRobotDriveMotorPort);
         final EditText robotServerMotorPort = profileEditView.findViewById(R.id.editRobotServoMotorPort);
@@ -381,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         if (robotProfile.getId() > 0) {
             Log.d("Preference", "hallo");
             robotName.setText(robotProfile.getName());
-            robotIp.setText(robotProfile.getIpOne());
+            robotControlIp.setText(robotProfile.getControlIp());
             robotControlPort.setText(portOneAsString);
             robotDriveMotorPort.setText(portTwoAsString);
             robotServerMotorPort.setText(portThreeAsString);
@@ -389,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
             robotMaxY.setText(robotMaxYAsString);
             robotMaxAngularSpeed.setText(robotMaxAngularSpeedAsString);
             robotFrequency.setText(robotFrequencyAsString);
+            robotDebugIp.setText(robotProfile.getDebugIp());
         }
 
         final Dialog dialog = new Dialog(MainActivity.this);
@@ -406,9 +408,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     int profileIndex;
                     //Read values from TextFields
                     String name = robotName.getText().toString().trim();
-                    String ip = robotIp.getText().toString().trim();
-                    //TODO CEDRIC DA WAS MACHEN:
-                    String ipTwo = "0.0.0.0";
+                    String controlIp = robotControlIp.getText().toString().trim();
+                    String debugIp = robotDebugIp.getText().toString().trim();
                     int portOne = (Integer.parseInt(robotControlPort.getText().toString().trim()));
                     int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString().trim()));
                     int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString().trim()));
@@ -418,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     float frequency = (Float.parseFloat(robotFrequency.getText().toString().trim()));
 
                     //Create a RobotProfile Object
-                    RobotProfile profile = new RobotProfile(name, ip, ipTwo, portOne, portTwo, portThree,
+                    RobotProfile profile = new RobotProfile(name, controlIp, debugIp,  portOne, portTwo, portThree,
                             maxAngularSpeed, maxX, maxY, frequency);
 
                     if (robotProfile.getId() > 0) {
@@ -504,9 +505,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      */
     private void setDefaultProfileValues(RobotProfile robotProfile) {
 
-        ipAddressTextFieldTab1.setText(robotProfile.getIpOne());
-        ipAddressTextFieldTab2.setText(robotProfile.getIpOne());
-        ipAddressTextFieldTab3.setText(robotProfile.getIpOne());
+        ipAddressTextFieldTab1.setText(robotProfile.getControlIp());
+        ipAddressTextFieldTab2.setText(robotProfile.getDebugIp());
+        ipAddressTextFieldTab3.setText(robotProfile.getDebugIp());
 
         editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
         editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));

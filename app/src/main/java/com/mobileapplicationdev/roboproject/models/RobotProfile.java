@@ -10,8 +10,8 @@ import com.mobileapplicationdev.roboproject.R;
 
 public class RobotProfile {
     private String name;
-    private String ipOne;
-    private String ipTwo;
+    private String controlIp;
+    private String debugIp;
     private int portOne;
     private int portTwo;
     private int portThree;
@@ -33,7 +33,8 @@ public class RobotProfile {
     /**
      * full robot profile
      * @param name name
-     * @param ipOne ipOne
+     * @param controlIp controlIp
+     * @param debugIp debugIp
      * @param portOne portOne
      * @param portTwo portTwo
      * @param portThree portThree
@@ -42,16 +43,16 @@ public class RobotProfile {
      * @param maxY maxY
      * @param frequency frequency
      */
-    public RobotProfile(String name, String ipOne, String ipTwo, int portOne, int portTwo, int portThree,
+    public RobotProfile(String name, String controlIp, String debugIp, int portOne, int portTwo, int portThree,
                         float maxAngularSpeed, float maxX, float maxY, float frequency) {
         checkName(name);
         this.name = name;
 
-        checkIp(ipOne);
-        this.ipOne = ipOne;
+        checkIp(controlIp);
+        this.controlIp = controlIp;
 
-        checkIp(ipTwo);
-        this.ipTwo = ipTwo;
+        checkIp(debugIp);
+        this.debugIp = debugIp;
 
         checkPort(portOne);
         this.portOne = portOne;
@@ -128,22 +129,22 @@ public class RobotProfile {
         this.name = name;
     }
 
-    public String getIpOne() {
-        return ipOne;
+    public String getControlIp() {
+        return controlIp;
     }
 
-    public void setIpOne(String ipOne) {
-        checkIp(ipOne);
-        this.ipOne = ipOne;
+    public void setControlIp(String controlIp) {
+        checkIp(controlIp);
+        this.controlIp = controlIp;
     }
 
-    public String getIpTwo() {
-        return ipTwo;
+    public String getDebugIp() {
+        return debugIp;
     }
 
-    public void setIpTwo(String ipTwo) {
-        checkIp(ipTwo);
-        this.ipTwo = ipTwo;
+    public void setDebugIp(String debugIp) {
+        checkIp(debugIp);
+        this.debugIp = debugIp;
     }
 
     public int getPortOne() {
