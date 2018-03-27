@@ -847,9 +847,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         resetButtonTab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                debugVelocityChart.clearValues();
+                //debugVelocityChart.clearValues();
                 debugVelocityChart.invalidate();
-                debugVelocityChart.clear();
+                //debugVelocityChart.clear();
                 initDynamicGraph(debugVelocityChart);
             }
         });
@@ -952,9 +952,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         resetButtonTab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                debugAngleChart.clearValues();
+                //debugAngleChart.clearValues();
                 debugAngleChart.invalidate();
-                debugAngleChart.clear();
+                //debugAngleChart.clear();
                 initDynamicGraph(debugAngleChart);
             }
         });
