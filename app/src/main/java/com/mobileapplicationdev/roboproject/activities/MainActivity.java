@@ -338,9 +338,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private void selectProfile(final RobotProfile robotProfile) {
         setPreferences(robotProfile);
 
-        ipAddressTextFieldTab1.setText(robotProfile.getIp());
-        ipAddressTextFieldTab2.setText(robotProfile.getIp());
-        ipAddressTextFieldTab3.setText(robotProfile.getIp());
+        ipAddressTextFieldTab1.setText(robotProfile.getIpOne());
+        ipAddressTextFieldTab2.setText(robotProfile.getIpOne());
+        ipAddressTextFieldTab3.setText(robotProfile.getIpOne());
 
         editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
         editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));
@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
         if (robotProfile.getId() > 0) {
             Log.d("Preference", "hallo");
             robotName.setText(robotProfile.getName());
-            robotIp.setText(robotProfile.getIp());
+            robotIp.setText(robotProfile.getIpOne());
             robotControlPort.setText(portOneAsString);
             robotDriveMotorPort.setText(portTwoAsString);
             robotServerMotorPort.setText(portThreeAsString);
@@ -407,6 +407,8 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     //Read values from TextFields
                     String name = robotName.getText().toString().trim();
                     String ip = robotIp.getText().toString().trim();
+                    //TODO CEDRIC DA WAS MACHEN:
+                    String ipTwo = "0.0.0.0";
                     int portOne = (Integer.parseInt(robotControlPort.getText().toString().trim()));
                     int portTwo = (Integer.parseInt(robotDriveMotorPort.getText().toString().trim()));
                     int portThree = (Integer.parseInt(robotServerMotorPort.getText().toString().trim()));
@@ -416,7 +418,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
                     float frequency = (Float.parseFloat(robotFrequency.getText().toString().trim()));
 
                     //Create a RobotProfile Object
-                    RobotProfile profile = new RobotProfile(name, ip, portOne, portTwo, portThree,
+                    RobotProfile profile = new RobotProfile(name, ip, ipTwo, portOne, portTwo, portThree,
                             maxAngularSpeed, maxX, maxY, frequency);
 
                     if (robotProfile.getId() > 0) {
@@ -461,7 +463,7 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
     private List<RobotProfile> loadProfiles() {
         List<RobotProfile> profileList = new ArrayList<>();
 
-        RobotProfile newProfile = new RobotProfile(getString(R.string.new_profile), "0.0.0.0",
+        RobotProfile newProfile = new RobotProfile(getString(R.string.new_profile), "0.0.0.0", "0.0.0.0",
                 0, 0, 0, 0, 0, 0, 0);
         newProfile.setId(-1);
 
@@ -502,9 +504,9 @@ public class MainActivity extends AppCompatActivity implements SocketService.Cal
      */
     private void setDefaultProfileValues(RobotProfile robotProfile) {
 
-        ipAddressTextFieldTab1.setText(robotProfile.getIp());
-        ipAddressTextFieldTab2.setText(robotProfile.getIp());
-        ipAddressTextFieldTab3.setText(robotProfile.getIp());
+        ipAddressTextFieldTab1.setText(robotProfile.getIpOne());
+        ipAddressTextFieldTab2.setText(robotProfile.getIpOne());
+        ipAddressTextFieldTab3.setText(robotProfile.getIpOne());
 
         editFrequencyTab2.setText(String.valueOf(robotProfile.getFrequency()));
         editFrequencyTab3.setText(String.valueOf(robotProfile.getFrequency()));

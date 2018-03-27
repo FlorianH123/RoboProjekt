@@ -10,7 +10,8 @@ import com.mobileapplicationdev.roboproject.R;
 
 public class RobotProfile {
     private String name;
-    private String ip;
+    private String ipOne;
+    private String ipTwo;
     private int portOne;
     private int portTwo;
     private int portThree;
@@ -32,7 +33,7 @@ public class RobotProfile {
     /**
      * full robot profile
      * @param name name
-     * @param ip ip
+     * @param ipOne ipOne
      * @param portOne portOne
      * @param portTwo portTwo
      * @param portThree portThree
@@ -41,13 +42,16 @@ public class RobotProfile {
      * @param maxY maxY
      * @param frequency frequency
      */
-    public RobotProfile(String name, String ip, int portOne, int portTwo, int portThree,
+    public RobotProfile(String name, String ipOne, String ipTwo, int portOne, int portTwo, int portThree,
                         float maxAngularSpeed, float maxX, float maxY, float frequency) {
         checkName(name);
         this.name = name;
 
-        checkIp(ip);
-        this.ip = ip;
+        checkIp(ipOne);
+        this.ipOne = ipOne;
+
+        checkIp(ipTwo);
+        this.ipTwo = ipTwo;
 
         checkPort(portOne);
         this.portOne = portOne;
@@ -124,13 +128,22 @@ public class RobotProfile {
         this.name = name;
     }
 
-    public String getIp() {
-        return ip;
+    public String getIpOne() {
+        return ipOne;
     }
 
-    public void setIp(String ip) {
-        checkIp(ip);
-        this.ip = ip;
+    public void setIpOne(String ipOne) {
+        checkIp(ipOne);
+        this.ipOne = ipOne;
+    }
+
+    public String getIpTwo() {
+        return ipTwo;
+    }
+
+    public void setIpTwo(String ipTwo) {
+        checkIp(ipTwo);
+        this.ipTwo = ipTwo;
     }
 
     public int getPortOne() {
@@ -208,4 +221,5 @@ public class RobotProfile {
     public String toString() {
         return name + " id=" + id;
     }
+
 }
