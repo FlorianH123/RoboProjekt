@@ -77,8 +77,12 @@ public class Utils {
         return (1/hertz);
     }
 
+    /**
+     * create the line data set for the setpoint linechart
+     * @return linedataset
+     */
     public static LineDataSet createSetTwo() {
-        LineDataSet set = new LineDataSet(null, Resources.getSystem().getString(R.string.setpoint));
+        LineDataSet set = new LineDataSet(null, "Soll-Wert");
 
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.rgb("#B40404"));
@@ -92,13 +96,18 @@ public class Utils {
         set.setHighLightColor(Color.rgb(100, 170, 30));
         set.setValueTextColor(Color.RED);
         set.setValueTextSize(9f);
-        set.setDrawValues(true);
+        set.setDrawValues(false);
 
         return set;
     }
 
+    /**
+     * create the line data set for the actual value line chart
+     * @param mode cubic or linear
+     * @return linedataset
+     */
     public static LineDataSet createSet(LineDataSet.Mode mode) {
-        LineDataSet set = new LineDataSet(null, Resources.getSystem().getString(R.string.actual_value));
+        LineDataSet set = new LineDataSet(null, "Ist-Wert");
 
         set.setMode(mode);
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
