@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "RoboController.db";
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 13;
 
     //Constants for the profiles table
     //table name:
@@ -30,9 +30,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //name:
     private static final String NAME_PRO_NAME = "name";
     private static final String NAME_PRO_TYPE = "TEXT";
-    //ip:
-    private static final String IP_PRO_NAME = "ip";
-    private static final String IP_PRO_TYPE = "TEXT";
+    //ipOne:
+    private static final String IP_1_PRO_NAME = "ipOne";
+    private static final String IP_1_PRO_TYPE = "TEXT";
+    //ipTwo:
+    private static final String IP_2_PRO_NAME = "ipTwo";
+    private static final String IP_2_PRO_TYPE = "TEXT";
     //portOne:
     private static final String PORT_1_PRO_NAME = "portOne";
     private static final String PORT_1_PRO_TYPE = "INTEGER";
@@ -52,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String MAX_Y_PRO_NAME = "maxY";
     private static final String MAX_Y_PRO_TYPE = "FLOAT";
     //frequency:
-    private static final String FREQ_PRO_NAME = "frequenz";
+    private static final String FREQ_PRO_NAME = "frequency";
     private static final String FREQ_PRO_TYPE = "FLOAT";
 
     //SQL-Command to create profiles table:
@@ -60,7 +63,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             "CREATE TABLE " + PRO_TABLE_NAME + "(" +
                     ID_PRO_NAME + " " + ID_PRO_TYPE + ", " +
                     NAME_PRO_NAME + " " + NAME_PRO_TYPE + ", " +
-                    IP_PRO_NAME + " " + IP_PRO_TYPE + ", " +
+                    IP_1_PRO_NAME + " " + IP_1_PRO_TYPE + ", " +
+                    IP_2_PRO_NAME + " " + IP_2_PRO_TYPE + ", " +
                     PORT_1_PRO_NAME + " " + PORT_1_PRO_TYPE + ", " +
                     PORT_2_PRO_NAME + " " + PORT_2_PRO_TYPE + ", " +
                     PORT_3_PRO_NAME + " " + PORT_3_PRO_TYPE + ", " +
@@ -93,7 +97,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put(NAME_PRO_NAME, profile.getName());
-            values.put(IP_PRO_NAME, profile.getIp());
+            values.put(IP_1_PRO_NAME, profile.getControlIp());
+            values.put(IP_2_PRO_NAME, profile.getDebugIp());
             values.put(PORT_1_PRO_NAME, profile.getPortOne());
             values.put(PORT_2_PRO_NAME, profile.getPortTwo());
             values.put(PORT_3_PRO_NAME, profile.getPortThree());
@@ -123,7 +128,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
 
             values.put(NAME_PRO_NAME, profile.getName());
-            values.put(IP_PRO_NAME, profile.getIp());
+            values.put(IP_1_PRO_NAME, profile.getControlIp());
+            values.put(IP_2_PRO_NAME, profile.getDebugIp());
             values.put(PORT_1_PRO_NAME, profile.getPortOne());
             values.put(PORT_2_PRO_NAME, profile.getPortTwo());
             values.put(PORT_3_PRO_NAME, profile.getPortThree());
@@ -160,7 +166,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                     profile.setId(c.getInt(c.getColumnIndex(ID_PRO_NAME)));
                     profile.setName(c.getString(c.getColumnIndex(NAME_PRO_NAME)));
-                    profile.setIp(c.getString(c.getColumnIndex(IP_PRO_NAME)));
+                    profile.setControlIp(c.getString(c.getColumnIndex(IP_1_PRO_NAME)));
+                    profile.setDebugIp(c.getString(c.getColumnIndex(IP_2_PRO_NAME)));
                     profile.setPortOne(c.getInt(c.getColumnIndex(PORT_1_PRO_NAME)));
                     profile.setPortTwo(c.getInt(c.getColumnIndex(PORT_2_PRO_NAME)));
                     profile.setPortThree(c.getInt(c.getColumnIndex(PORT_3_PRO_NAME)));
@@ -218,7 +225,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if(c.getCount() == 0) {
                 ContentValues values = new ContentValues();
                 values.put(NAME_PRO_NAME, "Default");
-                values.put(IP_PRO_NAME, "192.168.0.29");
+                values.put(IP_1_PRO_NAME, "192.168.0.29");
+                values.put(IP_2_PRO_NAME, "192.168.0.29");
                 values.put(PORT_1_PRO_NAME, 15002);
                 values.put(PORT_2_PRO_NAME, 15002);
                 values.put(PORT_3_PRO_NAME, 15002);
